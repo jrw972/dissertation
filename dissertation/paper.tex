@@ -15,7 +15,7 @@
 
 %%\newtheorem{theorem}{Theorem}
 
-\title{A Model and Platform for Designing and Implementing Reactive Systems}
+\title{A Transactional Model and Platform for Designing and Implementing Reactive Systems}
 \author{Justin R. Wilson}
 \date{}
 
@@ -24,6 +24,30 @@
 \VerbatimFootnotes
 
 \maketitle
+
+\chapter*{Abstract}
+
+A reactive program is one that has ``ongoing interactions with its environment\cite{manna1992temporal}'' and include operating systems, network clients and servers, databases, programs for embedded systems, and smart phone apps.
+Reactive programs are already a core part of our computational and physical infrastructure and will continue to proliferate our society as new form factors, e.g. wireless sensors, and inexpensive (wireless) networking are applied to new problems.
+Asynchronous concurrency is a fundamental characteristic of reactive systems that makes them hard to develop.
+Threads are the dominant approach to implementing reactive systems and tend to magnify problems associated with asynchronous concurrency as there is a gap between the semantics of thread-based computation and the semantics of reactive systems.
+In terms of software engineering, reactive software developed with threads often have subtle timing bugs and tend to be brittle and non-reusable as a holistic understanding of the software is necessary to avoid concurrency hazards, e.g., data races, deadlock, livelock.
+Based on these generally accepted problems with the state of the art, we believe a new model for developing and implementing reactive systems is necessary.
+
+This dissertation makes four contributions to the state of the art in reactive systems.
+First, we propose a formal yet practical model for reactive systems called \emph{reactive components}.
+A reactive component is a set of state variables and state transitions that can be composed with other reactive components to yield transactions that are executed by a weakly fair scheduler.
+The reactive component model is based on concepts from temporal logic and models like UNITY~\cite{chandy1989parallel} and I/O automata~\cite{nancy1996distributed}.
+The major contribution of the reactive component model is \emph{principled composition} which ensures that 1) the result of composition is always another reactive component for consistency of reasoning, 2) systems may be decomposed to an arbitrary degree and depth to foster divide-and-conquer when designing and re-use when implementing, 3) the behavior of a reactive component can be stated in terms of its interface which is necessary for abstraction, and 4) properties of reactive components established independent of context can never be violated.
+Second, we develop a prototypical programming language for reactive components that enforces various aspects of the model, e.g., the isolation of state between components, while permitting a number of useful programming techniques, e.g., reference and move semantics for efficient communication.
+Third, we provide an implementation of the proposed programming language.
+The implementation contains an algorithm that checks for composition hazards including recursively defined and non-deterministic transactions.
+Transactions are executed using a novel calling convention that can be implemented efficiently on existing architectures.
+The run-time system also contains two weakly fair schedulers that use the results of the composition analysis to concurrently executive non-interfering transactions.
+Fourth, we compare the performance of our reactive component schedulers (which use interpretation) to the performance of a compiled threaded program for two reactive systems.
+For one system, the combination of the implementation and hardware biases it toward an event-based solution which was confirmed when the reactive component implementation outperformed the thread implementation due to reduced context switching.
+The other system is biased toward an thread-based solution and the threaded implementation outperformed the reactive component implementations.
+These results demonstrate that reactive components may be a viable alternative to threads but additional work is necessary to generalize this claim.
 
 \input introduction.tex
 
