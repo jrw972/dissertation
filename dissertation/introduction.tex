@@ -13,7 +13,7 @@ Whereas transformational programs are designed to halt and produce an output (wh
 The activities of input, processing, and output are thus overlapped in the execution of a reactive program.
 A web server is a example of a reactive program as it continually receives requests, processes them, and sends responses.
 Reactive systems include operating systems, databases, networked applications, interactive applications, and embedded systems.
-A number of formal models have been developed to reason about reactive systems and include the Calculus of Communicating Systems~\cite{milner1982calculus}, the Algebra of Communicating Processes~\cite{bergstra1982fixed}, Cooperating Sequential Processes~\cite{dijkstra1965cooperating}, Communicating Sequential Processes~\cite{hoare1978communicating}, the Actor Model~\cite{hewitt1973universal}\cite{clinger1981foundations}\cite{agha1985actors}, UNITY~\cite{chandy1989parallel}, and I/O automata~\cite{nancy1996distributed}.
+A number of formal models have been developed to reason about reactive systems and include the Calculus of Communicating Systems~\cite{milner1982calculus}, the Algebra of Communicating Processes~\cite{bergstra1982fixed}, Cooperating Sequential Processes~\cite{dijkstra1965cooperating}, Communicating Sequential Processes~\cite{hoare1978communicating}, Kahn process networks~\cite{kahn1974semantics}, the Actor Model~\cite{hewitt1973universal}\cite{clinger1981foundations}\cite{agha1985actors}, UNITY~\cite{chandy1989parallel}, and I/O automata~\cite{nancy1996distributed}.
 A reactive program must share resources with its environment to facilitate communication.
 From the perspective of the reactive program, input occurs when the environment acts on the reactive program and output occurs when the reactive program acts on the environment.
 The manipulation of resources internal to a reactive program or an environment is generically referred to as processing.
@@ -23,7 +23,7 @@ Concurrency refers to the idea that a reactive program and its environment may a
 In synchronous models, a reactive program and its environment share a common clock which allows the reactive program to coordinate access to shared resources, e.g., the environment writes a shared variable in one clock cycle and the reactive program reads it in the next.
 However, shared clocks are difficult to implement and do not scale.
 Consequently, many reactive systems are asynchronous meaning that the reactive program and environment evolve independently with respect to time.
-To facilitate communicate, asynchronous models include facilities for atomicity that allow a reactive program to act without being interrupted by its environment and vice versa.
+To facilitate communication, asynchronous models include facilities for atomicity that allow a reactive program to act without being interrupted by its environment and vice versa.
 The facilities for atomicity allow a reactive program to synchronize with its environment as the atomic events play the role of a shared clock.
 A common approach to ensuring correctness in asynchronous models is to view the environment as an adversary that will deliver inputs at inopportune times.
 Since a reactive program may run forever, the designers of reactive programs thus must often reason about infinite event sequences containing interleaved input, output, and processing.
@@ -116,7 +116,7 @@ A model adhering to these principles facilitates and supports \emph{principled c
 Principled composition requires language support for interfaces, definitions, and substitutional equivalence.
 A variety of useful domains including mathematical expressions, object-oriented programming, functional programming, and digital logic circuits support principled composition.
 
-Asynchronous concurrency, two inherent characteristics of reactive systems, undermine decomposition and composition when not properly encapsulated and therefore limit our ability to design and implement complex reactive systems.
+Asynchronous concurrency, an inherent characteristic of reactive systems, undermines decomposition and composition when not properly encapsulated and therefore limits our ability to design and implement complex reactive systems.
 Such problems of asynchronous concurrency stem from the interactions between reactive programs.
 Decomposition increases the number of reactive programs constituting a system which in turn increases the number of susceptible interactions and opportunities for timing bugs.
 For decomposition to achieve an overall reduction in complexity when designing a reactive system, it must reduce the amount of reasoning that must be performed at each level of the design.
@@ -128,16 +128,16 @@ Some examples of indirect approaches to modeling state include monads~\cite{wadl
 The imperative programming paradigm models state directly using variables and assignment and the dominant languages used to implement reactive systems, such as C, C++, and Java, are based on this paradigm.
 As we are interested in expressing reactive semantics directly, we limit the remaining discussion to reactive systems based on the imperative programming paradigm.
 
-The imperative programming paradigm when implemented using structured programming techniques attempts to express a computation as sequence of statements.
+The imperative programming paradigm when implemented using structured programming techniques attempts to express a computation as a sequence of statements.
 The computation being performed is realized by executing each statement in the sequence where a statement is either an assignment statement, a condition (if/else), or a loop.
 Control flows from one statement to the next unless altered by a condition or loop.
 A locus of control is called a \emph{thread}.
 Statements compose sequentially, that is, a sequence of statements can be thought of as a single statement that performs the computation of the sequence in one step.
-Imperative programming languages often permit the definition of procedures, e.g., subroutines, functions, etc., as a way to abstract sequences of statements or expressions.
+Imperative programming languages often permit the definition of procedures, e.g., subroutines, functions, macros, etc., as a way to abstract sequences of statements or expressions.
 Control passes from the calling sequence to the sequence indicated by the procedure and returns to the calling sequence when the procedure terminates.
 The semantics of calling a procedure are completely compatible with the sequential composition of statements.
 
-Many reactive programs are multi-threaded and written to use the facilities of a conventional operating system.
+Many reactive programs are multi-threaded and designed to use the facilities of a conventional operating system.
 For the discussion to follow, we consider each thread in a multi-threaded program to be a reactive program.
 The environment for a thread then is the operating system and the other threads with which it directly interacts.
 This matches the definition of a reactive program as the thread will have ongoing interactions with its environment, i.e., interact with the operating system and other threads.
@@ -152,11 +152,11 @@ While some of these patterns have been incorporated into programming languages (
 In practice, explicit atomicity and the corresponding use of synchronization primitives has proven to be tedious and error prone~\cite{sutter2005software}.
 
 Correct synchronization in sequential imperative programs is a holistic problem that resists encapsulation.
-Sequential imperative programs, both transformational and reactive, are often designed using functionally modular principles such as procedural programming or object-oriented programming.
+Sequential imperative programs, both transformational and reactive, are often designed using functionally modular principles such as procedural programming, object-oriented programming, and functional programming.
 A transition in a reactive program then is typically distributed over a variety of modules, i.e., the graph of procedure calls.
 The challenge for a developer then is to identify all of the shared state and then use synchronization primitives to guard concurrent updates.
 Proper synchronization is based upon a complete understanding of the call graph (which may not be fully known due to aliasing).
-The resulting code tends to be fragile, i.e., modifications tend to introduce new timing bugs.
+The resulting code tends to be brittle as modifications tend to introduce new timing bugs.
 %% Existing approaches to synchronization attempt to impose structure on the call graph, e.g., an object can only participate in one transition at a time (thread-safe interface~\cite{schmidt2000pattern}), to avoid concurrency hazards.
 %% The most common formal approach to verifying correct synchronization is model checking which has its own limitation, e.g., the size and fidelity of the model.
 %% The active object pattern~\cite{schmidt2000pattern} is an attempt to encapsulate the behavior of a reactive program.
@@ -296,15 +296,23 @@ Thus, reactive programs based on the imperative programming paradigm are not sub
 %% Furthermore, designs in our model are not limited exclusively to pair-wise interactions since ports facilitate the construction of interactions that involve more than two parties.
 %% The ports constitute an actor's interface and simultaneously encapsulate reactive behavior while providing a principled and flexible mechanism for composing reactive behaviors.
 
-\paragraph{TODO Approach.}
-To reduce the accidental complexity associated with the design and implementation of reactive systems while ensuring that reactive systems can be decomposed and composed in a principled way, we developed a new model and platform for reactive systems based on the direct manipulation of state, implicit atomicity, and non-deterministic sequencing.
-Implicit atomicity relieves the burden of specifying critical sections with synchronization primitives, which seems to be one of the greatest sources of accidental complexity in reactive systems, while the semantics of non-deterministic sequencing allows reactive programs to be subject to principled decomposition and composition.
-%% We do not exclude the possibility of using deterministic sequencing, but rather view it as a special case of non-deterministic sequencing.
-%% Reactive programs are composed by linking transitions, i.e., parallel composition.
-%% Both parallel and sequential composition may be used to compose complex state transitions within a single reactive program.
+\paragraph{Approach.}
+To reduce the accidental complexity associated with the design and implementation of reactive systems while supporting principled composition and decomposition, we propose a transactional model for reactive systems called reactive components.
+A reactive component is a set of state variables and a set of transactions that operate on those state variables.
+Linking a transaction in one component to a transaction in another component yields another transaction that operates on the state variables of the constituent components.
+A transaction-oriented approach resolves the main difficulties of the control-oriented imperative approach.
+In the reactive component model, transactions are atomic.
+This relieves developers from the burden of identifying and guarding critical sections.
+The composability of transactions allows developers to create complex state transitions independent of control flow.
+This relieves developers from needing a holistic understanding of the call graph when composing a complex state transition.
 
-\paragraph{TODO Contributions.}
-This research makes three contributions to the state of the art in reactive system development.
-In section~\ref{model}, we develop a model for reactive systems based on implicit atomicity and non-deterministic sequencing in an effort to reduce the accidental complexity associated with their development and enable principled decomposition and composition.
-In section~\ref{implementation}, we propose a programming language based on the model and the assumption of a static system.
-In section~\ref{evaluation}, we propose a qualitative evaluation of the model to determine if the model facilitates design processes based on principled composition and decomposition and a quantitative evaluation of its implementation to determine if the model has an efficient implementation on modern architectures.
+\paragraph{Contributions.}
+This research makes the following contributions to the state of the art in reactive system development.
+In Chapter~\ref{model}, we present the reactive component model.
+In Chapter~\ref{language}, we present \rcgo:  a programming language for reactive components based on the Go programming language.
+For tractability, we assume systems with a fixed number of components in a fixed configuration.
+In Chapter~\ref{implementation}, we describe the implementation of an interpreter for \rcgo including the algorithm that checks a system for sound composition, a calling convention for transactions, the implementation of move semantics, and an approach to file descriptor I/O.
+Chapter~\ref{implementation} also describes the design, implementation, and an evaluation of two concurrent weakly fair schedulers.
+The schedulers are compared to a custom multi-threaded application for two reactive systems.
+For one system, the reactive component implementation outperforms the custom application while the custom application outperforms the reactive component implementation for the other system.
+The results demonstrate that reactive components may be a viable alternative to threads but additional work is necessary to generalize this claim.
