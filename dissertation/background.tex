@@ -1,4 +1,5 @@
-\chapter{Background and Related Work \label{background}}
+\chapter{Background and Related Work}
+\label{background}
 
 \paragraph{Reactive semantics.}
 State (memory) is fundamental to reactive systems as past inputs influence future behavior.
@@ -47,7 +48,7 @@ Deterministic sequencing and non-deterministic sequencing only describe individu
 Influential models based on non-deterministic sequencing include the UNITY model of Chandy and Misra~\cite{chandy1989parallel} and Lynch's I/O automata~\cite{nancy1996distributed}.
 
 Atomicity may either be \emph{explicit} or \emph{implicit} in a model for reactive systems.
-Platforms that support reactive processes with deterministic sequencing and shared variables typically include primitive transitions called \emph{synchronization primitives}, e.g., test-and-test, compare-and-swap, that may atomically update state and/or alter the flow of control~\cite{andrews1983concepts}.
+Platforms that support reactive processes with deterministic sequencing and shared variables typically include primitive transitions called \emph{synchronization primitives}, e.g., test-and-set, compare-and-swap, that may atomically update state and/or alter the flow of control~\cite{andrews1983concepts}.
 Synchronization primitives can be used to construct more general synchronization mechanisms like semaphores and monitors~\cite{dijkstra1965cooperating}.
 The goal of synchronization is to create atomic sequences of transitions called \emph{critical regions} or \emph{critical sections}~\cite{andrews1983concepts}.
 Atomicity, therefore, is made explicit by the programmer.
@@ -74,7 +75,7 @@ Software transactional memory, proposed by Shavit and Touitou~\cite{shavit1997so
 
 Another popular approach to reactive systems is messaging passing with deterministic sequencing as is done in Hoare's Communicating Sequential Processes~\cite{hoare1978communicating}.
 This model is also supported by widely available platforms via pipes, message queues, and sockets~\cite{silberschatz2005operating}.
-A message passing channel may either be a fixed size or unbounded and accessed synchronously or asynchronously by either the sender or the receiver~\cite{andrews1983concepts}.
+A message passing channel may either unbounded or have a fixed size and accessed synchronously or asynchronously by either the sender or the receiver~\cite{andrews1983concepts}.
 %% Synchronous sends block the sender until the channel is not full while asynchronous sends succeed or fail immediately.
 %% Similarly, synchronous receives block the receiver until the channel is not empty while asynchronous receives succeed or fail immediately.
 %% To illustrate, channels in CSP may contain one message and are accessed synchronously by both sender and receiver while channels in Kahn Process Networks~\cite{kahn1974semantics} are typically unbounded and accessed asynchronously by the sender and synchronously by the receiver.
