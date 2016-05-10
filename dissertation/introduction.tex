@@ -298,12 +298,12 @@ Thus, reactive programs based on the imperative programming paradigm are not sub
 
 \paragraph{Approach.}
 To reduce the accidental complexity associated with the design and implementation of reactive systems while supporting principled composition and decomposition, we propose a transactional model for reactive systems called reactive components.
-A reactive component is a set of state variables and a set of transactions that operate on those state variables.
-Linking a transaction in one component to a transaction in another component yields another transaction that operates on the state variables of the constituent components.
+A reactive component is a set of state variables and a set of atomic transitions that operate on those state variables.
+Linking a transition in one component to a transition in another component yields another transition that operates on the state variables of the constituent components.
 A transaction-oriented approach resolves the main difficulties of the control-oriented imperative approach.
-In the reactive component model, transactions are atomic.
+In the reactive component model, transitions are atomic.
 This relieves developers from the burden of identifying and guarding critical sections.
-The composability of transactions allows developers to create complex state transitions independent of control flow.
+The composability of transitions allows developers to create complex state transitions independent of control flow.
 This relieves developers from needing a holistic understanding of the call graph when composing a complex state transition.
 
 \paragraph{Contributions.}
@@ -311,7 +311,7 @@ This research makes the following contributions to the state of the art in react
 In Chapter~\ref{model}, we present the reactive component model.
 In Chapter~\ref{language}, we present \rcgo:  a programming language for reactive components based on the Go programming language.
 For tractability, we assume systems with a fixed number of components in a fixed configuration.
-In Chapter~\ref{implementation}, we describe the implementation of an interpreter for \rcgo including the algorithm that checks a system for sound composition, a calling convention for transactions, the implementation of move semantics, and an approach to file descriptor I/O.
+In Chapter~\ref{implementation}, we describe the implementation of an interpreter for \rcgo including the algorithm that checks a system for sound composition, a calling convention for transitions, the implementation of move semantics, and an approach to file descriptor I/O.
 Chapter~\ref{implementation} also describes the design, implementation, and an evaluation of two concurrent weakly fair schedulers.
 The schedulers are compared to a custom multi-threaded application for two reactive systems.
 For one system, the reactive component implementation outperforms the custom application while the custom application outperforms the reactive component implementation for the other system.
