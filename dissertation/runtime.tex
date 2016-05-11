@@ -1,18 +1,20 @@
-\chapter{Implementation}
+\chapter{Implementation and Evaluation}
 \label{implementation}
 
-This chapter presents the algorithm for checking composition; the implementation of activations, heaps, and (two) schedulers; and I/O facilities for an interpreter designed for the language presented in Chapter~\ref{language}.
+This chapter presents the algorithm for checking composition; the implementation of activations, heaps, and (two) schedulers; and I/O facilities for an interpreter designed for the \rcgo programming language presented in Chapter~\ref{language}.
 
-\paragraph{Interpreter organization and implementation.}
+\section{Interpreter Organization and Implementation}
+\label{interpreter}
+
 The interpreter consists of a scanner, a parser, a sequence of semantic checks, a code generation phase, composition checks, and an execution phase.
 The interpreter is implemented in C++.
 Flex and Bison were used to implement the scanner and parser, respectively.
-The semantic checks include type checking and enforcement of \verb+const+ and \verb+foreign+ intrinsic and dereference mutability.
-The implementation of these checks follows the requirements set forth in Chapter~\ref{language}.
+The semantic checks include type checking and enforcement of intrinsic and dereference mutability as set forth in Chapter~\ref{language}.
 The code generation phase converts the AST into a tree of stack operations.
+The composition check synthesizes transactions and checks them for soundness (Section~\ref{sound_composition}).
 The execution phase begins by initializing component instances by calling the initializer associated with each instance.
-The scheduler then proceeds by selecting and executing actions, with weak fairness.
-Scheduler implementations use the POSIX threads (pthreads) library for concurrent execution and synchronization.
+The scheduler then proceeds by selecting and executing transactions according to weak fairness (Section~\ref{scheduler}).
+The scheduler implementations use the POSIX threads (pthreads) library for concurrent execution and synchronization.
 The code is available on GitHub\footnote{https://github.com/jrw972/rc}.
 
 \section{Enforcing Sound Composition}
@@ -692,6 +694,7 @@ Furthermore, they have well-defined concurrency semantics that will be enforced 
 Thus, it is possible to use the reactive component model to produce reusable \emph{reactive} software.
 
 \section{Scheduler}
+\label{scheduler}
 
 A scheduler is responsible for selecting and executing transactions according to the weak fairness criteria set forth in Chapter~\ref{model}.
 Of particular interest is the design and implementation of general-purpose schedulers that are capable of executing transactions in parallel.

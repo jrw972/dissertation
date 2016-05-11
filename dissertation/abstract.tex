@@ -14,10 +14,10 @@ A reactive component is a set of state variables and atomic transitions that can
 The final set of transitions in a system of reactive components are executed by a weakly fair scheduler.
 The reactive component model is based on concepts from temporal logic and models like UNITY~\cite{chandy1989parallel} and I/O automata~\cite{nancy1996distributed}.
 The major contribution of the reactive component model is \emph{principled composition} which ensures that 1) the result of composition is always another reactive component for consistency of reasoning, 2) systems may be decomposed to an arbitrary degree and depth to foster divide-and-conquer when designing and re-use when implementing, 3)~the behavior of a reactive component can be stated in terms of its interface which is necessary for abstraction, and 4) properties of reactive components established independent of context can never be violated which permits assume-guarantee reasoning.
-Second, we develop a prototypical programming language for reactive components called \rcgo as it based on the syntax and semantics of the Go programming language.
+Second, we develop a prototypical programming language for reactive components called \rcgo{} as it based on the syntax and semantics of the Go programming language.
 The semantics of the language enforce various aspects of the reactive component model, e.g., the isolation of state between components, while permitting a number of useful programming techniques, e.g., reference and move semantics for efficient communication.
 For tractability, we assume that systems contain a fixed set of components in a fixed configuration.
-Third, we provide an interpreter for the \rcgo language to test the practicality of the assumptions upon which the reactive component model are founded.
+Third, we provide an interpreter for the \rcgo{} language to test the practicality of the assumptions upon which the reactive component model are founded.
 The interpreter contains an algorithm that checks for composition hazards including recursively defined and non-deterministic transitions.
 Transitions are executed using a novel calling convention that can be implemented efficiently on existing architectures.
 The run-time system also contains two weakly fair schedulers that use the results of the composition analysis to concurrently execute non-interfering transitions.

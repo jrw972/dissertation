@@ -318,6 +318,11 @@ P.~Wadler.
 \newblock In {\em Proceedings of the 1990 ACM conference on LISP and functional
   programming}, pages 61--78. ACM, 1990.
 
+\bibitem{williams2012c++}
+Anthony Williams.
+\newblock {\em C++ concurrency in action practical multithreading}.
+\newblock Manning, Shelter Island, NY, 2012.
+
 \bibitem{wirth1971program}
 N.~Wirth.
 \newblock Program development by stepwise refinement.
