@@ -281,6 +281,7 @@ The lookup must repeated for each of the $|N|$ nodes for a combined complexity o
 The complexity of these algorithms has not presented a problem in practice as most of the systems we have implemented have small numbers for $|N|$, $|V|$, and $k$.
 
 \section{Activations}
+\label{activations}
 
 When executing a transaction, the run-time must execute the immutable phase of all implied state transitions before executing any of the mutable phases.
 To accomplish this, the run-time uses a novel calling convention to create a list of deferred contexts and statements that represent the mutable phase of each state transition.
@@ -493,6 +494,7 @@ This could be performed prior to execution or during execution using just-in-tim
 We leave the application of these technique as future work.
 
 \section{Heaps}
+\label{heaps}
 
 In this section, we describe the implementation of the heap data type introduced in chapter~\ref{language} and our approach to garbage collection.
 Our approach to implementing dynamic memory allocation and garbage collection was shaped by the independence of state required by the semantics of reactive components.
