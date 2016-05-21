@@ -1,27 +1,29 @@
 \chapter*{Abstract}
 
-A reactive program is one that has ``ongoing interactions with its environment\cite{manna1992temporal}.''
+A reactive program is one that has ``ongoing interactions with its environment''~\cite{manna1992temporal}.
 Reactive programs include those for embedded systems, operating systems, network clients and servers, databases, and smart phone apps.
 Reactive programs are already a core part of our computational and physical infrastructure and will continue to proliferate our society as new form factors, e.g. wireless sensors, and inexpensive (wireless) networking are applied to new problems.
+
 Asynchronous concurrency is a fundamental characteristic of reactive systems that makes them difficult to develop.
-Threads are the dominant approach to implementing reactive systems and tend to magnify problems associated with asynchronous concurrency as there is a gap between the semantics of thread-based computation and the semantics of reactive systems.
-In terms of software engineering, reactive software developed with threads often has subtle timing bugs and tends to be brittle and non-reusable as a holistic understanding of the software is necessary to avoid concurrency hazards such as data races, deadlock, and livelock.
-Based on these generally accepted problems with the state of the art, we believe a new model for developing and implementing reactive systems is necessary.
+Threads are commonly used for implementing reactive systems, but they may magnify problems associated with asynchronous concurrency, as there is a gap between the semantics of thread-based computation and the semantics of reactive systems:  reactive software developed with threads often has subtle timing bugs and tends to be brittle and non-reusable as a holistic understanding of the software becomes necessary to avoid concurrency hazards such as data races, deadlock, and livelock.
+Based on these problems with the state of the art, we believe a new model for developing and implementing reactive systems is necessary.
 
 This dissertation makes four contributions to the state of the art in reactive systems.
-First, we propose a formal yet practical model for reactive systems called \emph{reactive components}.
+First, we propose a formal yet practical model for (asynchronous) reactive systems called \emph{reactive components}.
 A reactive component is a set of state variables and atomic transitions that can be composed with other reactive components to yield another reactive component.
 The final set of transitions in a system of reactive components are executed by a weakly fair scheduler.
 The reactive component model is based on concepts from temporal logic and models like UNITY~\cite{chandy1989parallel} and I/O automata~\cite{nancy1996distributed}.
-The major contribution of the reactive component model is \emph{principled composition} which ensures that 1) the result of composition is always another reactive component for consistency of reasoning, 2) systems may be decomposed to an arbitrary degree and depth to foster divide-and-conquer when designing and re-use when implementing, 3)~the behavior of a reactive component can be stated in terms of its interface which is necessary for abstraction, and 4) properties of reactive components established independent of context can never be violated which permits assume-guarantee reasoning.
-Second, we develop a prototypical programming language for reactive components called \rcgo{} as it based on the syntax and semantics of the Go programming language.
-The semantics of the language enforce various aspects of the reactive component model, e.g., the isolation of state between components, while permitting a number of useful programming techniques, e.g., reference and move semantics for efficient communication.
+The major contribution of the reactive component model is a formal method for \emph{principled composition}, which ensures that 1) the result of composition is always another reactive component, for consistency of reasoning; 2) systems may be decomposed to an arbitrary degree and depth, to foster divide-and-conquer when designing and re-use when implementing; 3)~the behavior of a reactive component can be stated in terms of its interface, which is necessary for abstraction; and 4) properties of reactive components established independent of context can never be violated, which permits assume-guarantee reasoning.
+
+Second, we develop a prototypical programming language for reactive components called \emph{\rcgo{}} as it based on the syntax and semantics of the Go programming language.
+The semantics of the \rcgo{} language enforce various aspects of the reactive component model, e.g., the isolation of state between components and safety of concurrency properties, while permitting a number of useful programming techniques, e.g., reference and move semantics for efficient communication among reactive components.
 For tractability, we assume that systems contain a fixed set of components in a fixed configuration.
+
 Third, we provide an interpreter for the \rcgo{} language to test the practicality of the assumptions upon which the reactive component model are founded.
-The interpreter contains an algorithm that checks for composition hazards including recursively defined and non-deterministic transitions.
+The interpreter contains an algorithm that checks for composition hazards like recursively defined transitions and non-deterministic transitions.
 Transitions are executed using a novel calling convention that can be implemented efficiently on existing architectures.
-The run-time system also contains two weakly fair schedulers that use the results of the composition analysis to concurrently execute non-interfering transitions.
-Fourth, we compare the performance of each scheduler in the interpreter to the performance of a custom compiled multi-threaded program for two reactive systems.
-For one system, the combination of the implementation and hardware biases it toward an event-based solution which was confirmed when the reactive component implementation outperformed the custom implementation due to reduced context switching.
+The run-time system also contains two weakly fair schedulers that use the results of composition analysis to concurrently execute non-interfering transitions.
+Fourth, we compare the performance of each scheduler in the interpreter to the performance of a custom compiled multi-threaded program, for two reactive systems.
+For one system, the combination of the implementation and hardware biases it toward an event-based solution, which was confirmed when the reactive component implementation outperformed the custom implementation due to reduced context switching.
 For the other system, the custom implementation is not prone to excessive context switches and outperformed the reactive component implementations.
-These results demonstrate that reactive components may be a viable alternative to threads but additional work is necessary to generalize this claim.
+These results demonstrate that reactive components may be a viable alternative to threads in practice, but that additional work is necessary to generalize this claim.
