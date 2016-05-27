@@ -7,50 +7,50 @@ Warning--string name "june" is undefined
 --line 843 of file paper.bib
 Warning--to sort, need author, editor, or key in 1983proceedings
 Warning--to sort, need author or key in cxx11
-Warning--to sort, need author or key in ioatoolkit
 Warning--to sort, need author or key in go
+Warning--to sort, need author or key in ioatoolkit
 Warning--empty author and editor in 1983proceedings
-Warning--empty journal in armstrong1996concurrent
 Warning--can't use both volume and number fields in blumofe1995cilk
-You've used 60 entries,
+Warning--empty publisher in EcmaScript
+You've used 61 entries,
             2118 wiz_defined-function locations,
-            839 strings with 11986 characters,
-and the built_in function-call counts, 18071 in all, are:
-= -- 1815
-> -- 688
+            848 strings with 12109 characters,
+and the built_in function-call counts, 18254 in all, are:
+= -- 1832
+> -- 685
 < -- 14
-+ -- 294
-- -- 219
-* -- 1169
-:= -- 2967
-add.period$ -- 186
-call.type$ -- 60
-change.case$ -- 274
++ -- 293
+- -- 217
+* -- 1177
+:= -- 2994
+add.period$ -- 189
+call.type$ -- 61
+change.case$ -- 276
 chr.to.int$ -- 0
-cite$ -- 67
-duplicate$ -- 744
-empty$ -- 1549
-format.name$ -- 219
-if$ -- 3827
+cite$ -- 68
+duplicate$ -- 758
+empty$ -- 1576
+format.name$ -- 217
+if$ -- 3871
 int.to.chr$ -- 0
-int.to.str$ -- 60
-missing$ -- 65
-newline$ -- 299
-num.names$ -- 114
-pop$ -- 332
+int.to.str$ -- 61
+missing$ -- 68
+newline$ -- 304
+num.names$ -- 116
+pop$ -- 340
 preamble$ -- 1
-purify$ -- 228
+purify$ -- 230
 quote$ -- 0
-skip$ -- 499
+skip$ -- 503
 stack$ -- 0
-substring$ -- 1115
-swap$ -- 139
+substring$ -- 1120
+swap$ -- 141
 text.length$ -- 14
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 210
 warning$ -- 7
-while$ -- 184
-width$ -- 62
-write$ -- 650
+while$ -- 186
+width$ -- 63
+write$ -- 662
 (There were 8 warnings)

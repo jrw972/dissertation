@@ -487,7 +487,7 @@ In this section, we examine various features related to reactive components and 
 Substitutional equivalence for reactive components is demonstrated by outlining a procedure for in-lining sub-components.
 Hazards of composition, namely, non-deterministic state transitions resulting from conflicting and recursive composition, are identified and a means of detecting them is proposed.
 The issue of decomposition is considered and \emph{pull ports} are introduced as a mechanism for decomposition.
-Finally, the points of principled composition presented in Chapter~\ref{introduction} are reviewed for reactive components.
+Finally, the points of principled composition presented in Section~\ref{challenges} are reviewed for reactive components.
 
 \begin{figure}
 \begin{verbatim}
@@ -771,7 +771,7 @@ Composition cannot ``undo'' a property established for a component.
 In this chapter, we presented the reactive component model for reactive programs.
 A reactive component consists of a set of state variables and transitions that are private to the component.
 The interface of a reactive component consists of push ports and reactions, which allow a component to trigger a transition in another component, and pull ports and getters, which allow a component to access the state of another component.
-Composition is achieved through recursive encapsulation and explicit port binding and satisfies the requirements for principled composition set forth in Chapter~\ref{introduction}.
+Composition is achieved through recursive encapsulation and explicit port binding and satisfies the requirements for principled composition set forth in Section~\ref{challenges}.
 The definitions of sub-components can be substituted into the containing component resulting in an equivalent system (substitutional equivalence).
 Similarly, sub-components may be ``factored out'' by using pull ports and getters to safely access the state of the sub-components.
 

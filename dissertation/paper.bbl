@@ -34,11 +34,6 @@ G.R. Andrews and F.B. Schneider.
 \newblock Concepts and notations for concurrent programming.
 \newblock {\em ACM Computing Surveys (CSUR)}, 15(1):3--43, 1983.
 
-\bibitem{armstrong1996concurrent}
-J.~Armstrong, R.~Virding, C.~Wikstr, M.~Williams, et~al.
-\newblock Concurrent programming in erlang.
-\newblock 1996.
-
 \bibitem{baeten2005brief}
 J.C.M. Baeten.
 \newblock A brief history of process algebra.
@@ -111,6 +106,11 @@ E.W. Dijkstra.
 \newblock Cooperating sequential processes.
 \newblock Technical report, Technological University, Eindhoven, The
   Netherlands, September 1965.
+
+\bibitem{EcmaScript}
+{ECMA International}.
+\newblock {\em Standard ECMA-262 - ECMAScript Language Specification}.
+\newblock 5.1 edition, June 2011.
 
 \bibitem{Eswaran:1976:NCP:360363.360369}
 K.~P. Eswaran, J.~N. Gray, R.~A. Lorie, and I.~L. Traiger.
@@ -287,6 +287,11 @@ N.~Shavit and D.~Touitou.
 A.~Silberschatz, P.B. Galvin, and G~Gagne.
 \newblock {\em Operating system concepts}, volume~7.
 \newblock Addison-Wesley, 2005.
+
+\bibitem{Surhone:2010:NOD:1941165}
+Lambert~M. Surhone, Mariam~T. Tennoe, and Susan~F. Henssonow.
+\newblock {\em Node.Js}.
+\newblock Betascript Publishing, Mauritius, 2010.
 
 \bibitem{sutter2005software}
 H.~Sutter and J.~Larus.
