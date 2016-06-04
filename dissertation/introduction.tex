@@ -12,23 +12,23 @@ Formal models of computation like the Turing machine~\cite{turing1936computable}
 In contrast, a reactive program is characterized by ``ongoing interactions with its environment''~\cite{manna1992temporal}.
 A reactive program must share resources with its environment to facilitate communication.
 From the perspective of the reactive program, input occurs when the environment acts on the reactive program and output occurs when the reactive program acts on the environment.
-The manipulation of resources internal to a reactive program or an environment is generically referred to as processing.
+The manipulation of resources that are internal to a reactive program is generically referred to as processing.
 
 Whereas transformational programs are designed to halt and produce an output, reactive programs are often designed to run forever.
 The activities of input, processing, and output are thus recurring and often overlapped in the execution of a reactive program.
 Designers of reactive programs then must often reason about infinite event sequences containing interleaved input, processing, and output.
 A web server is a example of a reactive program as it repeatedly receives requests, processes them, and sends responses.
 Reactive systems include operating systems, databases, networked applications, interactive applications, and embedded systems.
-A number of formal models have been developed to reason about reactive systems and include the Calculus of Communicating Systems~\cite{milner1982calculus}, the Algebra of Communicating Processes~\cite{bergstra1982fixed}, Cooperating Sequential Processes~\cite{dijkstra1965cooperating}, Communicating Sequential Processes~\cite{hoare1978communicating}, Kahn process networks~\cite{kahn1974semantics}, the Actor Model~\cite{hewitt1973universal}\cite{clinger1981foundations}\cite{agha1985actors}, UNITY~\cite{chandy1989parallel}, and I/O automata~\cite{nancy1996distributed}.
+A number of formal models have been developed to reason about reactive systems, and include the Calculus of Communicating Systems~\cite{milner1982calculus}, the Algebra of Communicating Processes~\cite{bergstra1982fixed}, Cooperating Sequential Processes~\cite{dijkstra1965cooperating}, Communicating Sequential Processes~\cite{hoare1978communicating}, Kahn process networks~\cite{kahn1974semantics}, the Actor Model~\cite{hewitt1973universal}\cite{clinger1981foundations}\cite{agha1985actors}, UNITY~\cite{chandy1989parallel}, and I/O automata~\cite{nancy1996distributed}.
 
 Asynchronous concurrency is a fundamental characteristic of reactive systems that makes them difficult to design and develop.
 Concurrency refers to the idea that a reactive program and its environment may act at the same time.
-In synchronous models, a reactive program and its environment share a common clock which allows the reactive program to coordinate access to shared resources, e.g., the environment writes a shared variable in one clock cycle and the reactive program reads it in the next.
+In synchronous models, a reactive program and its environment share a common clock that allows the reactive program to coordinate access to shared resources, e.g., the environment writes a shared variable in one clock cycle and the reactive program reads it in the next.
 However, shared clocks are difficult to implement and do not scale.
-Consequently, many reactive systems are asynchronous meaning that the reactive program and environment evolve independently with respect to time.
+Consequently, many reactive systems are asynchronous, meaning that the reactive program and the environment evolve independently with respect to time.
 To facilitate communication, asynchronous models include facilities for atomicity that allow a reactive program to act without being interrupted by its environment and vice versa.
 These facilities for atomicity allow a reactive program to synchronize with its environment, as the atomic events play the role of a shared clock.
-A common approach to ensuring correctness in asynchronous models is to view the environment as an adversary that will deliver inputs at inopportune times.
+A common approach to ensuring correctness in asynchronous models is to view the environment as an adversary that may deliver inputs at inopportune times.
 
 State is fundamental to reactive systems and may be modeled directly or indirectly.
 Some examples of indirect approaches to modeling state include monads~\cite{wadler1990comprehending} which are typically used in functional languages such as Haskell, or mail queues with message-behavior pairs~\cite{agha1985actors} which are used in actor-oriented languages such as Erlang.
@@ -44,12 +44,12 @@ Imperative programming languages often permit the definition of procedures, e.g.
 Control passes from the calling sequence to the sequence indicated by the procedure and returns to the calling sequence when the procedure terminates.
 The semantics of calling a procedure are completely compatible with the sequential composition of statements.
 
-Many reactive programs are multi-threaded and designed to use the facilities of a conventional operating system.
+Many reactive programs are multi-threaded and are designed to use the facilities of a conventional operating system.
 For the discussion to follow, we consider each thread in a multi-threaded program to be a reactive program.
 The environment for a thread then is the operating system and the other threads with which it directly interacts.
-This matches the definition of a reactive program as the thread will have ongoing interactions with its environment, i.e., interact with the operating system and other threads.
+This matches the definition of a reactive program as each thread will have ongoing interactions with its environment, i.e., interact with the operating system and other threads.
 This also matches the definition of asynchronous concurrency as the thread and its environment share no common clock and can interact asynchronously.
-To be more specific, a system call is asynchronous from the perspective of the operating system and threads may receive asynchronous signals from the operating system and each other.
+To be more specific, a system call is asynchronous from the perspective of the operating system and threads may receive asynchronous signals from the operating system and from each other.
 
 \section{Trends}
 
@@ -61,7 +61,7 @@ Applications for these personal platforms are necessarily interactive and theref
 The leveling-off of processor speeds and the resulting trend toward multicore processors is also creating demand for reactive systems, as increases in performance must come through increasingly concurrent applications~\cite{sutter2005software}.
 
 A general trend toward distribution is also driving demand for reactive systems.
-Increasingly, network services form the core (or are at least a critical component) of many applications and are fundamental to delivering the content (e.g., downloading books and movies) and communication (e.g., social media) that drive the application.
+Increasingly, network services form the core (or are at least a critical component) of many applications and are fundamental to delivering the content (e.g., downloading books and movies) and communication (e.g., using social media) that drive the application.
 More and more devices are being equipped with (especially wireless) network adapters due to the introduction of inexpensive networking technologies.
 Networks are now also \emph{emerging}, as opposed to being intentionally deployed, in environments such as the home, office, hospitals, etc.
 Applications that take advantage of these new networks are necessarily reactive.
@@ -71,10 +71,11 @@ Given the continued proliferation of reactive systems, their number, diversity, 
 This is most evident in large-scale distributed systems where a computation is spread over a variety of nodes.
 Such systems often \emph{evolve} as new sub-systems are introduced and integrated into the existing infrastructure.
 The individual nodes themselves may also contain a variety of interactions.
-For example, it is not uncommon to find a smart phone application that simultaneously interacts with the user via a graphical user interface, an application server via an Internet connection, and sensors (e.g., accelerometers) that are embedded in the hardware.
+For example, it is not uncommon to find a smart phone application that concurrently interacts with the user via a graphical user interface, an application server via an Internet connection, and sensors (e.g., accelerometers) that are embedded in the hardware.
 Similarly, sophisticated servers like web servers and databases are often built from collections of interacting reactive modules.
 
 \section{Limitations of the State of the Art}
+\label{limitations}
 
 Failure to account for asynchronous concurrency may result in a reactive program with \emph{timing bugs}, meaning that correct execution depends on arbitrary scheduling decisions.
 Timing bugs may be manifested when the schedule of events is perturbed, e.g., due to the introduction of a new processor or operating system, or when part of the program takes more or less time than normal.
@@ -85,6 +86,7 @@ Timing bugs can cost many hours of debugging time and can lead to a poor user ex
 
 Introducing asynchronous concurrency into the imperative programming paradigm places a burden on developers as they must explicitly identify the statement sequences that must atomic.
 The misuse of synchronization primitives, which becomes likely as state transitions become complex, may introduce concurrency hazards (e.g., deadlock~\cite{dijkstra1965cooperating}) which manifest themselves as timing bugs.
+
 A number of design patterns for concurrency have been developed to help developers avoid concurrency hazards~\cite{schmidt2000pattern}, \cite{lea2000concurrent}.
 These design patterns represent a move toward implicit atomicity as they often attempt to leverage language features to control atomicity (e.g., scoped locking~\cite{schmidt2000pattern}).
 While some of these patterns have been incorporated into programming languages (e.g., the \verb+synchronized+ keyword of Java implements the thread-safe interface pattern~\cite{schmidt2000pattern}), they are most often enforced only by convention and therefore easily violated or ignored (e.g., if a new developer is unaware of the convention).
@@ -102,6 +104,9 @@ The resulting code tends to be brittle as modifications tend to introduce new ti
 
 \section{Challenges}
 \label{challenges}
+
+Two primary challenges must be addressed to overcome the current limitations noted in Section~\ref{limitations}:  reducing accidental complexity and providing techniques for composing and decomposing reactive systems in a principled manner.
+We discuss each of these challenges in turn.
 
 \paragraph{Reduce accidental complexity.}
 A key challenge towards adequately supporting complex reactive systems is to reduce the accidental complexity associated with their design and implementation.
@@ -123,7 +128,7 @@ Thus, decomposition is a significant aid to understanding and managing complex s
 
 Asynchronous concurrency undermines decomposition and composition when not properly encapsulated and therefore limits our ability to design and implement complex reactive systems.
 Such problems of asynchronous concurrency stem from the interactions between reactive programs.
-Decomposition increases the number of reactive programs constituting a system which in turn increases the number of susceptible interactions and opportunities for timing bugs.
+Decomposition increases the number of reactive programs constituting a system, which in turn increases the number of susceptible interactions and opportunities for timing bugs.
 For decomposition to achieve an overall reduction in complexity when designing a reactive system, it must reduce the amount of reasoning that must be performed at each level of the design.
 Thus, it must be possible to replace the details of how a reactive program is implemented with higher-level statements about its behavior in terms of its interface.
 
@@ -179,10 +184,10 @@ Thus, reactive programs based on the imperative programming paradigm are not sub
 
 \section{Approach and Contributions}
 
-To reduce the accidental complexity associated with the design and implementation of reactive systems while supporting principled composition and decomposition, we propose a transactional model for reactive systems called reactive components.
+To reduce the accidental complexity associated with the design and implementation of reactive systems while supporting principled composition and decomposition, we propose a transactional model for reactive systems called \emph{reactive components}.
 A reactive component is a set of state variables and a set of atomic transitions that operate on those state variables.
 Linking a transition in one component to a transition in another component yields another transition that operates on the state variables of the constituent components.
-A transaction-oriented approach resolves the main difficulties of the control-oriented imperative approach.
+A transition-oriented approach resolves the main difficulties of the control-oriented imperative approach.
 In the reactive component model, transitions are atomic.
 This relieves developers from the burden of identifying and guarding critical sections.
 The composability of transitions allows developers to create complex state transitions independent of control flow.
@@ -197,4 +202,4 @@ Chapter~\ref{implementation} also describes the design, implementation, and an e
 The schedulers are compared to a custom multi-threaded application for two reactive systems.
 For one system, the reactive component implementation outperforms the custom application while the custom application outperforms the reactive component implementation for the other system.
 The results demonstrate that reactive components may be a viable alternative to threads but additional work is necessary to generalize this claim.
-Chapter~\ref{conclusion} presents conclusion and describes future work that is motivated and enabled by this dissertation.
+Chapter~\ref{conclusion} presents conclusions and describes future work that is motivated and enabled by this dissertation.
