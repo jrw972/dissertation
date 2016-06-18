@@ -12,45 +12,45 @@ Warning--to sort, need author or key in ioatoolkit
 Warning--empty author and editor in 1983proceedings
 Warning--can't use both volume and number fields in blumofe1995cilk
 Warning--empty publisher in EcmaScript
-You've used 61 entries,
+You've used 69 entries,
             2118 wiz_defined-function locations,
-            848 strings with 12109 characters,
-and the built_in function-call counts, 18254 in all, are:
-= -- 1832
-> -- 685
-< -- 14
-+ -- 293
-- -- 217
-* -- 1177
-:= -- 2994
-add.period$ -- 189
-call.type$ -- 61
-change.case$ -- 276
+            905 strings with 14032 characters,
+and the built_in function-call counts, 21459 in all, are:
+= -- 2182
+> -- 797
+< -- 19
++ -- 338
+- -- 253
+* -- 1375
+:= -- 3479
+add.period$ -- 219
+call.type$ -- 69
+change.case$ -- 316
 chr.to.int$ -- 0
-cite$ -- 68
-duplicate$ -- 758
-empty$ -- 1576
-format.name$ -- 217
-if$ -- 3871
+cite$ -- 76
+duplicate$ -- 906
+empty$ -- 1839
+format.name$ -- 253
+if$ -- 4600
 int.to.chr$ -- 0
-int.to.str$ -- 61
-missing$ -- 68
-newline$ -- 304
-num.names$ -- 116
-pop$ -- 340
+int.to.str$ -- 69
+missing$ -- 78
+newline$ -- 344
+num.names$ -- 132
+pop$ -- 386
 preamble$ -- 1
-purify$ -- 230
+purify$ -- 264
 quote$ -- 0
-skip$ -- 503
+skip$ -- 616
 stack$ -- 0
-substring$ -- 1120
-swap$ -- 141
-text.length$ -- 14
+substring$ -- 1338
+swap$ -- 192
+text.length$ -- 19
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 210
+type$ -- 238
 warning$ -- 7
-while$ -- 186
-width$ -- 63
-write$ -- 662
+while$ -- 219
+width$ -- 71
+write$ -- 764
 (There were 8 warnings)

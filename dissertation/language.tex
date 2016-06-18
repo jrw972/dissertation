@@ -249,7 +249,7 @@ Mutable state outside of a component, e.g., a global variable, is prohibited as 
 This section describes the syntax and semantics of \rcgo{}.
 Many concepts, e.g., components, ports, actions, and reactions, have a natural mapping into the Go language as types and method-like constructs.
 A major divergence from Go is the introduction of attributes that change the mutability of variables, as this was necessary to maintain the isolation between components while supporting reference semantics.
-The separation between the immutable phase and mutable phase is accomplished via an \verb+activate+ statement that contains a closure to be executed in the mutable phase.
+The separation between the immutable phase and mutable phase is accomplished via an \verb+activate+ statement that contains a continuation to be executed in the mutable phase.
 To support move semantics, we introduce a new type called a \emph{transferable heap} which allows one component to safely transfer a collection of objects to another component.
 
 \paragraph{Components.}
@@ -1093,8 +1093,28 @@ The output of the program, then, consists of 100 lines indicating that a message
 Each line of output contains the message number.
 Based on the weak fairness of the scheduler we expect 1) the 100 send lines to be in order, 2)~the 100 receive lines to be in order, and 3) the send line for message $n$ appears before the receive line for message $n$.
 
-\section{Summary}
+\section{Related Work}
 
+\rcgo{} is designed to be free from data races and draws upon existing work in this area.
+Common techniques include 1) augmenting type declarations, signatures, etc., to indicate sharing/locking requirements and effects; 2) associating objects with an owning thread or memory region; and 3) transferring objects from one owner to another.
+The \verb+foreign+ attribute of \rcgo{} is similar to the \verb+lent+ attribute of Guava~\cite{Bacon:2000:GDJ:353171.353197} and the \verb+limited+ attribute of Promises~\cite{Chan:1998:PLS:302163.302180}.
+All three techniques allow a reference to be temporarily shared but not stored so as to create a shared resource.
+The transferable heap data type is similar to Islands~\cite{Hogg:1991:IAP:117954.117975} and Values in Guava~\cite{Bacon:2000:GDJ:353171.353197}.
+All three types represent object graphs with no external references which allow them to be transferred from one owner to another owner.
+In \rcgo{}, objects are owned by component instances while Islands and Values are owned by threads.
+
+Preventing data races in multi-threaded programs is accomplished by protecting critical sections with locks.
+Flanagan and Abadi developed a type system for statically checking for data races~\cite{Flanagan:1999:OTA:646734.701453, Abadi:2006:TSL:1119479.1119480}.
+This formalism was used in the design of both Guava~\cite{Bacon:2000:GDJ:353171.353197} and Cyclone~\cite{Grossman:2003:TMC:604174.604177}.
+Locks are explicit in Cyclone while they are implicitly associated with the monitors of Guava.
+The reactive components of \rcgo{} are similar to the monitors of Guava in that access to shared state is implicitly synchronized.
+
+The approach take by the languages cited thus far is to demonstrate freedom from data races through the type system exclusively.
+The type system of \rcgo{} is weaker than these languages in that it is only possible to prove that objects are not shared between components via \verb+foreign+ dereference mutability.
+The check for sound composition alluded to in Section~\ref{determinism} and described in Section~\ref{sound_composition} ensures that individual transactions are free from data races.
+As described in Section~\ref{execution} and Section~\ref{scheduler}, the scheduler has the responsibility of scheduling transactions in a way that avoid data races between transactions.
+
+\section{Summary}
 This chapter has presented the \rcgo programming language for reactive components.
 An implementation of reactive components tests if the assumptions upon which the model rests are practical.
 Our approach is to design a new programming language whose syntax and semantics  capture and enforce the semantics of reactive components.

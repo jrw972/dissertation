@@ -1573,12 +1573,12 @@ This is unsurprising given the efficiency of the Thread implementation.
 
 \clearpage
 
-\section{Conclusions and Future Work}
+\section{Summary}
 
 The goal of implementing reactive components was to test the practicality of the reactive component model.
 Specifically, we desired to know how the various features of the model could be implemented, which features were troublesome, and how the implementation utilizes various assumptions.
 Flexibility in the reactive component model necessitates a check for sound composition.
-The sound composition algorithm described in this chapter uses the static system assumption and the component proxy assumption to generate a graphical model of each transition and check it for determinism.
+The sound composition algorithm described in Section~\ref{sound_composition} uses the static system assumption and the component proxy assumption to generate a graphical model of each transition and check it for determinism.
 A cursory analysis yielded an upper bound of $O(k n^2 \log (n))$ where $n$ is the number of instances involved in the transaction.
 
 To implement activation statements, we developed the synchronized two-phase calling convention which executes the immutable phase of a transaction in the first phase and preserves the context necessary for the second phase which corresponds to the mutable phase.
@@ -1623,94 +1623,3 @@ While we cannot answer this question definitively, the act of converting a react
 The procedure for converting a reactive component program to a threaded program involves 1) creating a reader/writer lock for each component instance, 2) creating a thread for each transaction, 3) creating a condition variable and mutex for each precondition, 4) creating a critical section for each transaction, and 5) signaling affected transactions after the critical section.
 It seems feasible that this procedure can be automated.
 Thus, a system of reactive components can be converted to threads or scheduled as events depending on the resources available and nature of the transactions in the system, but doing so is left for future work.
-
-There are three main areas that may be addressed to improve the performance of the Instance and Partitioned schedulers.
-First, we may attempt to improve the efficiency of the schedulers through better design and implementation.
-The evaluation in this section can serve as a basis for future improvements.
-Second, we may attempt to eliminate the overhead of the Linux scheduler.
-In Linux, the threads made available via the pthreads library are scheduled by the Linux kernel.
-The Instance and Partitioned schedulers, then, are themselves scheduled by the Linux kernel.
-Thus, it may be necessary to implement a scheduler for reactive components at the kernel level to eliminate this source of overhead.
-Third, we may move from interpretation to compilation.
-To test this idea, we timed a loop to sum the numbers in the range [0, 1,000,000) and averaged it over 1,000 runs for a C++ implementation and a reactive component implementation.
-The average time for the reactive component implementation was 0.1304896 seconds and the average time for the C++ implementation was 0.0009984909 seconds; a speed-up factor of 131.
-This is very much a ``back of the envelope'' calculation; the actual improvement in moving from interpretation to compilation may be less than this.
-
-We selected the AsyncClock and SyncClock systems to evaluate the schedulers because they are small enough to understand but complex enough to show interesting behavior.
-The actual computation performed by these systems is minimal, i.e., setting boolean flags and incrementing counters.
-Most likely, these operations can be performed in a single clock cycle (for compiled programs).
-One obvious direction for future work, then, is to experiment with complex transactions and varied workloads.
-However, it is important to consider the possibility that real workloads will contain computationally simple transactions such as those found in the clock systems.
-Furthermore, one of the motivations for decomposing systems is to break up complex systems into smaller, reusable, and easier to understand systems.
-The results in this section demonstrate the diminishing return where the transactions become so simple that execution is dominated by overhead, i.e., it is more efficient to serialize execution than execute actions in parallel.
-Simple transactions are a foreseeable consequence of decomposition and designers should not be penalized for decomposing complex systems.
-Thus, one of the goals of scheduler design is to push the horizon of the diminishing return as far as possible.
-When coupled with responsiveness, the desired property in a scheduler is one whose throughput does not diminish with entanglement.
-
-One goal for a reactive component scheduler may be to optimize the evaluation of preconditions.
-Two possible goals are to reduce the number of times a precondition is evaluated (lazy vs. eager) or to reduce the overhead of evaluating a single precondition.
-The reactive component model allows arbitrary Boolean expressions to be used as preconditions.
-One idea may be to eliminate preconditions and replace them with explicit scheduling instructions, but this may become tedious and error prone.
-A compromise solution may involve restricting the complexity of preconditions to simple Boolean expressions, i.e., with no function calls.
-With this restriction, it may become possible to determine which activation statements enable/disable a transaction.
-
-To be safe, all concurrent schedulers require synchronization to protect the mutable state in a transaction.
-The approach taken by the oblivious Instance and Partitioned schedulers is to acquire locks protecting the state of each involved component before executing a transaction.
-The Partitioned scheduler demonstrates how asynchronous locking can be used to create a work-conserving scheduler.
-As indicated by the results in this section, a major challenge is to make synchronization as efficient as possible.
-
-Another direction for future work is to explore options that accomplish synchronization without locking or with minimal locking.
-Partitioning combined with non-preemption may create opportunities to synchronize without locking.
-Let $u$ be a transaction assigned to a specific scheduler thread and let $I$ be the set of instances involved in $u$.
-Furthermore, let all transactions involving any component in $I$ be mapped to the same scheduler thread (the single-threaded schedulers described in this section do this by virtue of their design).
-In this scenario, no locks are needed for a safe execution of $u$ because all other transactions that could change the relevant component state are excluded from executing due to the non-preemptive nature of the scheduler.
-This phenomenon is illustrated graphically by coloring the nodes in an race graph according to the thread to which they have been assigned.
-A transaction whose immediate neighbors all share the same color as the transaction itself can execute without acquiring locks.
-This suggests that algorithms that detect clusters of transactions in the race graph may be used to optimize the assignment of transactions to scheduler threads.
-
-Locking also may be optimized by performing operations on the race graph.
-For example, adjacent transactions in the race graph can be merged and executed under the same set of locks.
-This procedure can be used to create complex transactions that amortize the locking overhead.
-Most likely, the merging algorithm would make use of some heuristic that measures the perceived benefit of merging the transactions.
-For example, the edges in the race graph could be weighted with the Jacquard Index of the instance sets, i.e., the edges are weighted with a score indicating that the set of locks are similar.
-The merging algorithm must balance the goal of simplifying the locking with the goal of exploiting concurrency.
-For example, merging Request and Response eliminates the potential concurrency between Request and Tick in the \emph{AsyncClock} system.
-
-Similarity between instance sets suggests the idea that locks may be eliminated by fusing them together.
-To illustrate, the \emph{AsyncClock} system contains three locks corresponding to the three components.
-Suppose that the same lock is used to protect both the Client and the Server.
-This reduces the number of locks needed to execute the Request transaction from two to one and the number of locks needed to execute the Response transaction from three to two.
-
-The challenges associated with locking invite us to step back and consider the fundamental aspects of the problem that necessitate a locking protocol.
-The scheduler designs put forth so far are distributed in the sense that each scheduler thread is making an independent decision about the next transaction to execute.
-Locking is the means by which the scheduler thread discovers the decisions made by the other scheduler threads to determine if the transaction under consideration is compatible with the transactions already chosen by the other threads.
-The locking protocol becomes unnecessary if the decisions made by the other threads are already available, i.e., a knowledgeable scheduler.
-This suggests that orchestration may be used to ensure safety in a multi-threaded scheduler without locking.
-In this model, a manager thread assigns transactions to scheduler threads who execute the transactions without acquiring locks.
-The primary job of the manager thread is to enforce safety by only allowing the concurrent execution of disconnected transactions in the race graph.
-This approach may make use of a dedicated manager thread (Producer-Consumer) or use the Leader-Follower pattern~\cite{schmidt2000pattern}.
-An efficient implementation of the scheduler state, especially if it is shared through the Leader-Follower pattern, is a concern for this kind of scheduler.
-For systems with a fixed set of transactions, a compiler may be able to generate a scheduling automaton by enumerating the scheduler states $S$, pruning unsafe states and transitions according the rules outlined in section~\ref{scheduling_problem}, pruning transitions to ensure fairness, etc.
-This formulation may have the advantage of yielding compact scheduler state.
-
-Cache awareness and migration are two concerns that reactive component schedulers share with thread schedulers.
-Cache awareness attempts to improve the performance of a system by scheduling a computation on the same processor core because the state required for the computation may already be available in the cache.
-Thus, a reactive component scheduler may attempt to create an affinity between a transaction and a scheduler thread or processor core.
-Partitioning on the basis of shared component state satisfies this implicitly.
-Migration reassigns a computation to a different core to balance the load among the cores or free a core so that it may be shutdown.
-The challenge with respect to migration is to define load imbalance in a meaningful way.
-The migration algorithm will most likely be expressed as an optimization problem that attempts to find a global optimum for the throughput and latency of each action.
-
-Another design dimension for a reactive component scheduler is preemption.
-The main use of preemption is to share a physical core among many computations that are ready to execute.
-A reactive component scheduler may wish to preempt a long-running transaction to execute other enabled transactions.
-A preemptive scheduler for reactive components can take advantage of existing work on thread preemption.
-
-%% POSIX environment, possibly bare metal
-
-%% \item termination
-%% \item active - terminating - idling (most servers have 10\% utilization)
-%% \item flow control
-%% \item always enabled actions
-%% \item reactive components in hardware
-%% \item long running actions

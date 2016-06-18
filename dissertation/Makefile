@@ -4,7 +4,7 @@ LATEX=pdflatex
 LATEX_ARGS=-file-line-error -halt-on-error
 
 
-paper.pdf : paper.tex abstract.tex introduction.tex background.tex model.tex language.tex runtime.tex conclusion.tex paper.bib *.png
+paper.pdf : paper.tex abstract.tex introduction.tex background.tex model.tex language.tex implementation.tex conclusion.tex paper.bib *.png
 	$(LATEX) $(LATEX_ARGS) paper
 	bibtex paper
 	$(LATEX) $(LATEX_ARGS) paper

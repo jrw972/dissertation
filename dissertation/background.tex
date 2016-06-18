@@ -1,9 +1,12 @@
 \chapter{Background and Related Work}
 \label{background}
 
+In this chapter, we first present background on the semantics of reactive systems.
+We then provide a survey of other work related to this dissertation, with a particular emphasis on the UNITY and I/O Automata models upon which the approach presented here improves in specific ways.
+
 \paragraph{Reactive semantics.}
 State (memory) is fundamental to reactive systems as past inputs influence future behavior.
-Baeten concludes that the first step towards developing algebraic models for reactive systems was ``abandoning the idea that a program is a transformation from input to output, replacing this by an approach where all intermediate states are important\cite{baeten2005brief}.''
+Baeten concludes that the first step towards developing algebraic models for reactive systems was ``abandoning the idea that a program is a transformation from input to output, replacing this by an approach where all intermediate states are important''~\cite{baeten2005brief}.
 The state of a reactive system is often captured in: program variables, e.g., in Dijkstra's Cooperating Sequential Processes~\cite{dijkstra1965cooperating}; messages in a channel or queue, e.g.,  in Milner's Calculus of Communicating Systems~\cite{milner1982calculus} and in the Actor Model~\cite{agha1985actors}; or some combination of the two, e.g., in Kahn Process Networks~\cite{kahn1974semantics}.
 For generality, platforms typically allow complex states to be composed from primitive states, e.g., arrays, records, tuples, lists, sets, etc.
 
@@ -32,6 +35,7 @@ Consequently, updates to shared state must be coordinated to prevent corruption.
 
 Platforms for reactive systems, therefore, include the notion of \emph{atomicity} which says that certain transitions may not be interrupted, i.e., executed simultaneously or interleaved with another transition.
 An \emph{event} is an atomic state transition.
+
 \emph{Non-determinism} is another inherent attribute of reactive systems that conveys the idea that the order of events in a reactive system is not fixed.
 Non-determinism is typically combined with atomicity to ensure that transitions are well-defined.
 In a pair of events operating on the same state, for example, atomicity says that one event will be executed before the other while non-determinism says that the order in which they are executed is not determined.
@@ -44,7 +48,7 @@ Reactive processes with deterministic sequencing are often based on an (infinite
 Influential models based on deterministic sequencing include Dijkstra's Cooperating Sequential Processes~\cite{dijkstra1965cooperating} and Hoare's Communicating Sequential Processes~\cite{hoare1978communicating}.
 
 Conversely, the order of transitions in a reactive process with non-deterministic sequencing is not completely determined, i.e., the next transition is selected from a set of candidates.
-Platforms supporting reactive processes with non-deterministic sequencing include a \emph{scheduler} which chooses among the available transitions.
+Platforms supporting reactive processes with non-deterministic sequencing include a \emph{scheduler}, which chooses among the available transitions.
 Reactive programs with deterministic sequencing correspond to a (circular) list of transitions while reactive programs with non-deterministic sequencing correspond to a set of transitions.
 Deterministic sequencing and non-deterministic sequencing only describe individual reactive processes as the global choice for the next transition is in general non-deterministic.
 Influential models based on non-deterministic sequencing include the UNITY model of Chandy and Misra~\cite{chandy1989parallel} and Lynch's I/O automata~\cite{nancy1996distributed}.
@@ -73,19 +77,24 @@ Atomic transactions have been proposed as an alternative to locks when synchroni
 The idea of an atomic transaction originated in the field of databases~\cite{Eswaran:1976:NCP:360363.360369}.
 Knight~\cite{Knight:1986:AMF:319838.319854} and then Herlihy and Moss~\cite{Herlihy:1993:TMA:165123.165164} proposed cache-based hardware support for atomic transactions.
 Hardware atomic transaction are forthcoming on modern processors~\cite{haswell}.
-Software transactional memory, proposed by Shavit and Touitou~\cite{shavit1997software}, has sparked a great deal of interest and have been implemented in a number of languages, e.g., Clojure~\cite{halloway2009programming}.
+Software transactional memory, proposed by Shavit and Touitou~\cite{shavit1997software}, has sparked a great deal of interest and has been implemented in a number of languages, e.g., Clojure~\cite{halloway2009programming}.
+
+Another technique for designing and implementing reactive systems that is receiving renewed interest is promises and futures~\cite{friedman1976impact, ifip1975new}.
+Promises and futures represent two sides of a deferred computation.
+The consumer of a deferred computation receives a future that it can later interrogate for the values produced by the deferred computation.
+The producer of a deferred computation receives a promise that it later fulfills by performing the deferred computation.
 
 Another popular approach to reactive systems is messaging passing with deterministic sequencing as is done in Hoare's Communicating Sequential Processes~\cite{hoare1978communicating}.
 This model is also supported by widely available platforms via pipes, message queues, and sockets~\cite{silberschatz2005operating}.
 Go is a modern programming language with language support for the Communicating Sequential Processes model~\cite{go}.
-A message passing channel may either be unbounded or have a fixed size and accessed synchronously or asynchronously by either the sender or the receiver~\cite{andrews1983concepts}.
+A message passing channel may either be unbounded or have a fixed size and may be accessed synchronously or asynchronously by either the sender or the receiver~\cite{andrews1983concepts}.
 
 %% Synchronous sends block the sender until the channel is not full while asynchronous sends succeed or fail immediately.
 %% Similarly, synchronous receives block the receiver until the channel is not empty while asynchronous receives succeed or fail immediately.
 %% To illustrate, channels in CSP may contain one message and are accessed synchronously by both sender and receiver while channels in Kahn Process Networks~\cite{kahn1974semantics} are typically unbounded and accessed asynchronously by the sender and synchronously by the receiver.
 
-Events, as proposed by Ousterhout~\cite{ousterhout1996threads}, and embodied in the Reactor and Proactor architectural patterns~\cite{schmidt2000pattern}, are a popular technique for structuring user applications based on deterministic sequencing.
-The application is designed around a loop that multiplexes I/O events from the operating systems using a polling function like \verb+select+ or \verb+poll+.
+Events, as proposed by Ousterhout~\cite{ousterhout1996threads}, and embodied in the Reactor and Proactor architectural patterns~\cite{schmidt2000pattern}, offer a popular technique for structuring user applications based on deterministic sequencing.
+The application is designed around a loop that multiplexes I/O events from the operating system using a polling function like \verb+select+ or \verb+poll+.
 In response to an I/O event, the application invokes an (atomic) event handler that may update the state of the process and perform non-blocking I/O on various channels.
 Events invert the flow of control since high-level functions, e.g., processing a message, are triggered by low-level functions, e.g., receiving a byte.
 The context of each computation must be managed explicitly which is referred to as ``stack ripping''~\cite{adya2002cooperative}.
@@ -102,7 +111,7 @@ The UNITY model contains two means of composing programs which suggests that a m
 Creating a program via the \emph{union} operation involves taking the union of the state variables (named-based equivalence) and assignment statements of the constituent programs.
 \emph{Superposition} is a means of composition that transforms an underlying program into another.
 The transformation is allowed to add new state variables, add new assignment statements with the limitation that they only update new variables, and augment existing assignment statements but only by adding clauses that modify new variables.
-The size of the resulting program (measured in assignment statements) is on the order of the sum of the sizes of the two constituent programs as opposed to the product.
+The size of the resulting program (measured in assignment statements) is on the order of the sum of the sizes of the two constituent programs (as opposed to the product).
 %% This somewhat matches the intuition that the result of composition should be the sum of its parts as opposed to the product of its parts.
 
 Superposition is property-preserving while union is not property-preserving.
@@ -126,7 +135,7 @@ Input actions must be composed with an output action to be executed.
 Output actions can produce values that are consumed by input actions.
 Since the state of each I/O automaton is private, composition in I/O automata is property-preserving.
 
-Of interest to this dissertation is the implementation of these models and their application to the design and development of reactive systems.
+Of interest to this dissertation is the improvement and implementation of these ideas and their application to the design and development of reactive systems.
 Granicz et al. propose a compilation method for UNITY in their Mojave compiler framework~\cite{GZH03}.
 Other initiatives to implement the UNITY programming language are summarized in~\cite{GZH03}:
 \begin{quotation}
@@ -136,6 +145,22 @@ DeRoure's parallel implementation of UNITY~\cite{deroure1991parallel} compiles U
 Goldman's Spectrum Simulation System~\cite{goldman1990distributed} allows one to simulate systems expressed as I/O automata.
 The IOA toolkit is an implementation of I/O automata focused on verification and simulation~\cite{ioatoolkit}.
 The IOA toolkit does contain a source-to-source compiler (IOA to Java) and a run-time that has been used to compile and execute distributed protocols~\cite{georgiou2009automated}.
+
+\paragraph{Summary.}
+Formal models of reactive systems may be organized around sequential threads with shared variables, e.g., Cooperating Sequential Processes~\cite{dijkstra1965cooperating}, sequential threads with message-passing, e.g., Communicating Sequential Processes~\cite{hoare1978communicating}., atomic transitions with shared variables, e.g., UNITY~\cite{chandy1989parallel}, and atomic transitions with message-passing, e.g., I/O automata~\cite{nancy1996distributed}.
+Models based on atomic transitions avoid reasoning about the interleaved execution of threads which may simplify reasoning about reactive systems.
+Combining atomic transitions with message passing (I/O automata) creates the opportunity for property-preserving composition which is problematic in models based on shared variables (UNITY).
+The model described in Chapter~\ref{model} extends the property-preserving composition techniques of I/O automata by permitting composition to an arbitrary depth and degree using the superposition technique of UNITY to link transitions in different modules in a principled way.
+
+Reactive semantics may be introduced via libraries or built into the language.
+Taking an inherently transformational language and introducing reactive semantics via a library may significantly alter the semantics of the language.
+With respect to language support, an inherently transformational language may be augmented with features to support reactive semantics or the language can be designed around a particular approach to reactive systems.
+Go with CSP-style primitives is an example of the former and Erlang as a realization of the Actor model is an example of the latter.
+Language support has the potential to raise the level of abstraction and provides the opportunity to check and enforce reactive semantics.
+To date, the main focus areas of languages designed around the atomic transition paradigm have been parallel computing and simulation.
+The language presented in Chapter~\ref{language} instead focuses on practical concerns of software engineering such a reference semantics for the efficient implementation of data structures, move semantics for efficient communication, and the isolation of state for property-preserving composition.
+Similarly, there are a limited number of results concerning the design, implementation, and evaluation of weakly-fair schedulers that are a necessary piece of run-time systems that support atomic transitions.
+Chapter~\ref{implementation} describes the design, implementation, and evaluation of two concurrent weakly-fair schedulers.
 
 %% Andrews and Schneider survey preliminary work in reactive systems which grew out of operating systems research and was concerned with reactive programs based on deterministic sequencing~\cite{andrews1983concepts}.
 %% We argue that the ideas and techniques in \cite{andrews1983concepts}, e.g., coroutines, fork/join, spin locks, semaphores, conditional critical regions (condition variables), monitors (active objects, thread-safe interface), message passing, remote procedure call, atomic transactions (databases, software-transactional memory), are still representative of the state of the art in reactive systems.
