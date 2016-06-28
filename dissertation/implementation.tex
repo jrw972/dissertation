@@ -64,13 +64,13 @@ The function $\mathit{getters}: L \to \{ G \}$ maps a pull port to a set of gett
 \paragraph{Check bindings.}
 Inverting $\mathit{reactions}$ yields a function that maps a reaction to a set of push ports, $\mathit{reactions}^{-1}: R \to \{ S \}$.
 The $\mathit{reactions}^{-1}$ function is used to ensure that a reaction either is bound to one push port or is not bound:
-\begin{displaymath}
+\begin{equation}
 \forall r \in R : |\mathit{reactions}^{-1} (r)| \leq 1
-\end{displaymath}
+\end{equation}
 The $\mathit{getters}$ function is used to ensure that a pull port is bound to exactly one getter:
-\begin{displaymath}
+\begin{equation}
 \forall l \in L : |\mathit{getters} (l)| = 1
-\end{displaymath}
+\end{equation}
 
 \paragraph{Enumerate transactions.}
 Let $i$ be a component instance of type $c$.
@@ -89,6 +89,8 @@ A \emph{transaction} is a directed graph constructed as follows, as the example 
 \begin{figure}
 \centering
 %%\resizebox{\textwidth}{!}{%
+\begingroup
+\fontsize{10pt}{12pt}\selectfont
 \begin{tikzpicture}[
     arrowstyle/.style={draw, -stealth},
     edge from parent/.style={draw, -stealth},
@@ -142,6 +144,7 @@ A \emph{transaction} is a directed graph constructed as follows, as the example 
 \draw[arrowstyle] (Activation02) -- (Push01.north east);
 
 \end{tikzpicture}
+\endgroup
 %%}%
 \caption{Example transaction\label{transaction}}
 \end{figure}
@@ -187,6 +190,8 @@ Activation statements that do nothing but log the state of a component are a com
 \begin{figure}
 \centering
 %%\resizebox{\textwidth}{!}{%
+\begingroup
+\fontsize{10pt}{12pt}\selectfont
 \begin{tikzpicture}[
     reaction/.style={rectangle, draw, rounded corners=1mm, text width=2cm,
         text centered, anchor=north},
@@ -238,6 +243,7 @@ Activation statements that do nothing but log the state of a component are a com
 \draw (Activation02) -- (Push01);
 
 \end{tikzpicture}
+\endgroup
 %%}%
 \caption{Example mutable phase access set calculation\label{access_sets}}
 \end{figure}
@@ -310,6 +316,8 @@ For this presentation, we assume that the stack grows down, i.e., the previous b
 \begin{figure}
 \centering
 \resizebox{.5\textwidth}{!}{%
+\begingroup
+\fontsize{10pt}{12pt}\selectfont
 \begin{tikzpicture}
 %% component boundary
 
@@ -332,6 +340,7 @@ For this presentation, we assume that the stack grows down, i.e., the previous b
 \draw[->] (bp) -- (pbp);
 
 \end{tikzpicture}
+\endgroup
 }%
 \caption{Diagram of a stack frame\label{frame}.  The stack is depicted as growing down.}
 \end{figure}
@@ -420,6 +429,8 @@ Control is transferred to the previous instruction pointer which contains the bo
 \begin{figure}
 \centering
 \resizebox{.75\textwidth}{!}{%
+\begingroup
+\fontsize{10pt}{12pt}\selectfont
 \begin{tikzpicture}
 %% component boundary
 
@@ -468,6 +479,7 @@ Control is transferred to the previous instruction pointer which contains the bo
 \draw[decorate,decoration={brace}] (-1,-4) -- (-1,1) node[anchor=east,midway] { reaction };
 
 \end{tikzpicture}
+\endgroup
 }%
 \caption{Diagram of the stack after the immutable phase when an action activates a single reaction.\label{activation_ex_1}}
 \end{figure}
@@ -566,6 +578,8 @@ Thus, failing to \verb+merge+ and \verb+move+ heaps on the active stack prevents
 \begin{figure}
 \centering
 %%\resizebox{\textwidth}{!}{%
+\begingroup
+\fontsize{10pt}{12pt}\selectfont
 \begin{tikzpicture}
 \node [rectangle, draw] (p1) at (0,1) {0x12345678};
 \node [rectangle, draw] (p2) at (0,0) {0x12345678};
@@ -581,8 +595,10 @@ Thus, failing to \verb+merge+ and \verb+move+ heaps on the active stack prevents
 \draw [->] (hl) -- (heap);
 \draw [dashed] (6, -2) -- (6, 2);
 \end{tikzpicture}
+\endgroup
 %%}%
-\cprotect\caption{Example illustrating heap links\label{heap_link}.  The objects on the far left represent user-level pointers to heaps, e.g., \verb+* heap int+.  The middle object is a heap link, which contains the address of the child heap that appears on the far right.}
+\cprotect\caption{Example illustrating heap links.  The objects on the far left represent user-level pointers to heaps, e.g., \verb+* heap int+.  The middle object is a heap link, which contains the address of the child heap that appears on the far right.}
+\label{heap_link}
 \end{figure}
 
 As illustrated in Figure~\ref{heap_link}, a user-level pointer to a heap points to an object called a heap link which in turn points to a heap.
@@ -656,6 +672,8 @@ The messages are exchanged using the User Datagram Protocol (UDP).
 \begin{figure}
 \centering
 \resizebox{\textwidth}{!}{%
+\begingroup
+\fontsize{10pt}{12pt}\selectfont
 \begin{tikzpicture}
 \draw (2,7.5) rectangle (4,9);
 \node[below] at (3,9) {Timer};
@@ -677,6 +695,7 @@ The messages are exchanged using the User Datagram Protocol (UDP).
 \draw (receivea.center) -- (receiveb.center);
 
 \end{tikzpicture}
+\endgroup
 }%
 \caption{Diagram of a Simple Network Time Protocol (SNTP) client\label{sntp}}
 \end{figure}
@@ -747,6 +766,8 @@ After a transaction, all preconditions based on any mutated state are undefined 
 \begin{figure}
 \centering
 %\resizebox{\textwidth}{!}{%
+\begingroup
+\fontsize{10pt}{12pt}\selectfont
 \begin{tikzpicture}
   [->,-triangle 60, node distance=3cm, auto, every loop/.append style={-triangle 60}]
 
@@ -765,6 +786,7 @@ After a transaction, all preconditions based on any mutated state are undefined 
   \path (X) edge [loop right] node {$\lambda$} ();
 
 \end{tikzpicture}
+\endgroup
 %}%
 \caption{State transition diagram for the state component of dynamic transaction state.
   $I$ represents $\mathit{Idle}$, $V$ represents $\mathit{Eval}$, and $X$ represents $\mathit{Exec}$.
@@ -1075,6 +1097,8 @@ This system will be denoted as the \emph{AsyncClock} system.
 \begin{figure}
 \centering
 \resizebox{.5\textwidth}{!}{%
+\begingroup
+\fontsize{10pt}{12pt}\selectfont
 \begin{tikzpicture}
 
 \node[draw, ellipse] (Request) at (0,0) {Request};
@@ -1085,6 +1109,7 @@ This system will be denoted as the \emph{AsyncClock} system.
 \draw (Tick) -- (Response);
 
 \end{tikzpicture}
+\endgroup
 }%
 \caption{Race graph for the AsyncClock system.  Each node is a transaction.  Nodes sharing an edge cannot be executed concurrently due to potentially mutated shared state. \label{clock_system_mutex}}
 \end{figure}
@@ -1173,19 +1198,21 @@ Thus, the throughput for the Paritioned scheduler is a mixture of distributions 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{async_thread_throughput_hist.png}
-\caption{\label{async_thread_throughput}}
+\caption{AsyncClock Thread Histogram of Throughput}
+\label{async_thread_throughput}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{async_instance_throughput_hist.png}
-\caption{\label{async_instance_throughput}}
+\caption{AsyncClock Instance Histogram of Throughput}
+\label{async_instance_throughput}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{async_partitioned_throughput_hist.png}
-\caption{\label{async_partitioned_throughput}}
+\caption{AsyncClock Partitioned Histogram of Throughput\label{async_partitioned_throughput}}
 \end{figure}
 
 Figures~\ref{async_thread_throughput_utilization}, \ref{async_instance_throughput_utilization}, and \ref{async_partitioned_throughput_utilization} show plots of utilization versus throughput for Thread, Instance, and Partitioned, respectively.
@@ -1196,19 +1223,22 @@ This is most likely the result of locking behavior where runs that (randomly) ex
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{async_thread_throughput_utilization.png}
-\caption{\label{async_thread_throughput_utilization}}
+\caption{AsyncClock Thread Utilization vs. Throughput}
+\label{async_thread_throughput_utilization}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{async_instance_throughput_utilization.png}
-\caption{\label{async_instance_throughput_utilization}}
+\caption{AsyncClock Instance Utilization vs. Throughput}
+\label{async_instance_throughput_utilization}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{async_partitioned_throughput_utilization.png}
-\caption{\label{async_partitioned_throughput_utilization}}
+\caption{AsyncClock Partitioned Utilization vs. Throughput}
+\label{async_partitioned_throughput_utilization}
 \end{figure}
 
 Figures~\ref{async_thread_throughput_context}, \ref{async_instance_throughput_context}, and \ref{async_partitioned_throughput_context} show plots of voluntary context switches versus throughput for Thread, Instance, and Partitioned, respectively.
@@ -1228,19 +1258,22 @@ The only contention in this mapping is between Response on thread 1 and Counter 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{async_thread_throughput_context.png}
-\caption{\label{async_thread_throughput_context}}
+\caption{AsyncClock Thread Voluntary Context Switches vs. Throughput}
+\label{async_thread_throughput_context}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{async_instance_throughput_context.png}
-\caption{\label{async_instance_throughput_context}}
+\caption{AsyncClock Instance Voluntary Context Switches vs. Throughput}
+\label{async_instance_throughput_context}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{async_partitioned_throughput_context.png}
-\caption{\label{async_partitioned_throughput_context}}
+\caption{AsyncClock Partitioned Voluntary Context Switches vs. Throughput}
+\label{async_partitioned_throughput_context}
 \end{figure}
 
 Figure~\ref{async_thread_throughput_entanglement} shows a plot of entanglement versus throughput for Thread.
@@ -1269,19 +1302,22 @@ This is expected because the concurrency between Request and Tick can be exploit
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{async_thread_throughput_entanglement.png}
-\caption{\label{async_thread_throughput_entanglement}}
+\caption{AsyncClock Thread Entanglement vs. Throughput}
+\label{async_thread_throughput_entanglement}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{async_instance_throughput_entanglement.png}
-\caption{\label{async_instance_throughput_entanglement}}
+\caption{AsyncClock Instance Entanglement vs. Throughput}
+\label{async_instance_throughput_entanglement}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{async_partitioned_throughput_entanglement.png}
-\caption{\label{async_partitioned_throughput_entanglement}}
+\caption{AsyncClock Partitioned Entanglement vs. Throughput}
+\label{async_partitioned_throughput_entanglement}
 \end{figure}
 
 Figures~\ref{async_thread_latency}, \ref{async_instance_latency}, and \ref{async_partitioned_latency} show histograms of the latency for the Thread, Instance, and Partitioned schedulers, respectively.
@@ -1319,19 +1355,22 @@ The work-conserving nature of the Partitioned scheduler allows it to achieve a l
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{async_thread_latency_hist.png}
-\caption{\label{async_thread_latency}}
+\caption{AsyncClock Thread Histogram of Latency}
+\label{async_thread_latency}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{async_instance_latency_hist.png}
-\caption{\label{async_instance_latency}}
+\caption{AsyncClock Instance Histogram of Latency}
+\label{async_instance_latency}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{async_partitioned_latency_hist.png}
-\caption{\label{async_partitioned_latency}}
+\caption{AsyncClock Partitioned Histogram of Latency}
+\label{async_partitioned_latency}
 \end{figure}
 
 Figure~\ref{async_throughput_box} shows a box plot of the throughput for the Thread, Instance, and Partitioned schedulers.
@@ -1352,7 +1391,8 @@ Thus, the Partitioned scheduler could be improved by using the race graph to avo
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{async_throughput_box.png}
-\caption{\label{async_throughput_box}}
+\caption{AsyncClock Throughput}
+\label{async_throughput_box}
 \end{figure}
 
 Figure~\ref{async_latency_box} shows a box plot of the latency for the Thread, Instance, and Partitioned schedulers.
@@ -1371,7 +1411,8 @@ The Thread scheduler achieves the lowest latency via the Tick transaction due to
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{async_latency_box.png}
-\caption{\label{async_latency_box}}
+\caption{AsyncClock Latency}
+\label{async_latency_box}
 \end{figure}
 
 Both the Instance and Partitioned schedulers contain transactions for performing garbage collection.
@@ -1392,19 +1433,22 @@ The list of partitions is given in Table~\ref{sync_partitions}.
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{sync_thread_throughput_hist.png}
-\caption{\label{sync_thread_throughput}}
+\caption{SyncClock Thread Histogram of Throughput}
+\label{sync_thread_throughput}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{sync_instance_throughput_hist.png}
-\caption{\label{sync_instance_throughput}}
+\caption{SyncClock Instance Histogram of Throughput}
+\label{sync_instance_throughput}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{sync_partitioned_throughput_hist.png}
-\caption{\label{sync_partitioned_throughput}}
+\caption{SyncClock Partitioned Histogram of Throughput}
+\label{sync_partitioned_throughput}
 \end{figure}
 
 Figures~\ref{sync_thread_throughput_utilization}, \ref{sync_instance_throughput_utilization}, and \ref{sync_partitioned_throughput_utilization} show plots of utilization versus throughput for the Thread, Instance, and Partitioned schedulers, respectively.
@@ -1416,19 +1460,22 @@ The Instance scheduler shows a weak trend of increased utilization with throughp
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{sync_thread_throughput_utilization.png}
-\caption{\label{sync_thread_throughput_utilization}}
+\caption{SyncClock Thread Utilization vs. Throughput}
+\label{sync_thread_throughput_utilization}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{sync_instance_throughput_utilization.png}
-\caption{\label{sync_instance_throughput_utilization}}
+\caption{SyncClock Instance Utilization vs. Throughput}
+\label{sync_instance_throughput_utilization}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{sync_partitioned_throughput_utilization.png}
-\caption{\label{sync_partitioned_throughput_utilization}}
+\caption{SyncClock Partitioned Utilization vs. Throughput}
+\label{sync_partitioned_throughput_utilization}
 \end{figure}
 
 Figures~\ref{sync_thread_throughput_context}, \ref{sync_instance_throughput_context}, and \ref{sync_partitioned_throughput_context} show plots of voluntary context switches versus throughput for the Thread, Instance, and Partitioned schedulers, respectively.
@@ -1439,19 +1486,22 @@ The plot for the Partitioned scheduler clearly shows an inverse relationship bet
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{sync_thread_throughput_context.png}
-\caption{\label{sync_thread_throughput_context}}
+\caption{SyncClock Thread Voluntary Context Switches vs. Throughput}
+\label{sync_thread_throughput_context}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{sync_instance_throughput_context.png}
-\caption{\label{sync_instance_throughput_context}}
+\caption{SyncClock Instance Voluntary Context Switches vs. Throughput}
+\label{sync_instance_throughput_context}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{sync_partitioned_throughput_context.png}
-\caption{\label{sync_partitioned_throughput_context}}
+\caption{SyncClock Partitioned Voluntary Context Switches vs. Throughput}
+\label{sync_partitioned_throughput_context}
 \end{figure}
 
 Figures~\ref{sync_thread_throughput_entanglement}, \ref{sync_instance_throughput_entanglement}, and \ref{sync_partitioned_throughput_entanglement} show plots of entanglement versus throughput for the Thread, Instance, and Partitioned schedulers, respectively.
@@ -1472,19 +1522,22 @@ The `F' partition has minimal inter-thread conflicts with maximal opportunities 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{sync_thread_throughput_entanglement.png}
-\caption{\label{sync_thread_throughput_entanglement}}
+\caption{SyncClock Thread Entanglement vs. Throughput}
+\label{sync_thread_throughput_entanglement}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{sync_instance_throughput_entanglement.png}
-\caption{\label{sync_instance_throughput_entanglement}}
+\caption{SyncClock Instance Entanglement vs. Throughput}
+\label{sync_instance_throughput_entanglement}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{sync_partitioned_throughput_entanglement.png}
-\caption{\label{sync_partitioned_throughput_entanglement}}
+\caption{SyncClock Partitioned Entanglement vs. Throughput}
+\label{sync_partitioned_throughput_entanglement}
 \end{figure}
 
 Figures~\ref{sync_thread_latency}, \ref{sync_instance_latency}, and \ref{sync_partitioned_latency} show histograms of the latency for the Thread, Instance, and Partitioned schedulers, respectively.
@@ -1515,19 +1568,22 @@ Tick    & 4,069.06ns \\
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{sync_thread_latency_hist.png}
-\caption{\label{sync_thread_latency}}
+\caption{SyncClock Thread Histogram of Latency}
+\label{sync_thread_latency}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{sync_instance_latency_hist.png}
-\caption{\label{sync_instance_latency}}
+\caption{SyncClock Instance Histogram of Latency}
+\label{sync_instance_latency}
 \end{figure}
 
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{sync_partitioned_latency_hist.png}
-\caption{\label{sync_partitioned_latency}}
+\caption{SyncClock Partitioned Histogram of Latency}
+\label{sync_partitioned_latency}
 \end{figure}
 
 Figure~\ref{sync_throughput_box} shows a box plot of the throughput for the Thread, Instance, and Partitioned schedulers.
@@ -1548,7 +1604,8 @@ In aggregate, however, the Instance scheduler appears to be better than the Part
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{sync_throughput_box.png}
-\caption{\label{sync_throughput_box}}
+\caption{SyncClock Throughput}
+\label{sync_throughput_box}
 \end{figure}
 
 Figure~\ref{sync_latency_box} shows a box plot of the latency for the Thread, Instance, and Partitioned schedulers.
@@ -1568,7 +1625,8 @@ This is unsurprising given the efficiency of the Thread implementation.
 \begin{figure}
 \center
 \includegraphics[height=.4\textheight]{sync_latency_box.png}
-\caption{\label{sync_latency_box}}
+\caption{SyncClock Latency}
+\label{sync_latency_box}
 \end{figure}
 
 \clearpage

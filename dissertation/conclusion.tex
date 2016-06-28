@@ -1,13 +1,11 @@
 \chapter{Conclusions and Future Work}
 \label{conclusion}
 
-\section{Summary}
-
 A reactive system is characterized by ``ongoing interactions with its environment''~\cite{manna1992temporal}.
 Asynchronous concurrency is a feature of reactive systems that makes them inherently difficult to develop.
 Reactive systems are already used in critical infrastructure and the number, diversity, and scale of reactive systems is expected to increase given the continuing proliferation of embedded, networked, and interactive systems.
 Decomposition and composition are two complementary techniques that we would like to use when designing and implementing reactive systems given such increases in complexity.
-We argue that the dominant techniques based on multiple sequential threads/processes prevent decomposition and composition and contribute to the accidental complexity associated with reactive system development.
+We argue that the dominant techniques based on multiple sequential threads/processes thwart decomposition and composition and thus contribute to the accidental complexity associated with reactive system development.
 
 Specifically, we believe that a model for reactive systems should facilitate \emph{principled} composition and decomposition.
 Beyond defining units of composition and a means of composition, a model for reactive systems should facilitate practical techniques like recursive encapsulation and behavior abstraction through interfaces.
@@ -15,7 +13,7 @@ Composition should be compositional meaning that properties established independ
 Finally, units of composition should be subject to substitutional equivalence meaning that the definition of a unit of composition can be substituted for its use.
 Substitutional equivalence allows a complex system to be reduced to a single unit and a complex unit to be decomposed into a system of simpler units.
 
-In Chapter~\ref{model}, we present the \emph{reactive component} model for reactive systems.
+In Chapter~\ref{model}, we presented the \emph{reactive component} model for reactive systems.
 The reactive component model is based on models like UNITY and I/O automata in that computation is carried out via a sequence of atomic state transitions selected non-deterministically.
 To these models, reactive components adds facilities for recursive encapsulation and interfaces that facilitate third-party composition via explicit binding.
 A reactive component is a set of state variables, atomic state transitions, and ports.
@@ -38,7 +36,7 @@ However, allowing a reactive component instance to serve as a proxy for its stat
 
 Practicality was one of our goals when designing the reactive component model.
 That is, we intended it to be implemented and used to design and build real-world systems in an effort to reduce the accidental complexity associated with reasoning about a system using one set of semantics and implementing using another.
-Thus, we present the \rcgo{} programming language for reactive components in Chapter~\ref{language}.
+Thus, we presented the \rcgo{} programming language for reactive components in Chapter~\ref{language}.
 We adopted the Go programming language as the basis for \rcgo{} and added syntax and semantics to support the elements of the reactive component model.
 The major challenge when designing the language was supporting reference and move semantics while preserving the isolation of state between reactive components.
 Reference semantics are important as they allow the construction of arbitrary linked data structures and move semantic are important for efficient communication between reactive components.
@@ -47,7 +45,7 @@ Thus, we added intrinsic and dereference mutability attributes to pointer types.
 Immutable dereference mutability is used to enforce the immutable phase of state transitions while foreign dereference mutability prevents pointers referring to a component's state from being saved by another component.
 To facilitate move semantics, we introduced a transferrable heap type which facilitates the construction and transfer of self-contained linked data structures.
 
-Chapter\ref{implementation} describes the implementation of key features for the \rcgo{} run-time system.
+Chapter~\ref{implementation} described the implementation of key features for the \rcgo{} run-time system.
 The two major assumptions leveraged throughout the design of the run-time are 1) components instances serve as a proxy for their state variables and 2)~the reactive systems being implemented are static meaning that the number and configuration of the reactive components in the system are fixed.
 With these two assumptions we present an algorithm that checks for sound composition.
 The algorithm treats each transaction, i.e., a composed transition, as a graph with nodes corresponding to actions, reactions, activation statements, and push ports.
@@ -104,8 +102,16 @@ The second experiment demonstrates that additional work is necessary to improve 
 
 \section{Future Work}
 
-\subsection{Dynamic Systems}
+This dissertation has presented the reactive component model as an alternative to sequential threads for designing and implementing reactive systems.
+As a model, sequential thread-based computation is firmly entrenched in many areas of computation including hardware (synchronous sequential processors), operating systems (process and thread abstractions), and programming languages.
+Thus, we may consider possibilities such as hardware architectures specifically designed for reactive components and operating systems where the main abstraction is the reactive component or transaction instead of the thread.
+These topics are quite ambitious and additional work is required before these topics may be adequately addressed.
+First, we must generalize the reactive component model for dynamic systems (Section~\ref{dynamic_systems}).
+This is necessary as an operating system must be able to load and configure reactive components and many reactive applications are naturally formulated using dynamic configurations.
+Second, we must consider the problem of scheduling transactions as the scheduler will have a significant impact on the performance of reactive component applications (Section~\ref{future_scheduler}).
 
+\subsection{Dynamic Systems}
+\label{dynamic_systems}
 Two assumptions were necessary to make tractable the analysis of systems of reactive components.
 First, we assume that a reactive component instance is a proxy for its state variables.
 Pull ports and getters reduce the impact of this assumption as a designer can decompose at will which yields more component instances for fine-grained analysis.
@@ -138,6 +144,7 @@ In the terms of enforcing the reactive component model, the check for sound comp
 Thus, additional work is needed to determine if the sound composition check can be modified for use in an on-line setting or if additional restrictions must be placed on the model to ensure an efficient on-line check.
 
 \subsection{Scheduler}
+\label{future_scheduler}
 
 There are three main areas that may be addressed to improve the performance of the Instance and Partitioned schedulers.
 First, we may attempt to improve the efficiency of the schedulers through better design and implementation.
@@ -239,7 +246,7 @@ A preemptive scheduler for reactive components can take advantage of existing wo
 %% The language \rcgo{} is based on the Go programming language.
 %% One are for future work is to consider other base languages like C, C++, Java, Rust, Python, etc.
 
-\section{Broader impact}
+\section{Broader Impacts}
 
 Reactive systems have had a profound impact on society and will continue to impact society for the foreseeable future.
 Some reactive systems like the Internet and smart phones have high visibility and continue to amaze while others, like the army of micro-controllers present in a modern automobile or a home appliance, are less conspicuous but nevertheless help us with our daily activities and contribute to our safety and comfort.

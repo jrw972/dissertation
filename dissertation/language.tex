@@ -2,12 +2,12 @@
 \label{language}
 
 \begin{quote}
-In theory, there is no difference between theory and practice. \linebreak
+In theory, there is no difference between theory and practice.
 But, in practice, there is.  \emph{Anonymous}
 \end{quote}
 
-In this chapter, we present the \rcgo{} programming language for reactive components.
-We state the motivation for the language, our assumptions for tractability, and the features that guided our design.
+In this chapter, we present \rcgo{}, a novel extension to the Go programming language, designed for reactive components.
+We state the motivation for the \rcgo{} language, our assumptions for tractability, and the features that guided our design.
 We then explain how reactive components are expressed in the language and we conclude with illustrative examples.
 
 \section{Challenges}
@@ -65,14 +65,14 @@ Without move semantics, the practicality of the reactive component model is grea
 
 \section{Approach}
 
-Our approach to implementing the reactive component model defined in Chapter~\ref{model} is to create a programming language that facilitates the direct expression of reactive components.
+Our approach to implementing the reactive component model defined in Chapter~\ref{model} is to provide a programming language that facilitates the direct expression of reactive components.
 Language support for the model is beneficial because it closes the semantic gap between reasoning and implementation.
 The importance of language support can be seen in techniques like structured programming~\cite{dahl1972structured} and object-oriented programming~\cite{booch1982object}.
 While these techniques can be applied in virtually any setting, their lasting utility is derived from their implementation in a variety of programming languages.
 Providing language support for reactive components raises the level of abstraction and allows reasoning about a system consisting of them directly from its specification, instead of reasoning in one set of semantics while implementing in another which can be tedious and error-prone.
 
 Language support allows developers to rely on the consistent application of the semantics of the model through strict enforcement.
-Crafting a new language specifically for reactive components creates an opportunity to introduce syntax and semantics that allow a compiler or interpreter to distinguish programs that conform to the semantics of reactive components from those that \emph{potentially} may not.
+Designing language support specifically for reactive components creates an opportunity to introduce syntax and semantics that allow a compiler or interpreter to distinguish programs that conform to the semantics of reactive components from those that \emph{potentially} may not.
 To illustrate, consider the problem of ensuring that the state of a component does not change during the immutable phase of a transition.
 We observe that an action/reaction is similar to a method.
 Based on this observation, checking the immutability of a component in the immutable phase should be similar to checking for \verb+const+ correctness in C++.
@@ -84,15 +84,14 @@ As was seen in Section~\ref{propcomp}, allowing a component instance to serve as
 
 \section{Preliminaries}
 
-\paragraph{Go.}
-Our approach to designing a programming language for reactive components is to start with an existing language, Go~\cite{go}, remove features that are counter to reactive components, and then introduce syntax and semantics for reactive components.
+Our approach to programming language support for reactive components is to start with an existing language, Go~\cite{go}, remove features that interfere with the semantics of reactive components, and then introduce syntax and semantics for reactive components.
 Go is an imperative programming language with a straightforward type system and expressions and statements resembling C.
 Go supports methods but places no emphasis on an inheritance hierarchy.
 In the same vein, Go does not have constructors, destructors, function overloading, or operator overloading.
-This combination, makes Go an attractive foundation for a language for reactive components since it is tractable in implementation and approachable by a general audience.
+This combination makes Go an attractive foundation for a language for reactive components since it is tractable in implementation and approachable by a general audience.
 We defer to Go's syntax and semantics for our definitions of types, declarations, statements, and expressions.
-We will not discuss the syntax and semantics of Go except when they interact with the semantics of reactive components.
-Our implementation of Go's types, declarations, statements, and expressions is intentionally only as broad as is needed to demonstrate the contributions of this dissertation.
+We will not discuss the syntax and semantics of Go except when they interact with those of reactive components.
+Our implementation of Go's types, declarations, statements, and expressions also is intentionally only as broad as is needed to demonstrate the contributions of this dissertation.
 
 In \rcgo{}, actions, reactions, getters, initializers, and bindings are expressed using Go's syntax for methods.
 Component types are constructed using the syntax of structs.
@@ -102,12 +101,12 @@ Activations in the model correspond to activate statements which activate push p
 Move semantics are realized through a new \emph{tranferrable heap} type and associated operations.
 The main features that we remove from Go are go routines, i.e., threads, and channels which are used for CSP-style communication.
 
-Designing a programming language for reactive components using a different foundation language or set of foundation languages will certainly require a different approach and yield different results.
-For example, memory management in Go is based on garbage collection which is inline with allowing reference semantics while isolating component state.
-In contrast, adopting a language based on manual memory management like C and C++ will require a reconsideration as to if/how isolation may be achieved.
+Designing a programming language for reactive components using a different foundation language (or set of foundation languages) would require a different approach and may yield different results.
+For example, memory management in Go is based on garbage collection which is consistent with allowing reference semantics while isolating component state.
+In contrast, adopting a language based on manual memory management like C and C++ will require a reconsideration as to if/how such isolation may be achieved.
 
 \paragraph{Static system assumption.}
-To make implementation more tractable, we will assume that the systems to be implemented have a static topology, meaning that all reactive components are statically allocated.
+To make implementation more tractable, we will assume that the systems to be implemented have a static topology, meaning that all reactive components are statically defined.
 Both finite state and infinite state (subject to system resource limits) reactive components are permitted, but both the number and configurations of reactive components in a system are fixed.
 This is roughly equivalent to systems that assume a fixed number of actors or threads.
 These assumptions are common in embedded and real-time systems due to the combination of limited resources and a need for predictability.
@@ -115,9 +114,11 @@ These assumptions also are common in many other less constrained environments, a
 Thus, even with the static system assumption, an implementation of the model is still applicable to many systems of interest.
 We leave the implementation of extensions that facilitate the dynamic creation and binding of reactive components for future work.
 
-\begin{figure}
+\begin{figure}[H]
 \centering
 \resizebox{\textwidth}{!}{%
+\begingroup
+\fontsize{10pt}{12pt}\selectfont
 \begin{tikzpicture}
 [
   >=stealth',
@@ -191,6 +192,7 @@ We leave the implementation of extensions that facilitate the dynamic creation a
 \path[pil] (heap22.east) edge [loop above, out=45, in=-45, min distance=1.5cm] (heap22.east);
 
 \end{tikzpicture}
+\endgroup
 }%
 \caption{Memory model.
 An edge from one segment to another indicates that a pointer in one segment (source) may refer to a location in another segment (target).
@@ -199,12 +201,11 @@ Any pointer may refer to a location in the constant segment (these edges are not
 \end{figure}
 
 \paragraph{Memory model.}
-Figure~\ref{memory_model} shows the memory model for \rcgo{}.
+Figure~\ref{memory_model} illustrates the memory model for \rcgo{}.
 A pointer may refer to a location in the constant segment, a stack segment, a component segment, a heap segment, or a transferable heap segment.
 The edges in the figure indicate that a pointer in one segment may refer to a location in another segment.
 As implied by the name, the constant segment is used to store constants like string literals.
-A pointer in any segment may refer to the constant segment.
-These edges are not shown shown in the figure.
+A pointer in any segment may refer to the constant segment:  these edges are not shown shown in the figure.
 
 Function parameters and local variables are allocated on a call stack as they are in C or C++.
 Multiple stacks may be present if multiple transactions are executed concurrently.
@@ -251,12 +252,18 @@ Many concepts, e.g., components, ports, actions, and reactions, have a natural m
 A major divergence from Go is the introduction of attributes that change the mutability of variables, as this was necessary to maintain the isolation between components while supporting reference semantics.
 The separation between the immutable phase and mutable phase is accomplished via an \verb+activate+ statement that contains a continuation to be executed in the mutable phase.
 To support move semantics, we introduce a new type called a \emph{transferable heap} which allows one component to safely transfer a collection of objects to another component.
+In following presentation, we use the following convention:
+\begin{itemize}
+  \item keywords appear in lowercase, e.g., \verb+type+
+  \item identifiers and literals appear in uppercase and underscores, e.g., \verb+ID+
+  \item non-terminals appear in camel-case, e.g., \verb+FieldList+
+\end{itemize}
 
 \paragraph{Components.}
 A reactive component resembles a \verb+struct+ in Go since it is a group of named state variables.
 A component, then, is defined with the following syntax:
 \begin{verbatim}
-type identifier component { field list };
+type ID component { FieldList };
 \end{verbatim}
 For example,
 \begin{verbatim}
@@ -271,13 +278,13 @@ The type of a field may be another component type to support recursive encapsula
 \paragraph{Receivers.}
 A method in Go has one of the following two forms:
 \begin{verbatim}
-func (identifier typeName) methodName signature body
-func (identifier *typeName) methodName signature body
+func (ID TYPE_ID) METHOD_ID Signature Body
+func (ID *TYPE_ID) METHOD_ID Signature Body
 \end{verbatim}
-The first form operates on a copy of a value of type \verb+typeName+.
-The second form operates on a pointer to a value of type \verb+typeName+.
-The parameter \verb+identifier+ performs the same function as the \verb+this+ keyword in C++ and Java.
-The syntax \verb+(identifier typeName)+ is called a receiver and the syntax \verb+(identifier *typeName)+ is called a pointer receiver.
+The first form operates on a copy of a value of type \verb+TYPE_ID+.
+The second form operates on a pointer to a value of type \verb+TYPE_ID+.
+The parameter \verb+ID+ names the receiver of the method and performs the same function as the \verb+this+ keyword in C++ and Java.
+The syntax \verb+(ID TYPE_ID)+ is called a receiver and the syntax \verb+(ID *TYPE_ID)+ is called a pointer receiver.
 Actions, reactions, getters, and initializers use a pointer receiver.
 
 \paragraph{Intrinsic and dereference mutability.}
@@ -385,7 +392,7 @@ This allows one to initialize components before the scheduler starts.
 This is necessary for establishing invariants as is commonly done in formal models, e.g., the \verb+initially+ section of UNITY~\cite{chandy1989parallel}.
 An initializer has the form:
 \begin{verbatim}
-init (id *typeName) initializerName signature body
+init (ID *TYPE_ID) INITIALIZER_ID Signature Body
 \end{verbatim}
 An initializer is similar to a method but has additional semantics:
 \begin{itemize}
@@ -399,7 +406,7 @@ An initializer is similar to a method but has additional semantics:
 An instance is a top-level component.
 An instance is declared with the following syntax:
 \begin{verbatim}
-instance identifier typeIdentifier initializerIdentifier (expressionList);
+instance ID TYPE_ID INITIALIZER_ID (ExpressionList);
 \end{verbatim}
 For example, \verb+instance c Clock Init ();+ declares as instance named \verb+c+ of type \verb+Clock+ and will call the initializer \verb+Init+ with an empty list of arguments.
 The instance identifier must be unique, the type identifier must refer to a component, and the initializer must be declared for the component type.
@@ -407,7 +414,7 @@ The instance identifier must be unique, the type identifier must refer to a comp
 \paragraph{Actions.}
 An action has the form:
 \begin{verbatim}
-action (id $const *typeName) identifier (booleanExpression) body
+action (ID $const *TYPE_ID) ACTION_ID (BooleanExpression) Body
 \end{verbatim}
 The immutable dereference mutability of the receiver enforces the immutable phase of transitions.
 Actions may only be defined for component types.
@@ -419,7 +426,7 @@ Actions set the heap segment on entry and reset the heap segment on exit so that
 \paragraph{Reactions.}
 A reaction has the form:
 \begin{verbatim}
-reaction (id $const *typeName) identifier (parameterList) body
+reaction (ID $const *TYPE_ID) REACTION_ID (ParameterList) Body
 \end{verbatim}
 As with actions, the immutable dereference mutability of the receiver enforces the immutable phase of transitions.
 Reactions may only be defined for component types.
@@ -434,7 +441,7 @@ Reactions set the heap segment on entry and reset the heap segment on exit so th
 A push port is declared as a field (of a component) with push port type.
 A push port type has the form:
 \begin{verbatim}
-push (parameterList)
+push (ParameterList)
 \end{verbatim}
 The parameter list declares the parameters that are passed to any bound reaction.
 The parameter list must be foreign safe.
@@ -449,7 +456,7 @@ type Clock component {
 \paragraph{Getters.}
 A getter, which provides a safe way of obtaining information from a component, has the form:
 \begin{verbatim}
-getter (id $const *typeName) identifier signature body
+getter (ID $const *TYPE_ID) GETTER_ID Signature Body
 \end{verbatim}
 A getter is similar to a method but has additional semantics:
 \begin{itemize}
@@ -463,12 +470,12 @@ A getter is similar to a method but has additional semantics:
 A pull port is declared as a field (of a component) with pull port type.
 A pull port type has the form:
 \begin{verbatim}
-pull (parameterList) returnParameter
+pull (ParameterList) ReturnParameter
 \end{verbatim}
 The parameter list declares the parameters that are passed to the bound getter.
 The parameter list and return parameter must be foreign safe.
 Pull ports are called like getters and place the same restriction on the caller, that is, a pull port may only be invoked by a getter or an action or reaction in the immutable phase.
-The following example declares a pull port named \verb+isBufferFull+ in the \verb+Producer+ component:
+The following example declares a pull port named \verb+isOutputBufferFull+ in the \verb+Producer+ component:
 \begin{verbatim}
 type Producer component {
   ...
@@ -482,8 +489,8 @@ Binders allow reactions to be associated with push ports and getters to be assoc
 Binding and recursive encapsulation are the two mechanisms for composing reactive components.
 A binder has the form:
 \begin{verbatim}
-bind (id *typeName) identifier {
-  bindStatement
+bind (ID *TYPE_ID) BIND_ID {
+  BindStatement
   ...
 }
 \end{verbatim}
@@ -508,13 +515,13 @@ Activations are the mechanism by which transitions extend to other components vi
 Activations also serve as the boundary between the immutable and mutable phases of a transition.
 An activate statement has the form:
 \begin{verbatim}
-activate portName (arguments) ... {
-  statements
+activate PORT_ID (Arguments) ... {
+  Statements
 };
 \end{verbatim}
 Activate statements can only occur in the body of an action or a reaction.
 Assume that the receiver of the action or reaction is named \verb+this+\footnote{\verb+this+ is not a keyword in Go.}.
-The expression \verb+this.portName+ must refer to a push port and the arguments passed to the push port must agree with its signature.
+The expression \verb+this.PORT_ID+ must refer to a push port and the arguments passed to the push port must agree with its signature.
 The list of push ports in an activate statement is optional.
 When an activate statement is executed, the named push ports are activated meaning that the reactions bound to those push ports are executed with the given arguments.
 These reactions, in turn, may execute other activate statements.
@@ -602,7 +609,7 @@ change (x, y) {
 In the example, \verb+x+ is a pointer to a heap and \verb+y+ is a variable that points to the root of the heap.
 The root variable is valid for the scope introduced by the \verb+change+ statement.
 The root variable will be set to \verb+nil+ if the heap is no longer valid.
-Within the scope of the \verb+change+ statement, all other variables and parameters are re-entered with foreign dereference immutability.
+Within the scope of the \verb+change+ statement, all other variables and parameters that may contain pointers are re-entered with foreign dereference immutability.
 This enforces the isolation of heaps by preventing the heap from storing a pointer that refers to a location in another heap.
 
 Logically, the runtime maintains a stack of heaps.
@@ -671,7 +678,8 @@ getter (this $const * Variable) Get () int {
     return this.value;
 }
 \end{verbatim}
-\cprotect\caption{Code listing for \verb+Variable+ component \label{variable}}
+\cprotect\caption{Code listing for \verb+Variable+ component}
+\label{variable}
 \end{figure}
 
 Figure~\ref{variable} shows the \verb+Variable+ component.
@@ -688,6 +696,8 @@ The final element of the \verb+Variable+ component is the getter \verb+Get+ that
 Since getters are not allowed to change the state of the component, they must be declared with immutable dereference mutability \verb+(this $const * Variable)+.
 
 \begin{figure}
+\begingroup
+\fontsize{9pt}{11pt}\selectfont
 \begin{verbatim}
 type ProcessStatus int;
 const PROCESS_IDLE = 0;
@@ -742,7 +752,9 @@ action (this $const * Process) _decide (this.status == PROCESS_DECIDE) {
     }
 }
 \end{verbatim}
-\cprotect\caption{Code listing for \verb+Process+ component \label{process}}
+\endgroup
+\cprotect\caption{Code listing for \verb+Process+ component}
+\label{process}
 \end{figure}
 
 Figure~\ref{process} shows the \verb+Process+ component.
@@ -790,6 +802,8 @@ For compositional reasoning, the behavior of a component can be abstracted and s
 For example, a \verb+Process+ component will decide the value of the shared variable when initialized via the \verb+initr+ reaction.
 
 \begin{figure}
+\begingroup
+\fontsize{9pt}{11pt}\selectfont
 \begin{verbatim}
 type UserStatus int;
 const USER_REQUEST = 0;
@@ -835,7 +849,9 @@ reaction (this $const * User) Decide (v int) {
     }
 }
 \end{verbatim}
-\cprotect\caption{Code listing for \verb+User+ component \label{user}}
+\endgroup
+\cprotect\caption{Code listing for \verb+User+ component}
+\label{user}
 \end{figure}
 
 Figure~\ref{user} shows the \verb+User+ component.
@@ -880,7 +896,8 @@ bind (this *System) _bind {
 
 instance s System Init ();
 \end{verbatim}
-\cprotect\caption{Code listing for \verb+System+ component \label{system}}
+\cprotect\caption{Code listing for \verb+System+ component}
+\label{system}
 \end{figure}
 
 Figure~\ref{system} shows the \verb+System+ component.
@@ -900,6 +917,8 @@ Figure~\ref{system_instance} shows a graphical representation of a \verb+System+
 \begin{figure}
 \centering
 \resizebox{\textwidth}{!}{%
+\begingroup
+\fontsize{10pt}{12pt}\selectfont
 \begin{tikzpicture}
 
 %% User 0
@@ -975,8 +994,10 @@ Figure~\ref{system_instance} shows a graphical representation of a \verb+System+
 \node[below] at (8.5,11) {System};
 
 \end{tikzpicture}
+\endgroup
 }%
-\cprotect\caption{Diagram of a \verb+System+ instance\label{system_instance}}
+\cprotect\caption{Diagram of a \verb+System+ instance}
+\label{system_instance}
 \end{figure}
 
 \begin{figure}
@@ -986,7 +1007,8 @@ x set to 102
 0x1fd71f8 decided value is 102
 0x1fd7228 decided value is 102
 \end{verbatim}
-\cprotect\caption{Sample output for a \verb+System+ instance\label{system_output}}
+\cprotect\caption{Sample output for a \verb+System+ instance}
+\label{system_output}
 \end{figure}
 
 Figure~\ref{system_output} shows sample output for an execution of a \verb+System+ component.
@@ -1024,7 +1046,8 @@ action (this $const * Channel) _receive (!this.queue.Empty ()) {
   };
 }
 \end{verbatim}
-\cprotect\caption{Listing for a \verb+Channel+ component\label{channel_listing}}
+\cprotect\caption{Listing for a \verb+Channel+ component}
+\label{channel_listing}
 \end{figure}
 
 Figure~\ref{channel_listing} shows the \verb+Channel+ component.
@@ -1072,7 +1095,8 @@ bind (this *System) Bind {
 
 instance s System Initially ();
 \end{verbatim}
-\cprotect\caption{Listing for a \verb+System+ component that transfers heaps to and from a \verb+Channel+ component\label{channel_system_listing}}
+\cprotect\caption{Listing for a \verb+System+ component that transfers heaps to and from a \verb+Channel+ component}
+\label{channel_system_listing}
 \end{figure}
 
 Figure~\ref{channel_system_listing} shows the \verb+System+ component that exercises the \verb+Channel+.
@@ -1109,26 +1133,26 @@ This formalism was used in the design of both Guava~\cite{Bacon:2000:GDJ:353171.
 Locks are explicit in Cyclone while they are implicitly associated with the monitors of Guava.
 The reactive components of \rcgo{} are similar to the monitors of Guava in that access to shared state is implicitly synchronized.
 
-The approach take by the languages cited thus far is to demonstrate freedom from data races through the type system exclusively.
+The approach taken by the languages cited thus far is to demonstrate freedom from data races through the type system exclusively.
 The type system of \rcgo{} is weaker than these languages in that it is only possible to prove that objects are not shared between components via \verb+foreign+ dereference mutability.
 The check for sound composition alluded to in Section~\ref{determinism} and described in Section~\ref{sound_composition} ensures that individual transactions are free from data races.
-As described in Section~\ref{execution} and Section~\ref{scheduler}, the scheduler has the responsibility of scheduling transactions in a way that avoid data races between transactions.
+As described in Section~\ref{execution} and Section~\ref{scheduler}, the scheduler has the responsibility of scheduling transactions in a way that avoids data races between transactions.
 
 \section{Summary}
 This chapter has presented the \rcgo programming language for reactive components.
-An implementation of reactive components tests if the assumptions upon which the model rests are practical.
-Our approach is to design a new programming language whose syntax and semantics  capture and enforce the semantics of reactive components.
+An implementation of reactive components tests whether the assumptions upon which the model rests are practical.
+Our approach is to design new programming language syntax and semantics to capture and enforce the semantics of reactive components.
 As a matter of practicality, we impose support for reference semantics which allow developers to use linked data structures and the ability to transfer data structures from one component to another.
 The corresponding features are a declarable dereference mutability that allows components to treat pointers as foreign and a transferable heap data type that represents a self-contained linked data structure.
-Components are expressed as a collection of fields; similar to a \verb+struct+.
+Components are expressed as a collection of fields (similar to a \verb+struct+).
 Ports (push and pull) are expressed as fields of a component.
 Actions and reactions are expressed as method-like elements.
 Composition is accomplished via binders and instances.
 Our implementation of an interpreter for \rcgo is described in Section~\ref{interpreter}.
 
-The programming language presented in this chapter allow developers to take a principled approach to developing general purpose reactive programs.
+The \rcgo{} programming language presented in this chapter allows developers to take a principled approach to developing general purpose reactive programs.
 First, a developer need not identify shared state and add appropriate locking because state is not shared between components and each action/reaction is atomic.
-Second, a developer need not ``worry'' about the consequences of composition.
+Second, a developer need not worry about the consequences of composition.
 In paradigms where composition is accomplished through synchronous function call, developers must determine the conditions in which it is safe to transfer control to a function.
 In the reactive component paradigm, the semantics of activate statements and ports provide strong guarantees when composing and checking for illegal composition becomes the responsibility of the runtime environment (Section~\ref{sound_composition}).
 Third, developers are no longer burdened with mapping an inherently non-deterministic sequence of events onto one or more sequential threads of control.

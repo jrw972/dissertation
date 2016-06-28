@@ -1,6 +1,12 @@
 This is BibTeX, Version 0.99d (TeX Live 2013/Debian)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: paper.aux
+A level-1 auxiliary file: introduction.aux
+A level-1 auxiliary file: background.aux
+A level-1 auxiliary file: model.aux
+A level-1 auxiliary file: language.aux
+A level-1 auxiliary file: implementation.aux
+A level-1 auxiliary file: conclusion.aux
 The style file: plain.bst
 Database file #1: paper.bib
 Warning--string name "june" is undefined
@@ -9,48 +15,52 @@ Warning--to sort, need author, editor, or key in 1983proceedings
 Warning--to sort, need author or key in cxx11
 Warning--to sort, need author or key in go
 Warning--to sort, need author or key in ioatoolkit
+Warning--to sort, need author or key in clojure
 Warning--empty author and editor in 1983proceedings
+Warning--empty journal in armstrong1996concurrent
 Warning--can't use both volume and number fields in blumofe1995cilk
 Warning--empty publisher in EcmaScript
-You've used 69 entries,
+Warning--can't use both volume and number fields in larus1988detecting
+Warning--empty journal in patrick1987general
+You've used 100 entries,
             2118 wiz_defined-function locations,
-            905 strings with 14032 characters,
-and the built_in function-call counts, 21459 in all, are:
-= -- 2182
-> -- 797
-< -- 19
-+ -- 338
-- -- 253
-* -- 1375
-:= -- 3479
-add.period$ -- 219
-call.type$ -- 69
-change.case$ -- 316
+            1049 strings with 18159 characters,
+and the built_in function-call counts, 31783 in all, are:
+= -- 3243
+> -- 1185
+< -- 33
++ -- 495
+- -- 377
+* -- 1981
+:= -- 5095
+add.period$ -- 318
+call.type$ -- 100
+change.case$ -- 462
 chr.to.int$ -- 0
-cite$ -- 76
-duplicate$ -- 906
-empty$ -- 1839
-format.name$ -- 253
-if$ -- 4600
+cite$ -- 111
+duplicate$ -- 1357
+empty$ -- 2713
+format.name$ -- 377
+if$ -- 6873
 int.to.chr$ -- 0
-int.to.str$ -- 69
-missing$ -- 78
-newline$ -- 344
-num.names$ -- 132
-pop$ -- 386
+int.to.str$ -- 100
+missing$ -- 108
+newline$ -- 495
+num.names$ -- 192
+pop$ -- 600
 preamble$ -- 1
-purify$ -- 264
+purify$ -- 387
 quote$ -- 0
-skip$ -- 616
+skip$ -- 958
 stack$ -- 0
-substring$ -- 1338
-swap$ -- 192
-text.length$ -- 19
+substring$ -- 1971
+swap$ -- 330
+text.length$ -- 33
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 238
-warning$ -- 7
-while$ -- 219
-width$ -- 71
-write$ -- 764
-(There were 8 warnings)
+type$ -- 352
+warning$ -- 11
+while$ -- 327
+width$ -- 103
+write$ -- 1095
+(There were 12 warnings)

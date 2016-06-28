@@ -1,4 +1,8 @@
-\begin{thebibliography}{10}
+\begin{thebibliography}{100}
+
+\bibitem{clojure}
+Clojure.
+\newblock \url{http://clojure.org/}.
 
 \bibitem{go}
 Go.
@@ -38,6 +42,17 @@ G.A. Agha.
 G.R. Andrews and F.B. Schneider.
 \newblock Concepts and notations for concurrent programming.
 \newblock {\em ACM Computing Surveys (CSUR)}, 15(1):3--43, 1983.
+
+\bibitem{armstrong1996concurrent}
+J.~Armstrong, R.~Virding, C.~Wikstr, M.~Williams, et~al.
+\newblock Concurrent programming in erlang.
+\newblock 1996.
+
+\bibitem{backus1978can}
+J.~Backus.
+\newblock Can programming be liberated from the von neumann style?: a
+  functional style and its algebra of programs.
+\newblock {\em Communications of the ACM}, 21(8):613--641, 1978.
 
 \bibitem{Bacon:2000:GDJ:353171.353197}
 David~F. Bacon, Robert~E. Strom, and Ashis Tarafdar.
@@ -99,6 +114,33 @@ W.D. Clinger.
 \newblock {\em Foundations of actor semantics}.
 \newblock PhD thesis, Massachusetts Institute of Technology, 1981.
 
+\bibitem{codd1959multiprogramming}
+EF~Codd, ES~Lowry, E.~McDonough, and CA~Scalzi.
+\newblock Multiprogramming stretch: feasibility considerations.
+\newblock {\em Communications of the ACM}, 2(11):13--17, 1959.
+
+\bibitem{Conway:1963:DST:366663.366704}
+Melvin~E. Conway.
+\newblock Design of a separable transition-diagram compiler.
+\newblock {\em Commun. ACM}, 6(7):396--408, July 1963.
+
+\bibitem{corbato1962experimental}
+F.J. Corbat{\'o}, M.~Merwin-Daggett, and R.C. Daley.
+\newblock An experimental time-sharing system.
+\newblock In {\em Proceedings of the May 1-3, 1962, spring joint computer
+  conference}, pages 335--344. ACM, 1962.
+
+\bibitem{corbato1965introduction}
+F.J. Corbat{\'o} and V.A. Vyssotsky.
+\newblock Introduction and overview of the multics system.
+\newblock In {\em Proceedings of the November 30--December 1, 1965, fall joint
+  computer conference, part I}, pages 185--196. ACM, 1965.
+
+\bibitem{corbet2005linux}
+J.~Corbet, A.~Rubini, and G.~Kroah-Hartman.
+\newblock {\em Linux device drivers}.
+\newblock O'Reilly Media, 2005.
+
 \bibitem{culler1993parallel}
 D.E. Culler, A.~Dusseau, S.C. Goldstein, A.~Krishnamurthy, S.~Lumetta,
   T.~Von~Eicken, and K.~Yelick.
@@ -126,10 +168,21 @@ E.W. Dijkstra.
 \newblock Technical report, Technological University, Eindhoven, The
   Netherlands, September 1965.
 
+\bibitem{driscoll1989making}
+J.R. Driscoll, N.~Sarnak, D.D. Sleator, and R.E. Tarjan.
+\newblock Making data structures persistent.
+\newblock {\em Journal of computer and system sciences}, 38(1):86--124, 1989.
+
 \bibitem{EcmaScript}
 {ECMA International}.
 \newblock {\em Standard ECMA-262 - ECMAScript Language Specification}.
 \newblock 5.1 edition, June 2011.
+
+\bibitem{emerson1980characterizing}
+E.~Emerson and E.~Clarke.
+\newblock Characterizing correctness properties of parallel programs using
+  fixpoints.
+\newblock {\em Automata, Languages and Programming}, pages 169--181, 1980.
 
 \bibitem{Eswaran:1976:NCP:360363.360369}
 K.~P. Eswaran, J.~N. Gray, R.~A. Lorie, and I.~L. Traiger.
@@ -143,11 +196,29 @@ Cormac Flanagan and Mart\'{\i}n Abadi.
   Concurrency Theory}, CONCUR '99, pages 288--303, London, UK, UK, 1999.
   Springer-Verlag.
 
+\bibitem{apache}
+The Apache~Software Foundation.
+\newblock \url{http://www.apache.org}.
+
+\bibitem{tomcat}
+The Apache~Software Foundation.
+\newblock \url{http://tomcat.apache.org}.
+
 \bibitem{friedman1976impact}
 D.P. Friedman and D.S. Wise.
 \newblock {\em The Impact of Applicative Programming on Multiprocessing}.
 \newblock Technical report (Indiana University, Bloomington. Computer Science
   Dept.). Indiana University, Computer Science Department, 1976.
+
+\bibitem{ganapathi2006windows}
+A.~Ganapathi, V.~Ganapathi, and D.~Patterson.
+\newblock Windows xp kernel crash analysis.
+\newblock {\em 20th LISA}, pages 101--111, 2006.
+
+\bibitem{garland2003ioa}
+S.J. Garland, N.A. Lynch, J.~Tauber, and M.~Vaziri.
+\newblock {\em IOA user guide and reference manual}.
+\newblock Computer Science and Artificial Intelligence Labatory, 2003.
 
 \bibitem{georgiou2009automated}
 C.~Georgiou, N.~Lynch, P.~Mavrommatis, and J.A. Tauber.
@@ -160,6 +231,12 @@ C.~Georgiou, N.~Lynch, P.~Mavrommatis, and J.A. Tauber.
 K.J. Goldman.
 \newblock Distributed algorithm simulation using input/output automata.
 \newblock Technical report, DTIC Document, 1990.
+
+\bibitem{gopinath1989copy}
+K.~Gopinath and J.L. Hennessy.
+\newblock Copy elimination in functional languages.
+\newblock In {\em Proceedings of the 16th ACM SIGPLAN-SIGACT symposium on
+  Principles of programming languages}, pages 303--314. ACM, 1989.
 
 \bibitem{GZH03}
 A.~Granicz, D.~Zimmerman, and J.~Hickey.
@@ -195,6 +272,13 @@ C.~Hewitt, P.~Bishop, and R.~Steiger.
 \newblock In {\em Proceedings of the 3rd international joint conference on
   Artificial intelligence}, pages 235--245. Morgan Kaufmann Publishers Inc.,
   1973.
+
+\bibitem{hind2001pointer}
+M.~Hind.
+\newblock Pointer analysis: haven't we solved this problem yet?
+\newblock In {\em Proceedings of the 2001 ACM SIGPLAN-SIGSOFT workshop on
+  Program analysis for software tools and engineering}, pages 54--61. ACM,
+  2001.
 
 \bibitem{hoare1978communicating}
 C.A.R. Hoare.
@@ -240,6 +324,11 @@ William Landi.
 \newblock Undecidability of static analysis.
 \newblock {\em ACM Lett. Program. Lang. Syst.}, 1(4):323--337, December 1992.
 
+\bibitem{larus1988detecting}
+J.R. Larus and P.N. Hilfinger.
+\newblock Detecting conflicts between structure accesses.
+\newblock In {\em ACM SIGPLAN Notices}, volume~23, pages 24--31. ACM, 1988.
+
 \bibitem{lea2000concurrent}
 D.~Lea.
 \newblock {\em Concurrent programming in Java: design principles and patterns}.
@@ -250,10 +339,22 @@ E.A. Lee.
 \newblock The problem with threads.
 \newblock {\em Computer}, 39(5):33--42, 2006.
 
+\bibitem{lee2011heterogeneous}
+E.A. Lee.
+\newblock Heterogeneous actor modeling.
+\newblock In {\em Proceedings of the ninth ACM international conference on
+  Embedded software}, pages 3--12. ACM, 2011.
+
 \bibitem{nancy1996distributed}
 N.A. Lynch.
 \newblock {\em Distributed algorithms}.
 \newblock Morgan Kaufmann, 1996.
+
+\bibitem{manna1983cook}
+Z.~Manna and A.~Pnueli.
+\newblock How to cook a temporal proof system for your pet language.
+\newblock In {\em Proceedings of the 10th ACM SIGACT-SIGPLAN symposium on
+  Principles of programming languages}, pages 141--154. ACM, 1983.
 
 \bibitem{manna1992temporal}
 Z.~Manna and A.~Pnueli.
@@ -261,10 +362,32 @@ Z.~Manna and A.~Pnueli.
   Specification}, volume~1.
 \newblock Springer, 1992.
 
+\bibitem{Mersel:1956:PIU:1455410.1455428}
+Jules Mersel.
+\newblock Program interrupt on the univac scientific computer.
+\newblock In {\em Papers presented at the February 7-9, 1956, joint
+  ACM-AIEE-IRE western computer conference}, AIEE-IRE '56 (Western), pages
+  52--53, New York, NY, USA, 1956. ACM.
+
 \bibitem{milner1982calculus}
 R.~Milner.
 \newblock {\em A calculus of communicating systems}.
 \newblock Springer-Verlag New York, Inc., 1982.
+
+\bibitem{milner1999communicating}
+R.~Milner.
+\newblock {\em Communicating and mobile systems: the $\pi$-calculus}.
+\newblock Cambridge Univ Pr, 1999.
+
+\bibitem{murphy2004automating}
+B.~Murphy.
+\newblock Automating software failure reporting.
+\newblock {\em Queue}, 2(8):42--48, 2004.
+
+\bibitem{okasaki1999purely}
+C.~Okasaki.
+\newblock {\em Purely functional data structures}.
+\newblock Cambridge Univ Pr, 1999.
 
 \bibitem{ifip1975new}
 IFIP Working Group~2.1 on~Algol, S.A. Schuman, and Institut de~recherche
@@ -290,10 +413,21 @@ D.L. Parnas.
 \newblock On the criteria to be used in decomposing systems into modules.
 \newblock {\em Communications of the ACM}, 15(12):1053--1058, 1972.
 
+\bibitem{patrick1987general}
+R.L. Patrick.
+\newblock General motors/north american monitor for the ibm 704 computer.
+\newblock 1987.
+
 \bibitem{pnueli1981temporal}
 A.~Pnueli.
 \newblock The temporal semantics of concurrent programs.
 \newblock {\em Theoretical Computer Science}, 13(1):45--60, 1981.
+
+\bibitem{queille1982specification}
+J.~Queille and J.~Sifakis.
+\newblock Specification and verification of concurrent systems in cesar.
+\newblock In {\em International Symposium on Programming}, pages 337--351.
+  Springer, 1982.
 
 \bibitem{radha1993portable}
 S.~Radha and C.R. Muthukrishnan.
@@ -340,6 +474,11 @@ A.~Silberschatz, P.B. Galvin, and G~Gagne.
 \newblock {\em Operating system concepts}, volume~7.
 \newblock Addison-Wesley, 2005.
 
+\bibitem{silberschatz1998operating}
+A.~Silberschatz, P.B. Galvin, G.~Gagne, and A.~Silberschatz.
+\newblock {\em Operating system concepts}, volume~4.
+\newblock Addison-Wesley, 1998.
+
 \bibitem{Surhone:2010:NOD:1941165}
 Lambert~M. Surhone, Mariam~T. Tennoe, and Susan~F. Henssonow.
 \newblock {\em Node.Js}.
@@ -354,6 +493,24 @@ H.~Sutter and J.~Larus.
 Robert~Endre Tarjan.
 \newblock Edge-disjoint spanning trees and depth-first search.
 \newblock {\em Acta Informatica}, 6(2):171--185, 1976.
+
+\bibitem{tauber2004verifiable}
+J.A. Tauber.
+\newblock {\em Verifiable compilation of i/o automata without global
+  synchronization}.
+\newblock PhD thesis, Massachusetts Institute of Technology, 2004.
+
+\bibitem{tauber2004compiling}
+J.A. Tauber, N.A. Lynch, and M.J. Tsai.
+\newblock Compiling ioa without global synchronization.
+\newblock In {\em Network Computing and Applications, 2004.(NCA 2004).
+  Proceedings. Third IEEE International Symposium on}, pages 121--130. IEEE,
+  2004.
+
+\bibitem{tsai2002code}
+M.J. Tsai.
+\newblock Code generation for the ioa language.
+\newblock Master's thesis, Massachusetts Institute of Technology, 2002.
 
 \bibitem{turing1936computable}
 A.~Turing.
@@ -374,6 +531,15 @@ P.~Wadler.
 \newblock Comprehending monads.
 \newblock In {\em Proceedings of the 1990 ACM conference on LISP and functional
   programming}, pages 61--78. ACM, 1990.
+
+\bibitem{walker1995interrupt}
+W.~Walker and H.G. Cragon.
+\newblock Interrupt processing in concurrent processors.
+\newblock {\em Computer}, 28(6):36--46, 1995.
+
+\bibitem{wheeler1951preparation}
+M.V.W.D.J. Wheeler and S.~Gill.
+\newblock The preparation of programs for an electronic digital computer, 1951.
 
 \bibitem{williams2012c++}
 Anthony Williams.

@@ -1,4 +1,4 @@
-\documentclass[letterpaper]{book}
+\documentclass[phdthesis,12pt]{wuthesis}
 
 \usepackage{url}
 \usepackage{tikz}
@@ -16,34 +16,91 @@
 
 \newcommand{\rcgo}{rc\textsubscript{go}}
 
-\title{A Transactional Model and Platform for Designing and Implementing Reactive Systems}
-\author{Justin R. Wilson}
-\date{}
+\renewcommand{\thesisauthor}{Justin R. Wilson}
+\renewcommand{\thesisauthorlastname}{Wilson}
+
+\renewcommand{\thesisdepartment}{Department of Computer Science and Engineering}
+\renewcommand{\thesisfield}{Computer Science}
+
+\renewcommand{\thesismonth}{August}
+\renewcommand{\thesisyear}{2016}
+
+\renewcommand{\thesistitle}{A Transactional Model and Platform for Designing and Implementing Reactive Systems}
+\renewcommand{\thesisshorttitle}{Reactive Components}
+
+\renewcommand{\thesissupervisor}{Professor Christopher Gill}
+\renewcommand{\thesiscommittee}{Christopher Gill, Chair \\
+	Roger Chamberlain \\
+	Ron Cytron \\
+        Peter MacKeith \\
+        Kunal Agrawal \\
+        Gruia-Catalin Roman}
+
+%% Enter the dedication
+%% \renewcommand{\thesisdedication}{Dedicated to my parents.}
 
 \begin{document}
-
 \VerbatimFootnotes
 
-\maketitle
+\frontmatter
+\begin{thesistitlepage}
+%\iffalse
+\end{thesistitlepage}
 
-\input abstract.tex
+\begin{thesiscopyrightpage}
+%\iffalse
+\end{thesiscopyrightpage}
 
+\begin{singlespace}
+\setcounter{page}{2}
 \tableofcontents
+\listoftables
+\listoffigures
+\end{singlespace}
 
-\input introduction.tex
+\begin{thesisacknowledgments}
 
-\input background.tex
+\begin{quote}
+for in Him we live and move and exist  \emph{Acts 17:38}
+\end{quote}
 
-\input model.tex
+First and foremost, I would like to thank my wife who has been beside me every step of the way.
 
-\input language.tex
+I am forever grateful for the patience, guidance, and wise counsel of my advisor Dr. Gill.
 
-\input implementation.tex
+The seed for this dissertation was planted by Dr. Roman in the basement of Lopata Hall during a course on UNITY.
+He was lecturing on the development of structured programming and the give and take between formal methods and practice.
+I am grateful to Dr. Roman for introducing me to the clarity of thinking that comes from formal models.
 
-\input conclusion.tex
+I would like to thank the Department of Computer Science and Engineering, the National Science Foundation, and the Ford Motor Company for their generous financial support.
 
-\bibliographystyle{plain}
-\bibliography{paper}{}
+\begin{quote}
+The end of a matter is better than its beginning; \\
+Patience of spirit is better than haughtiness of spirit.  \emph{Ecclesiastes 7:8}
+\end{quote}
+\end{thesisacknowledgments}
+
+%% \begin{thesisdedicationpage}                %% Generate the dedication page.
+%% %\iffalse
+%% \textbf{Note:} You may include a special dedication as shown here.  If you
+%% include this page, be sure to keep it brief and center it on the page both
+%% horizontally and vertically.  Alternatively, you may remove this page
+%% altogether, and a special dedication can be placed as the final paragraph to
+%% your acknowledgments page (as shown in this document on the preceding page).
+%% %\fi
+%% \end{thesisdedicationpage}
+
+\begin{thesisabstract}
+\input abstract.tex
+\end{thesisabstract}
+
+\mainmatter
+\include{introduction}
+\include{background}
+\include{model}
+\include{language}
+\include{implementation}
+\include{conclusion}
 
 \appendix
 
@@ -66,5 +123,76 @@ Symbol & System & Counter & Request & Tick & Count \\
 \caption{Partitions for the SyncClock system.  The Symbol column contains the symbol used to represent this partition on plots.  The System and Counter columns indicate the thread used for the garbage collection action for the respective component.  The Request and Tick columns indicate the thread used for the respective transaction.  The Count column indicates the number of samples for this partition.}
 \label{sync_partitions}
 \end{longtable}
+
+\bibliographystyle{plain}
+\begin{spacing}{1.0}
+\bibliography{paper}{}
+\end{spacing}
+\nocite{*}
+
+%% \begin{thesisauthorvita}
+%% %
+%% % This is just a sample of what to do in a vita
+%% %
+%% \begin{center}
+%% {\large\thesisauthor}
+%% \end{center}
+%% %
+%% % Need to 'fold' long labels
+%% %
+%% \newcommand{\vitalabel}[1]%
+%%   {\raisebox{0pt}[1ex][0pt]
+%%     {\makebox[\labelwidth][l]%
+%%       {\parbox[t]{\labelwidth}{\hspace{0pt}\textbf{#1}}}}}
+%% %
+%% % Here's the list definition
+%% %
+%% \begin{list}
+%%   {}%                                        nodefault label
+%%   { \renewcommand{\makelabel}{\vitalabel}%   setting labels
+%%     \setlength{\labelwidth}{100pt}%          label width
+%%     \setlength{\leftmargin}{120pt}%
+%%     \setlength{\itemindent}{0pt}%            don't indent first line of items
+%%     \setlength{\parsep}{\baselineskip}%               space between paragraphs
+%%     \setlength{\itemsep}{5pt}%               additional space between items
+%%     }
+
+%% \item[Degrees] B.S.\ Magna Cum Laude, computer Science, May 1988 \\
+%% 	M.S.\ Computer Science, December 1990 \\
+%% 	D.Sc.\ (or Ph.D.) Some Department, May 2007
+%% \item[Professional\linebreak Societies]
+%%   Association for Computing Machines \\
+%%   The Touring Society \\
+%%   The Free Software Foundation
+%% \item[Publications]
+%%   Student, I.\ D.\ (2005).\ \LaTeX{} document class for Sever Institute,
+%%   \textit{The \LaTeX{} J.} \textbf{10}(4):~323--336.
+
+%%   Student, I.\ D.\ (2005).\ More \LaTeX{} wisdom, \textit{Another \LaTeX{} J}.
+%%   \textbf{42}(7):~100--101.
+%% \end{list}
+%% \flushright
+%% \thesismonth\ \thesisyear
+%% \end{thesisauthorvita}
+
+%% \begin{thesisshorttitlepage}
+%% %\iffalse
+%% {\small
+
+%% \textbf{NOTE:}	This is a sample of a ``short title'' page.  Please change the
+%% line above to use an appropriate ``short title'' for your thesis, insert your
+%% last name, and include your degree and year in which the degree will be earned.
+%% Separate elements using commas, as illustrated in the sample above.
+%% \uline{Your ``short title'' cannot exceed 35 characters, counting spaces}.  It
+%% does not matter if there is a page number at the bottom of the page.
+
+%% \textbf{IMPORTANT:} This page should be printed and taped securely to each of
+%% the three manila envelopes used to submit your final hard copies.  Remove this
+%% page before submitting your final copies (i.e., this page should not be
+%% included in either your electronic submission or your hard copy submissions).
+%% See Appendix~\ref{app:procedures} for further details if necessary.
+%% }
+%% %\fi
+%% \end{thesisshorttitlepage}
 
 \end{document}

@@ -101,6 +101,8 @@ Unlike I/O Automata in which transitions have limited depth, a transition among 
 \begin{figure}[H]
 \centering
 \resizebox{\textwidth}{!}{%
+\begingroup
+\fontsize{10pt}{12pt}\selectfont
 \begin{tikzpicture}
 [
 arrowstyle/.style={
@@ -150,6 +152,7 @@ arrowstyle/.style={
 \node[draw, cylinder, shape border rotate=90, minimum height=40, minimum width=40] (sv1) at (5,7.25) {};
 \node[align=center] at (5,6.25) {state variables};
 \end{tikzpicture}
+\endgroup
 }%
 \caption{Features of a reactive component\label{reactive_component}}
 \end{figure}
@@ -186,6 +189,8 @@ The ability to publicize behavior and state and the ability to assemble well-def
 \begin{figure}
 \centering
 \resizebox{\textwidth}{!}{%
+\begingroup
+\fontsize{10pt}{12pt}\selectfont
 \begin{tikzpicture}
 \draw (0,6.5) rectangle (5,10);
 \node[below] at (2.5,10) {Web Server};
@@ -221,6 +226,7 @@ The ability to publicize behavior and state and the ability to assemble well-def
 \draw (ex6a.center) -- (ex6b.center);
 
 \end{tikzpicture}
+\endgroup
 }%
 \caption{Diagram of a web application built using reactive components\label{web_server}}
 \end{figure}
@@ -417,6 +423,8 @@ component System {
 \begin{figure}
 \centering
 %%\resizebox{\textwidth}{!}{%
+\begingroup
+\fontsize{10pt}{12pt}\selectfont
 \begin{tikzpicture}[
     arrowstyle/.style={draw, -stealth},
     edge from parent/.style={draw, -stealth},
@@ -443,6 +451,7 @@ component System {
   }
 ;
 \end{tikzpicture}
+\endgroup
 %%}%
 \cprotect\caption{Transaction diagram for the \verb+client.Request+ action for the System component of Figure~\ref{system_component}}
 \label{request_transaction}
@@ -451,6 +460,8 @@ component System {
 \begin{figure}
 \centering
 %%\resizebox{\textwidth}{!}{%
+\begingroup
+\fontsize{10pt}{12pt}\selectfont
 \begin{tikzpicture}[
     arrowstyle/.style={draw, -stealth},
     edge from parent/.style={draw, -stealth},
@@ -477,6 +488,7 @@ component System {
   }
 ;
 \end{tikzpicture}
+\endgroup
 %%}%
 \cprotect\caption{Transaction diagram for the \verb+clock.Clock+ action for the System component of Figure~\ref{system_component}}
 \label{clock_transaction}
@@ -568,6 +580,8 @@ Substituting the definition of the Clock component and Client components into th
 \begin{figure}
 \centering
 %%\resizebox{\textwidth}{!}{%
+\begingroup
+\fontsize{10pt}{12pt}\selectfont
 \begin{tikzpicture}[
     arrowstyle/.style={draw, -stealth},
     edge from parent/.style={draw, -stealth},
@@ -600,8 +614,9 @@ Substituting the definition of the Clock component and Client components into th
   }
 ;
 \end{tikzpicture}
+\endgroup
 %%}%
-\cprotect\caption{Transaction diagram for a non-deterministic transaction}
+\caption{Transaction diagram for a non-deterministic transaction}
 \label{ndt}
 \end{figure}
 
@@ -638,15 +653,15 @@ Substitutional equivalence implies that the process of substituting the definiti
 %% One motivation for extracting sub-components is to support the software engineering practice of refactoring where common code is extracted so that it can be reused in various places.
 
 Another motivation for decomposition is potentially increased performance through parallelism.
-Recall that true concurrency in reactive components is modeled as the non-deterministic selection and serial execution of actions.
+Recall that true concurrency in reactive Components is modeled as the non-deterministic selection and serial execution of actions.
 Two transactions can be safely executed concurrently if it can be shown that the state variables involved in each transaction are disjoint.
 As was previously mentioned, making this determination is undecidable for Turing-complete languages in the general case.
 However, the problem becomes decidable if the component instance is used as a proxy for its constituent state variables.
 Let $\mathit{rw}: t \to \{ \mathit{Read}, \mathit{Write} \}$ be a function that maps a transition to a value indicating that variables are read-only during the transition or written in some way.
 Two instance/transition pairs are independent ($\mathit{indp}$) if either the instances are different or at most one of the transition writes the variables of the instance:
-\begin{displaymath}
+\begin{equation}
 \mathit{indp}((i_1, t_1), (i_2, t_2)): i_1 \ne i_2 \lor \lnot (\mathit{rw}(t_1) = \mathit{Write} \land \mathit{rw}(t_2) = \mathit{Write})
-\end{displaymath}
+\end{equation}
 Two transaction graphs are independent if all of their nodes are independent $\mathit{indp}(G_1, G_2) = \forall (i_1, t_1) \in G_1.N, (i_2, t_2) \in G_2.N \; \mathit{indp}((i_1, t_1), (i_2, t_2))$.
 The significance of the preceding analysis is that the determination about what actions can be executed concurrently becomes machine checkable due to the strong guarantee that state variables belonging to an instance can only be modified by the transitions of that instance.
 

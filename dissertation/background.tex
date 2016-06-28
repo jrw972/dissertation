@@ -8,10 +8,9 @@ We then provide a survey of other work related to this dissertation, with a part
 State (memory) is fundamental to reactive systems as past inputs influence future behavior.
 Baeten concludes that the first step towards developing algebraic models for reactive systems was ``abandoning the idea that a program is a transformation from input to output, replacing this by an approach where all intermediate states are important''~\cite{baeten2005brief}.
 The state of a reactive system is often captured in: program variables, e.g., in Dijkstra's Cooperating Sequential Processes~\cite{dijkstra1965cooperating}; messages in a channel or queue, e.g.,  in Milner's Calculus of Communicating Systems~\cite{milner1982calculus} and in the Actor Model~\cite{agha1985actors}; or some combination of the two, e.g., in Kahn Process Networks~\cite{kahn1974semantics}.
-For generality, platforms typically allow complex states to be composed from primitive states, e.g., arrays, records, tuples, lists, sets, etc.
 
 Computation in a reactive system then can be viewed as a sequence of state transitions~\cite{pnueli1981temporal}.
-As these transitions may be complex, platforms typically allow complex state transitions to be composed from primitive state transitions.
+As these transitions may be complex, platforms typically allow complex state transitions to be composed from primitive state transitions and complex states, e.g., arrays, records, tuples, lists, sets, etc., to be commposed from primitive states.
 Three orthogonal techniques for composing complex state transitions are expressions, sequential composition, and parallel composition.
 \emph{Expressions} raise the level of abstraction by summarizing a computation whose intermediate results are unimportant.
 A compiler or interpreter is free to schedule the evaluation of an expression in any way that preserves the semantics of the expression.
@@ -26,8 +25,7 @@ Shared state is often organized using abstraction where updates to shared state 
 Synchronization and communication are identified as necessary activities in a reactive system~\cite{andrews1983concepts}.
 The two approaches to communication are \emph{shared variables} and \emph{message passing}~\cite{andrews1983concepts}.
 
-Multiple reactive processes effect state transitions that overlap in time.
-This is called \emph{concurrency}.
+Multiple reactive processes effect state transitions that overlap in time, which is called \emph{concurrency}.
 Simultaneous state transitions, i.e., those that overlap in real time, require parallel physical resources.
 State transitions that are formed by sequential composition may be overlapped by interleaving the primitive transitions of the corresponding complex transitions.
 The result of concurrent state transitions that update the same (shared) state may be undefined.
@@ -76,7 +74,7 @@ The work presented in this dissertation is a step in this direction.
 Atomic transactions have been proposed as an alternative to locks when synchronizing multiple processes.
 The idea of an atomic transaction originated in the field of databases~\cite{Eswaran:1976:NCP:360363.360369}.
 Knight~\cite{Knight:1986:AMF:319838.319854} and then Herlihy and Moss~\cite{Herlihy:1993:TMA:165123.165164} proposed cache-based hardware support for atomic transactions.
-Hardware atomic transaction are forthcoming on modern processors~\cite{haswell}.
+Hardware atomic transactions are forthcoming on modern processors~\cite{haswell}.
 Software transactional memory, proposed by Shavit and Touitou~\cite{shavit1997software}, has sparked a great deal of interest and has been implemented in a number of languages, e.g., Clojure~\cite{halloway2009programming}.
 
 Another technique for designing and implementing reactive systems that is receiving renewed interest is promises and futures~\cite{friedman1976impact, ifip1975new}.
@@ -105,13 +103,13 @@ Node.js~\cite{Surhone:2010:NOD:1941165} and ECMA Script (JavaScript)~\cite{EcmaS
 \paragraph{UNITY and I/O automata.}
 The UNITY model of Chandy and Misra~\cite{chandy1989parallel} and the I/O automata model of Lynch~\cite{nancy1996distributed} are two influential models for reactive systems based on non-deterministic sequencing.
 Execution in these models proceeds with a scheduler repeatedly selecting a transition, evaluating its guard, and executing it if the guard evaluates to true.
-The scheduler is assumed to be fair meaning that it will select (but not necessary execute) a transition an infinite number of times in an infinite execution.
+The scheduler is assumed to be fair, meaning that it will select (but not necessary execute) a transition an infinite number of times in an infinite execution.
 Transitions correspond to \emph{(parallel) assignment statements} in the UNITY model and \emph{actions} in the I/O automata model.
 The UNITY model contains two means of composing programs which suggests that a model based on non-deterministic sequencing could support principled decomposition.
-Creating a program via the \emph{union} operation involves taking the union of the state variables (named-based equivalence) and assignment statements of the constituent programs.
+Creating a program via the \emph{union} operation involves taking the union of the state variables (name-based equivalence) and assignment statements of the constituent programs.
 \emph{Superposition} is a means of composition that transforms an underlying program into another.
 The transformation is allowed to add new state variables, add new assignment statements with the limitation that they only update new variables, and augment existing assignment statements but only by adding clauses that modify new variables.
-The size of the resulting program (measured in assignment statements) is on the order of the sum of the sizes of the two constituent programs (as opposed to the product).
+The size of the resulting program (measured in assignment statements) is on the order of the sum (as opposed to the product) of the sizes of the two constituent programs .
 %% This somewhat matches the intuition that the result of composition should be the sum of its parts as opposed to the product of its parts.
 
 Superposition is property-preserving while union is not property-preserving.
@@ -124,14 +122,14 @@ The absence of such a decomposition limits the algebraic treatment of superposit
 Furthermore, a description of augmentation seems to require intimate knowledge of statements in the underlying program.
 Appropriate syntactic mechanisms should be developed to solve some of these problems.
 \end{quotation}
-They go on to say that a restricted form of superposition, i.e., one that only adds variables and assignment statements, is equivalent to union and can be analyzed as such.
+They go on to note that a restricted form of superposition, i.e., one that only adds variables and assignment statements, is equivalent to union and can be analyzed as such.
 
 The essence of superposition is that a transition in one program can be linked to a transition in another program, i.e., parallel composition.
 Whereas UNITY lacks language support for doing so, the I/O automata~\cite{nancy1996distributed} model presents a partial solution by associating names with transitions (actions).
 Actions in different automata can then be composed on the basis of name matching.
 The I/O automata model defines three kinds of actions:  output actions, input actions, and internal actions.
-Output actions and internal actions, collectively called local actions, contain a guard and may be selected and executed by the scheduler.
-Input actions must be composed with an output action to be executed.
+Output actions and internal actions, collectively called local actions, contain guards and may be selected and executed by the scheduler.
+Each input action must be composed with an output action to be executed.
 Output actions can produce values that are consumed by input actions.
 Since the state of each I/O automaton is private, composition in I/O automata is property-preserving.
 
@@ -147,12 +145,12 @@ The IOA toolkit is an implementation of I/O automata focused on verification and
 The IOA toolkit does contain a source-to-source compiler (IOA to Java) and a run-time that has been used to compile and execute distributed protocols~\cite{georgiou2009automated}.
 
 \paragraph{Summary.}
-Formal models of reactive systems may be organized around sequential threads with shared variables, e.g., Cooperating Sequential Processes~\cite{dijkstra1965cooperating}, sequential threads with message-passing, e.g., Communicating Sequential Processes~\cite{hoare1978communicating}., atomic transitions with shared variables, e.g., UNITY~\cite{chandy1989parallel}, and atomic transitions with message-passing, e.g., I/O automata~\cite{nancy1996distributed}.
+Formal models of reactive systems may be organized around sequential threads with shared variables, e.g., Cooperating Sequential Processes~\cite{dijkstra1965cooperating}, sequential threads with message-passing, e.g., Communicating Sequential Processes~\cite{hoare1978communicating}, atomic transitions with shared variables, e.g., UNITY~\cite{chandy1989parallel}, and atomic transitions with message-passing, e.g., I/O automata~\cite{nancy1996distributed}.
 Models based on atomic transitions avoid reasoning about the interleaved execution of threads which may simplify reasoning about reactive systems.
 Combining atomic transitions with message passing (I/O automata) creates the opportunity for property-preserving composition which is problematic in models based on shared variables (UNITY).
 The model described in Chapter~\ref{model} extends the property-preserving composition techniques of I/O automata by permitting composition to an arbitrary depth and degree using the superposition technique of UNITY to link transitions in different modules in a principled way.
 
-Reactive semantics may be introduced via libraries or built into the language.
+Reactive semantics may be introduced via libraries or built into a language.
 Taking an inherently transformational language and introducing reactive semantics via a library may significantly alter the semantics of the language.
 With respect to language support, an inherently transformational language may be augmented with features to support reactive semantics or the language can be designed around a particular approach to reactive systems.
 Go with CSP-style primitives is an example of the former and Erlang as a realization of the Actor model is an example of the latter.
