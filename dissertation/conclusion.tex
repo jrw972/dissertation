@@ -3,35 +3,35 @@
 
 A reactive system is characterized by ``ongoing interactions with its environment''~\cite{manna1992temporal}.
 Asynchronous concurrency is a feature of reactive systems that makes them inherently difficult to develop.
-Reactive systems are already used in critical infrastructure and the number, diversity, and scale of reactive systems is expected to increase given the continuing proliferation of embedded, networked, and interactive systems.
-Decomposition and composition are two complementary techniques that we would like to use when designing and implementing reactive systems given such increases in complexity.
+Reactive systems are already used in various forms of critical infrastructure and the number, diversity, and scale of reactive systems is expected to increase given the continuing proliferation of embedded, networked, and interactive systems.
+Decomposition and composition are two complementary techniques that are helpful when designing and implementing reactive systems, especially given such increases in complexity.
 We argue that the dominant techniques based on multiple sequential threads/processes thwart decomposition and composition and thus contribute to the accidental complexity associated with reactive system development.
 
 Specifically, we believe that a model for reactive systems should facilitate \emph{principled} composition and decomposition.
 Beyond defining units of composition and a means of composition, a model for reactive systems should facilitate practical techniques like recursive encapsulation and behavior abstraction through interfaces.
 Composition should be compositional meaning that properties established independent of context are preserved through the composition process.
-Finally, units of composition should be subject to substitutional equivalence meaning that the definition of a unit of composition can be substituted for its use.
+Finally, units of composition should be subject to substitutional equivalence meaning that the definition of a unit of composition can be substituted for its use and vice versa.
 Substitutional equivalence allows a complex system to be reduced to a single unit and a complex unit to be decomposed into a system of simpler units.
 
 In Chapter~\ref{model}, we presented the \emph{reactive component} model for reactive systems.
-The reactive component model is based on models like UNITY and I/O automata in that computation is carried out via a sequence of atomic state transitions selected non-deterministically.
+The reactive component model is based on models like UNITY and I/O Automata in that computation is carried out via a sequence of atomic state transitions selected non-deterministically.
 To these models, reactive components adds facilities for recursive encapsulation and interfaces that facilitate third-party composition via explicit binding.
 A reactive component is a set of state variables, atomic state transitions, and ports.
 The state variables of a reactive component may only be updated by the transitions associated with that component to ensure compositionality.
-Ports have a passive and active side.
+Ports have passive and active sides.
 Push ports allow a transition in a component to synchronously induce a transition in another component while pull ports allow components to export and access values and state.
 An action is a transition with a precondition that can be executed by the scheduler.
 A reaction is a passive push port and transition that can be linked to an active push port to form an atomic transition that spans multiple components.
 A getter is a passive pull port and an expression that allows the state of a component to be accessed in a safe way.
 A transition is divided into two phases called the immutable phase and the mutable phase.
-Component may not change state in the immutable phase which allows their state to be shared via temporary values.
+Components may not change state in the immutable phase, which allows their state to be shared via temporary values.
 State is updated from the temporary values in the mutable phase of a transition.
 This division facilitates the composition of transitions in a principled way as it provides a clear interpretation of the state of a component before and after a transition.
 This, in turn, allows the properties derived from the state variables and transitions in one component to be linked to the properties of other components to facilitate compositional reasoning.
 
 The interface-based composition semantics of reactive components introduces the possibility of non-deterministic transitions.
 A non-deterministic state transition occurs when a state variable is updated in disparate ways in different sub-transitions.
-The detection of non-deterministic state transitions arising from composition is trivially undecidable.
+The detection of non-deterministic state transitions arising from composition is generally undecidable.
 However, allowing a reactive component instance to serve as a proxy for its state variables reduces the problem of detecting non-deterministic transitions to simple graph and set theoretic problems.
 
 Practicality was one of our goals when designing the reactive component model.
@@ -39,16 +39,16 @@ That is, we intended it to be implemented and used to design and build real-worl
 Thus, we presented the \rcgo{} programming language for reactive components in Chapter~\ref{language}.
 We adopted the Go programming language as the basis for \rcgo{} and added syntax and semantics to support the elements of the reactive component model.
 The major challenge when designing the language was supporting reference and move semantics while preserving the isolation of state between reactive components.
-Reference semantics are important as they allow the construction of arbitrary linked data structures and move semantic are important for efficient communication between reactive components.
+Reference semantics are important as they allow the construction of arbitrary linked data structures and move semantics are important for efficient communication between reactive components.
 Supporting these features required techniques from race-free programming languages.
 Thus, we added intrinsic and dereference mutability attributes to pointer types.
 Immutable dereference mutability is used to enforce the immutable phase of state transitions while foreign dereference mutability prevents pointers referring to a component's state from being saved by another component.
 To facilitate move semantics, we introduced a transferrable heap type which facilitates the construction and transfer of self-contained linked data structures.
 
 Chapter~\ref{implementation} described the implementation of key features for the \rcgo{} run-time system.
-The two major assumptions leveraged throughout the design of the run-time are 1) components instances serve as a proxy for their state variables and 2)~the reactive systems being implemented are static meaning that the number and configuration of the reactive components in the system are fixed.
+The two major assumptions leveraged throughout the design of the run-time system are 1) components instances serve as a proxy for their state variables and 2)~the reactive systems being implemented are static meaning that the number and configuration of the reactive components in the system are fixed.
 With these two assumptions we present an algorithm that checks for sound composition.
-The algorithm treats each transaction, i.e., a composed transition, as a graph with nodes corresponding to actions, reactions, activation statements, and push ports.
+The algorithm treats each transaction, i.e., a composed transition, as a graph with nodes corresponding to actions, reactions, activate statements, and push ports.
 This algorithm checks for non-deterministic transactions by ensuring that the graph contains no cycles and that a component instance participates in at most one non-empty activate statement.
 
 The execution of a transaction requires two passes over a transaction graph corresponding to the immutable phase and mutable phase.
@@ -59,29 +59,29 @@ The significance of this approach is that transactions can be executed efficient
 The interpreter for \rcgo{} uses garbage collection to reclaim memory.
 Garbage collection avoids dangling pointers which could threaten the isolation of state among component instances.
 All component state in \rcgo{} may be attributed to exactly one reactive component instance.
-This admits an embarrassingly parallel garbage collection algorithm as garbage collection can be performed on each component in parallel.
+This admits an embarrassingly parallel garbage collection algorithm, as garbage collection can be performed on each component in parallel.
 
-The scheduler is the most significant part of the \rcgo{} implementation.
-The scheduler has the responsibility of selecting and executing transactions with weak fairness.
+The schedulers described in Chapter~\ref{scheduler} are the most significant parts of the \rcgo{} implementation.
+A scheduler has the responsibility of selecting and executing transactions with weak fairness.
 The challenge when designing and implementing a scheduler is to convert the logically serial selection and execution of the reactive component model to physically concurrent selection and execution.
 To do this, the scheduler utilizes the composition analysis to determine which transactions may be executed in parallel.
-We present two scheduler implementations:  one is based on a globally shared work queue while the other is based on a random and static partitioning of the transactions.
+We present two scheduler implementations:  one is based on a globally shared work queue while the other is based on static partitioning of the transactions.
 To evaluate the scheduler, we simulate a number of rounds in a simple request-response protocol.
-In the first design, the \rcgo{} schedulers outperform a custom multi-thread implementation due to excessive context switching in the multi-threaded program.
-This suggests the reactive components are viable as a concurrent event-based approach to reactive systems.
+In the first design, the \rcgo{} schedulers outperform a custom multi-threaded implementation due to excessive context switching in the multi-threaded program.
+This suggests that reactive components are viable as a concurrent event-based approach to reactive systems.
 The request-response protocol was then rewritten to be more conducive to the test hardware.
 The results of this experiment show that additional work is required to raise the performance of the \rcgo{} interpreter to be on par with optimized libraries for multi-threading.
 
 \section{Conclusions}
 
-The reactive component model is a viable model for designing and implementing reactive systems.
+The reactive component model is viable for designing and implementing reactive systems.
 The main goal of this work is to reduce the accidental complexity associated with the design and implementation of reactive systems.
 We believe the source of this accidental complexity is the mismatch between the semantics of reactive systems and the sequential multi-threaded techniques used to implement them.
 Furthermore, we observe that sequential multi-threaded techniques fail to adequately manage complexity in the face of composition and decomposition.
 There are three main ideas in the reactive component model that make it a viable solution to these problems.
 First, the reactive component model addresses the semantics of reactive systems by interpreting computation in reactive systems as a non-deterministic sequence of atomic events which have the added benefit of composing well.
 Second, the reactive component model uses encapsulation to guarantee compositionality.
-The state of each reactive component instance may only be manipulated by the transitions of that component and therefore all properties established independent of context may be never be violated through subsequent composition.
+The state of each reactive component instance may only be manipulated by the transitions of that component and therefore properties established independent of context may be never be violated through subsequent composition.
 This principle extends to constellations of interacting (composed) components that are themselves encapsulated.
 Third, compound state transitions spanning multiple components are formed using parallel composition instead of sequential composition.
 Parallel composition as expressed through the immutable phase and mutable phase concepts in the reactive component model provides a clear interpretation of compound atomic transactions.
@@ -92,27 +92,27 @@ The first two properties are enforced through the type system and type checking 
 The detection of non-deterministic state transitions can only be performed once the set of concrete instances is known.
 The current algorithm leverages the static system assumption to create concrete transactions from compound transitions.
 These transactions can be checked in polynomial time.
-The key point is that the reactive component model does not rest on assumptions that cannot be realized in practice as all of these algorithms have been implemented.
+The key point is that the reactive component model does not rest on assumptions that cannot be realized in practice, as all of these algorithms have been implemented.
 
-There is evidence that a run-time for reactive components could be made efficient enough to compete with optimized multi-threaded approaches.
+There is evidence that a run-time system for reactive components could be made efficient enough to compete with optimized multi-threaded approaches.
 A common approach to implementing high-performance reactive systems is to use a number of concurrent event loops which maximizes the use of available cores while minimizing context switches.
-The scheduler implementations in Chapter~\ref{implementation} are examples of this kind of design.
+The scheduler implementations in Chapter~\ref{scheduler} are examples of this kind of design.
 The efficacy of this approach is seen in the first experiment where the reactive component schedulers outperform a multi-threaded implementation due to context switching.
-The second experiment demonstrates that additional work is necessary to improve the performance of the reactive component schedulers to make it comparable with custom multi-threaded implementations.
+The second experiment demonstrates that additional work is necessary to improve the performance of the reactive component schedulers to make them comparable to custom multi-threaded implementations.
 
 \section{Future Work}
 
 This dissertation has presented the reactive component model as an alternative to sequential threads for designing and implementing reactive systems.
-As a model, sequential thread-based computation is firmly entrenched in many areas of computation including hardware (synchronous sequential processors), operating systems (process and thread abstractions), and programming languages.
+As a model, sequential thread-based computation is firmly entrenched in many areas including hardware (synchronous sequential processors), operating systems (process and thread abstractions), and programming languages.
 Thus, we may consider possibilities such as hardware architectures specifically designed for reactive components and operating systems where the main abstraction is the reactive component or transaction instead of the thread.
 These topics are quite ambitious and additional work is required before these topics may be adequately addressed.
 First, we must generalize the reactive component model for dynamic systems (Section~\ref{dynamic_systems}).
 This is necessary as an operating system must be able to load and configure reactive components and many reactive applications are naturally formulated using dynamic configurations.
-Second, we must consider the problem of scheduling transactions as the scheduler will have a significant impact on the performance of reactive component applications (Section~\ref{future_scheduler}).
+Second, we must consider the problem of scheduling transactions, as the scheduler will have a significant impact on the performance of reactive component applications (Section~\ref{future_scheduler}).
 
 \subsection{Dynamic Systems}
 \label{dynamic_systems}
-Two assumptions were necessary to make tractable the analysis of systems of reactive components.
+Two assumptions were necessary to make the analysis of systems of reactive components tractable.
 First, we assume that a reactive component instance is a proxy for its state variables.
 Pull ports and getters reduce the impact of this assumption as a designer can decompose at will which yields more component instances for fine-grained analysis.
 Second, we assume that a reactive system has a fixed number of component instances in a fixed configuration.
@@ -126,21 +126,21 @@ It is theoretically possible to declare a component instance for the 65,536 port
 However, doing so in practice would be wasteful as only a subset of ports are active at any given time.
 Thus, we require the ability to dynamically allocate and bind component instances.
 
-Models like UNITY and I/O automata use parameterized models to reason about systems consisting of an arbitrary number of program instances.
+Models like UNITY and I/O Automata use parameterized models to reason about systems consisting of an arbitrary number of program instances.
 For the TCP/UDP port example, these models would assume that all 65,536 ports exist and are sent activate and deactivate messages as necessary.
-From in implementation perspective, it may be possible to use this idea and automatically allocate and deallocate resources for component instances when they receive activate and deactivate messages.
+From an implementation perspective, it may be possible to use this idea and automatically allocate and deallocate resources for component instances when they receive activate and deactivate messages.
 
-Providing support for dynamic sets of components and bindings requires contributions to the model, language, and implementation.
-The major contributions to the model include adding support for dynamic arrays or sets of components and parameterized bindings that allow a component to interact with a dynamically allocated component.
-The next step is mapping the decided upon semantics into the \rcgo{} programming language.
-Supporting dynamically allocated components and bindings in the implementation requires extending the check for sound composition and providing run-time support for the features in the language.
-Checking for sound composition in a system with dynamic sets of components requires the run-time to perform an inductive proof over all sets of dynamic components in the system.
-That is, the run-time must prove that all transactions remain deterministic when any set of components increases in size.
+Providing support for dynamic sets of components and bindings requires further extensions to the model, language, and implementation.
+The major extensions to the model would include adding support for dynamic arrays or sets of components and parameterized bindings that allow a component to interact with a dynamically allocated component.
+The next step then would be mapping the extended semantics into the \rcgo{} programming language.
+Supporting dynamically allocated components and bindings in the implementation also would require extending the check for sound composition and providing run-time support for the features in the language.
+Checking for sound composition in a system with dynamic sets of components would require the run-time system to perform an inductive proof over all sets of dynamic components in the system.
+That is, the run-time system must prove that all transactions remain deterministic when any set of components increases in size.
 
 The dynamic sets of components and bindings described so far are subject to static analysis as the dimensions of variability are expressed in the code.
-The next level of support involves unplanned variability where new component types and instances are loaded and bound.
+The next level of support would involved unplanned variability where new component types and instances are loaded and bound.
 Supporting this level of dynamism requires support for programmatic loading and binding including a service discovery mechanism that allows components to publish their existence and other components to find them.
-In the terms of enforcing the reactive component model, the check for sound composition must be performed at run-time and constitutes a form of admission control.
+In terms of enforcing the reactive component model, the check for sound composition must be performed at runtime and constitutes a form of admission control.
 Thus, additional work is needed to determine if the sound composition check can be modified for use in an on-line setting or if additional restrictions must be placed on the model to ensure an efficient on-line check.
 
 \subsection{Scheduler}
@@ -148,23 +148,23 @@ Thus, additional work is needed to determine if the sound composition check can 
 
 There are three main areas that may be addressed to improve the performance of the Instance and Partitioned schedulers.
 First, we may attempt to improve the efficiency of the schedulers through better design and implementation.
-The evaluation in Section~\ref{scheduler} can serve as a basis for future improvements.
-Second, we may attempt to eliminate the overhead of the Linux scheduler.
+The evaluation in Chapter~\ref{scheduler} can serve as a basis for future improvements.
+Second, we may attempt to reduce the overhead of the Linux scheduler.
 In Linux, the threads made available via the pthreads library are scheduled by the Linux kernel.
 The Instance and Partitioned schedulers, then, are themselves scheduled by the Linux kernel.
-Thus, it may be necessary to implement a scheduler for reactive components at the kernel level to eliminate this source of overhead.
+Thus, it may be necessary to implement a scheduler for reactive components at the kernel level to restrict this source of overhead.
 Third, we may move from interpretation to compilation.
 To test this idea, we timed a loop to sum the numbers in the range [0, 1,000,000) and averaged it over 1,000 runs for a C++ implementation and a reactive component implementation.
 The average time for the reactive component implementation was 0.1304896 seconds and the average time for the C++ implementation was 0.0009984909 seconds; a speed-up factor of 131.
 This is very much a ``back of the envelope'' calculation; the actual improvement in moving from interpretation to compilation may be less than this.
 
 We selected the AsyncClock and SyncClock systems to evaluate the schedulers because they are small enough to understand but complex enough to show interesting behavior.
-The actual computation performed by these systems is minimal, i.e., setting boolean flags and incrementing counters.
+The actual computation performed by these systems is minimal, i.e., setting Boolean flags and incrementing counters.
 Most likely, these operations can be performed in a single clock cycle (for compiled programs).
 One obvious direction for future work, then, is to experiment with complex transactions and varied workloads.
 However, it is important to consider the possibility that real workloads will contain computationally simple transactions such as those found in the clock systems.
 Furthermore, one of the motivations for decomposing systems is to break up complex systems into smaller, reusable, and easier to understand systems.
-The results in Section~\ref{scheduler} demonstrate the diminishing return where the transactions become so simple that execution is dominated by overhead, i.e., it is more efficient to serialize execution than execute actions in parallel.
+The results in Chapter~\ref{scheduler} demonstrate the diminishing return where the transactions become so simple that execution is dominated by overhead, i.e., it is more efficient to serialize execution than execute actions in parallel.
 Simple transactions are a foreseeable consequence of decomposition and designers should not be penalized for decomposing complex systems.
 Thus, one of the goals of scheduler design is to push the horizon of the diminishing return as far as possible.
 When coupled with responsiveness, the desired property in a scheduler is one whose throughput does not diminish with entanglement.
@@ -174,19 +174,19 @@ Two possible goals are to reduce the number of times a precondition is evaluated
 The reactive component model allows arbitrary Boolean expressions to be used as preconditions.
 One idea may be to eliminate preconditions and replace them with explicit scheduling instructions, but this may become tedious and error prone.
 A compromise solution may involve restricting the complexity of preconditions to simple Boolean expressions, i.e., with no function calls.
-With this restriction, it may become possible to determine which activation statements enable/disable a transaction.
+With this restriction, it may become possible to determine which activate statements enable/disable a transaction.
 
 To be safe, all concurrent schedulers require synchronization to protect the mutable state in a transaction.
 The approach taken by the oblivious Instance and Partitioned schedulers is to acquire locks protecting the state of each involved component before executing a transaction.
 The Partitioned scheduler demonstrates how asynchronous locking can be used to create a work-conserving scheduler.
-As indicated by the results in Section~\ref{scheduler}, a major challenge is to make synchronization as efficient as possible.
+As indicated by the results in Chapter~\ref{scheduler}, a major challenge is to make synchronization as efficient as possible.
 
 Another direction for future work is to explore options that accomplish synchronization without locking or with minimal locking.
 Partitioning combined with non-preemption may create opportunities to synchronize without locking.
 Let $u$ be a transaction assigned to a specific scheduler thread and let $I$ be the set of instances involved in $u$.
-Furthermore, let all transactions involving any component in $I$ be mapped to the same scheduler thread (the single-threaded schedulers described in Section~\ref{scheduler} do this by virtue of their design).
+Furthermore, let all transactions involving any component in $I$ be mapped to the same scheduler thread (the single-threaded schedulers described in Chapter~\ref{scheduler} do this by virtue of their design).
 In this scenario, no locks are needed for a safe execution of $u$ because all other transactions that could change the relevant component state are excluded from executing due to the non-preemptive nature of the scheduler.
-This phenomenon is illustrated graphically by coloring the nodes in an race graph according to the thread to which they have been assigned.
+This phenomenon is illustrated graphically by coloring the nodes in a race graph according to the thread to which they have been assigned.
 A transaction whose immediate neighbors all share the same color as the transaction itself can execute without acquiring locks.
 This suggests that algorithms that detect clusters of transactions in the race graph may be used to optimize the assignment of transactions to scheduler threads.
 
@@ -198,7 +198,7 @@ For example, the edges in the race graph could be weighted with the Jacquard Ind
 The merging algorithm must balance the goal of simplifying the locking with the goal of exploiting concurrency.
 For example, merging Request and Response eliminates the potential concurrency between Request and Tick in the \emph{AsyncClock} system.
 
-Similarity between instance sets suggests the idea that locks may be eliminated by fusing them together.
+Similarity between instance sets suggests that locks may be eliminated by combining them.
 To illustrate, the \emph{AsyncClock} system contains three locks corresponding to the three components.
 Suppose that the same lock is used to protect both the Client and the Server.
 This reduces the number of locks needed to execute the Request transaction from two to one and the number of locks needed to execute the Response transaction from three to two.
@@ -206,20 +206,20 @@ This reduces the number of locks needed to execute the Request transaction from 
 The challenges associated with locking invite us to step back and consider the fundamental aspects of the problem that necessitate a locking protocol.
 The scheduler designs put forth so far are distributed in the sense that each scheduler thread is making an independent decision about the next transaction to execute.
 Locking is the means by which the scheduler thread discovers the decisions made by the other scheduler threads to determine if the transaction under consideration is compatible with the transactions already chosen by the other threads.
-The locking protocol becomes unnecessary if the decisions made by the other threads are already available, i.e., a knowledgeable scheduler.
+The locking protocol becomes unnecessary if the decisions made by the other threads are already available, i.e., to a knowledgeable scheduler.
 This suggests that orchestration may be used to ensure safety in a multi-threaded scheduler without locking.
 In this model, a manager thread assigns transactions to scheduler threads who execute the transactions without acquiring locks.
 The primary job of the manager thread is to enforce safety by only allowing the concurrent execution of disconnected transactions in the race graph.
 This approach may make use of a dedicated manager thread (Producer-Consumer) or use the Leader-Follower pattern~\cite{schmidt2000pattern}.
 An efficient implementation of the scheduler state, especially if it is shared through the Leader-Follower pattern, is a concern for this kind of scheduler.
-For systems with a fixed set of transactions, a compiler may be able to generate a scheduling automaton by enumerating the scheduler states $S$, pruning unsafe states and transitions according the rules outlined in section~\ref{scheduling_problem}, pruning transitions to ensure fairness, etc.
-This formulation may have the advantage of yielding compact scheduler state.
+For systems with a fixed set of transactions, a compiler may be able to generate a scheduling automaton by enumerating the scheduler states $S$, pruning unsafe states and transitions according the rules outlined in Section~\ref{scheduling_problem}, pruning transitions to ensure fairness, etc.
+This formulation also may have the advantage of yielding compact scheduler state.
 
 Cache awareness and migration are two concerns that reactive component schedulers share with thread schedulers.
 Cache awareness attempts to improve the performance of a system by scheduling a computation on the same processor core because the state required for the computation may already be available in the cache.
 Thus, a reactive component scheduler may attempt to create an affinity between a transaction and a scheduler thread or processor core.
 Partitioning on the basis of shared component state satisfies this implicitly.
-Migration reassigns a computation to a different core to balance the load among the cores or free a core so that it may be shutdown.
+Migration reassigns a computation to a different core to balance the load among the cores or free a core so that it may be shut down.
 The challenge with respect to migration is to define load imbalance in a meaningful way.
 The migration algorithm will most likely be expressed as an optimization problem that attempts to find a global optimum for the throughput and latency of each action.
 
@@ -237,7 +237,7 @@ A preemptive scheduler for reactive components can take advantage of existing wo
 %% \item reactive components in hardware
 %% \item long running actions
 
-%% Another assumption we made when designing the language and run-time was the use of garbage collection.
+%% Another assumption we made when designing the language and run-time system was the use of garbage collection.
 %% For our purposes, garbage collection helps enforce the isolation of state between components by preventing dangling pointers.
 %% The independence of each component instance admitted a simple parallel garbage collection algorithm as garbage collection can be performed for each instance in parallel.
 %% The obvious alternative to garbage collection is automatic reference counting and existing work as represented by the Rust programming language indicates that this approach may be feasible even for low-level systems programming.
@@ -249,7 +249,7 @@ A preemptive scheduler for reactive components can take advantage of existing wo
 \section{Broader Impacts}
 
 Reactive systems have had a profound impact on society and will continue to impact society for the foreseeable future.
-Some reactive systems like the Internet and smart phones have high visibility and continue to amaze while others, like the army of micro-controllers present in a modern automobile or a home appliance, are less conspicuous but nevertheless help us with our daily activities and contribute to our safety and comfort.
+Some reactive systems like the Internet and smart phones have high visibility while others, like the army of micro-controllers present in a modern automobile or a home appliance, are less conspicuous but nevertheless help us with our daily activities and contribute to our safety and comfort.
 Some reactive systems, like pace makers, life support machines, and robotic surgical instruments, even have a direct impact on our health and well being.
 The goal of this research is to ensure the quality and reliability of reactive systems in the face of predicted increases in size, diversity, and complexity.
 

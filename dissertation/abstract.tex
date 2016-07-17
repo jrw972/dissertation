@@ -10,10 +10,10 @@ This dissertation makes four contributions to the state of the art in reactive s
 First, we propose a formal yet practical model for (asynchronous) reactive systems called \emph{reactive components}.
 A reactive component is a set of state variables and atomic transitions that can be composed with other reactive components to yield another reactive component.
 The transitions in a system of reactive components are executed by a weakly fair scheduler.
-The reactive component model is based on concepts from temporal logic and models like UNITY~\cite{chandy1989parallel} and I/O automata~\cite{nancy1996distributed}.
+The reactive component model is based on concepts from temporal logic and models like UNITY~\cite{chandy1989parallel} and I/O Automata~\cite{nancy1996distributed}.
 The major contribution of the reactive component model is a formal method for \emph{principled composition}, which ensures that 1) the result of composition is always another reactive component, for consistency of reasoning; 2) systems may be decomposed to an arbitrary degree and depth, to foster divide-and-conquer approaches when designing and re-use when implementing; 3)~the behavior of a reactive component can be stated in terms of its interface, which is necessary for abstraction; and 4) properties of reactive components established independent of context can never be violated, which permits assume-guarantee reasoning.
 
-Second, we develop a prototypical programming language for reactive components called \emph{\rcgo{}} as it based on the syntax and semantics of the Go programming language.
+Second, we develop a prototypical programming language for reactive components called \emph{\rcgo{}} that is based on the syntax and semantics of the Go programming language.
 The semantics of the \rcgo{} language enforce various aspects of the reactive component model, e.g., the isolation of state between components and safety of concurrency properties, while permitting a number of useful programming techniques, e.g., reference and move semantics for efficient communication among reactive components.
 For tractability, we assume that each system contains a fixed set of components in a fixed configuration.
 

@@ -250,10 +250,10 @@ The state variables are manipulated by the various assignment statements that co
 As in other formal models, the types of the state variables may be selected to make writing proofs easier.
 %% That is, the state variables have mathematically friendly types like integers, sets, and lists.
 However, implementations of the reactive component model must provide a concrete type system that allows the state variables to be realized on a given machine.
-For example, the language for reactive components in Chapter~\ref{language} uses the type system of Go to define the types of state variables.
+For example, the \rcgo{} language for reactive components presented in Chapter~\ref{language} of this dissertation uses the type system of Go to define the types of state variables.
 The type of a state variable also may be a reactive component type, which facilitates recursive encapsulation.
 For modeling purposes, state variables typically have \emph{value semantics} to avoid reasoning about references and aliasing.
-However, and as a practical concession, we will introduce pointers for building arbitrary linked data structures (since we advocate an imperative state-based implementation) and describe the issues of introducing pointers into the reactive component model in Chapter~\ref{language}.
+However, and as a practical concession, we will introduce pointers for building arbitrary linked data structures (since we advocate an imperative state-based implementation) and discuss issues raised by introducing pointers into the reactive component model in Chapter~\ref{language}.
 
 \subsection{Atomic State Transitions}
 The rest of the internal core of a reactive component is a set of atomic state transitions that manipulate the state variables.
@@ -297,18 +297,18 @@ Composition in the reactive component model is achieved by declaring sub-compone
 
 \subsection{Transactions}
 
-A \emph{transaction} is a compound and concrete state transition formed by expanding the activations in an instance/action pair subject to the bindings in a system.
+A \emph{transaction} is a compound and concrete state transition formed by expanding the activations in an instance/action pair, subject to the bindings in a system.
 The instance and action that define a transaction are called the \emph{root} of the transaction.
 A transaction is enabled/disabled if its root action is enabled/disabled.
 Given the root instance and action, we may enumerate the active push ports that may be activated by the transition of the action.
-Note that the activation of a push port is conditional being under the control of the transition.
+Note that the activation of a push port is conditional, being under the control of the transition.
 The push ports, in turn, activate reactions in particular component instances.
 The transitions associated with the reactions may activate other push ports and so on.
 This analysis can be repeated to discover all of the reactions that are linked to the root action.
 The result is a \emph{transaction graph} which is a directed acyclic graph $G = (N,E)$.
 Each node $n \in N$ is a pair $(i, x)$ where $i$ is a component instance and $x$ is either an action, reaction, activation, or push port.
-Each edge $e \in E$ corresponds to a causal relationship between an action/reaction and an activation, an activation and a push ports, or a push port and a reaction.
-The edges between actions/reactions and activations indicate that the action/reaction \emph{may} execute the activation as they may be conditionally executed.
+Each edge $e \in E$ corresponds to a causal relationship between an action/reaction and an activation, an activation and a push port, or a push port and a reaction.
+The edges between actions/reactions and activations indicate that the action/reaction \emph{may} execute the activation, as they may be conditionally executed.
 The edges between activations and push ports and between push ports and reactions indicate that the implied push port or reaction \emph{will} be executed if the upstream activation is executed.
 
 \subsection{Execution}
@@ -335,7 +335,7 @@ From this, we can conclude that the scheduler always selected $B_0$ when $b = fa
 
 We divide a state transition into two phases called the \emph{immutable phase} and the \emph{mutable phase}.
 Logically, a transition assigns values to a set of state variables.
-This can be modeled as a multiple assignment statement with a left-hand side (LHS) consisting of a list of state variables and a right-hand side (RHS) consisting of a list of expressions that provide the next value for the corresponding state variable.
+This can be modeled as a multiple assignment statement with a left-hand side (LHS) consisting of a list of state variables and a right-hand side (RHS) consisting of a list of expressions that provide the next value for each corresponding state variable.
 The immutable phase corresponds to the computation of the RHS in a state transition.
 The mutable phase corresponds to the update of the values on the LHS with the values on the RHS.
 When transitions are linked with composition, we must relate the mutable and immutable phase in one state transition to the mutable and immutable phases of the other transitions in the transaction.
@@ -445,7 +445,7 @@ component System {
     child {
       node (Push01) [push] {client.request}
       child {
-        node (Rection01) [reaction] {clock.request}
+        node (Reaction01) [reaction] {clock.request}
       }
     }
   }
@@ -482,7 +482,7 @@ component System {
     child {
       node (Push01) [push] {clock.clock}
       child {
-        node (Rection01) [reaction] {client.clock}
+        node (Reaction01) [reaction] {client.clock}
       }
     }
   }
@@ -602,13 +602,13 @@ Substituting the definition of the Clock component and Client components into th
     child {
       node (Push01) [push] {A.setPush1}
       child {
-        node (Rection01) [reaction] {B.setTrue}
+        node (Reaction01) [reaction] {B.setTrue}
       }
     }
     child {
       node (Push02) [push] {A.setPush2}
       child {
-        node (Rection02) [reaction] {B.setFalse}
+        node (Reaction02) [reaction] {B.setFalse}
       }
     }
   }
@@ -658,7 +658,7 @@ Two transactions can be safely executed concurrently if it can be shown that the
 As was previously mentioned, making this determination is undecidable for Turing-complete languages in the general case.
 However, the problem becomes decidable if the component instance is used as a proxy for its constituent state variables.
 Let $\mathit{rw}: t \to \{ \mathit{Read}, \mathit{Write} \}$ be a function that maps a transition to a value indicating that variables are read-only during the transition or written in some way.
-Two instance/transition pairs are independent ($\mathit{indp}$) if either the instances are different or at most one of the transition writes the variables of the instance:
+Two instance/transition pairs are independent ($\mathit{indp}$) if either the instances are different or at most one of the transitions writes to the variables of the instance:
 \begin{equation}
 \mathit{indp}((i_1, t_1), (i_2, t_2)): i_1 \ne i_2 \lor \lnot (\mathit{rw}(t_1) = \mathit{Write} \land \mathit{rw}(t_2) = \mathit{Write})
 \end{equation}

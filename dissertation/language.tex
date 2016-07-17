@@ -45,7 +45,7 @@ As two of our objectives are practicality and utility, our language for reactive
 The potential hazard created by reference semantics is that the state of one component becomes accessible in another component.
 This means that the state of a component may not be solely under the control of the transitions for that component.
 Consequently, the properties associated with that component could be violated by the other components manipulating that state.
-Furthermore, an implementation that chooses to concurrently execute seemingly independent transactions may cause data corruption since the concurrent transactions may manipulate the same state in an uncoordinated fashion.
+Furthermore, an implementation that chooses to execute seemingly independent transactions concurrently may cause data corruption since the concurrent transactions may manipulate the same state in an uncoordinated fashion.
 Thus, our implementation of reactive components must take special care to preserve isolation of state among reactive components when supporting references and linked data structures.
 
 \paragraph{Efficient inter-component communication.}
@@ -94,11 +94,11 @@ We will not discuss the syntax and semantics of Go except when they interact wit
 Our implementation of Go's types, declarations, statements, and expressions also is intentionally only as broad as is needed to demonstrate the contributions of this dissertation.
 
 In \rcgo{}, actions, reactions, getters, initializers, and bindings are expressed using Go's syntax for methods.
-Component types are constructed using the syntax of structs.
+Component types are constructed using the syntax of \verb+struct+s.
 Push ports and pull ports are fields of a component.
 To enforce the immutable phase and facilitate checks for reference semantics, we introduce syntax that prevents the abuse of pointers.
 Activations in the model correspond to activate statements which activate push ports and contain the mutable phase of a state transitions.
-Move semantics are realized through a new \emph{tranferrable heap} type and associated operations.
+Move semantics are realized through a new \emph{transferable heap} type and associated operations.
 The main features that we remove from Go are go routines, i.e., threads, and channels which are used for CSP-style communication.
 
 Designing a programming language for reactive components using a different foundation language (or set of foundation languages) would require a different approach and may yield different results.
@@ -338,7 +338,7 @@ var y **uint = new (*uint);
 *y = x;                            // Illegal
 var z $foreign *uint = x;          // Legal
 \end{verbatim}
-The third line is illegal because the lvalue given by \verb+*x+ is immutable.
+The third line of the code fragment above is illegal because the lvalue given by \verb+*x+ is immutable.
 The fourth line is illegal because it casts away the \verb|$foreign| attribute of \verb+x+.
 (Notice that declaring \verb+y+ with \verb|$foreign| would cause the lvalue to be immutable.)
 The fifth line is legal because the lvalue is mutable and the \verb|$foreign| attribute is preserved.
@@ -370,7 +370,7 @@ The following checks are applied to assignment statements:
 %%   \caption{Intrinsic and dereference mutability for various operations\label{mutability}.  The possible choices for segment are constant, stack or heap (includes the component segment).  The possible choices for the intrinsic and dereference mutability are mutable, immutable, and foreign.}
 %% \end{table}
 
-\begin{table}
+\begin{table}[H]
   \centering
   \begin{tabular}{cccc}
               & Mutable & Immutable & Foreign \\
@@ -534,7 +534,7 @@ Thus, the bodies of activate statements form the mutable phase of the transactio
 Actions and reactions return, i.e., their flow of control is halted, after the execution of the body of a activate statement.
 Activate statements guarded by \verb+if+ statements facilitate \emph{conditional activation}.
 An activate statement may not appear in another activate statement.
-Our implementation of activation statements is described in Section~\ref{activations}.
+Our implementation of activate statements is described in Section~\ref{activations}.
 
 \paragraph{Arrays.}
 A homogeneous group of sub-components may be declared using array syntax.
@@ -612,7 +612,7 @@ The root variable will be set to \verb+nil+ if the heap is no longer valid.
 Within the scope of the \verb+change+ statement, all other variables and parameters that may contain pointers are re-entered with foreign dereference immutability.
 This enforces the isolation of heaps by preventing the heap from storing a pointer that refers to a location in another heap.
 
-Logically, the runtime maintains a stack of heaps.
+Logically, the run-time system maintains a stack of heaps.
 The top of the stack is called the \emph{active heap} and is used to service all memory allocation requests.
 On entering an action or reaction, the stack of heaps contains a single heap:  the heap associated with the receiver component.
 A \verb+change+ statement pushes a new heap on the stack.
@@ -657,8 +657,9 @@ The example consists of four kinds of components.
 First, there is a \verb+Variable+ component which represents a shared variable.
 \verb+Process+ components access the shared variable and report the status of the shared variable to \verb+User+ components.
 A top-level \verb+System+ component instantiates the shared variable, three processes, and three users to create a complete system.
+Figure~\ref{variable} shows the \verb+Variable+ component.
 
-\begin{figure}
+\begin{figure}[h]
 \begin{verbatim}
 type Variable component {
     value int;
@@ -682,7 +683,8 @@ getter (this $const * Variable) Get () int {
 \label{variable}
 \end{figure}
 
-Figure~\ref{variable} shows the \verb+Variable+ component.
+\clearpage
+
 A \verb+Variable+ component has a single integer state variable named \verb+value+.
 This variable is initialized to the sentinel value -1 in the initializer \verb+Init+.
 Notice that the initializer has a pointer receiver \verb+(this *Variable)+.
@@ -696,8 +698,6 @@ The final element of the \verb+Variable+ component is the getter \verb+Get+ that
 Since getters are not allowed to change the state of the component, they must be declared with immutable dereference mutability \verb+(this $const * Variable)+.
 
 \begin{figure}
-\begingroup
-\fontsize{9pt}{11pt}\selectfont
 \begin{verbatim}
 type ProcessStatus int;
 const PROCESS_IDLE = 0;
@@ -728,7 +728,13 @@ reaction (this $const * Process) initr (v int) {
         }
     }
 }
+\end{verbatim}
+\cprotect\caption{Code listing for \verb+Process+ component (part 1)}
+\label{process1}
+\end{figure}
 
+\begin{figure}
+\begin{verbatim}
 action (this $const * Process) _access (this.status == PROCESS_ACCESS) {
     x := this.get_x ();
     if x == -1 {
@@ -752,12 +758,11 @@ action (this $const * Process) _decide (this.status == PROCESS_DECIDE) {
     }
 }
 \end{verbatim}
-\endgroup
-\cprotect\caption{Code listing for \verb+Process+ component}
-\label{process}
+\cprotect\caption{Code listing for \verb+Process+ component (part 2)}
+\label{process2}
 \end{figure}
 
-Figure~\ref{process} shows the \verb+Process+ component.
+Figures~\ref{process1}~and~\ref{process2} shows the \verb+Process+ component.
 The listing begins by defining the states for a process, that is, a process is either idle, ready to access the shared variable, ready to decide, or done.
 A \verb+Process+ component consists of three state variables:  \verb+status+ contains the state of the process, \verb+input+ contains a value received from the \verb+User+, and \verb+output+ contains the value that will be sent to the \verb+User+.
 The \verb+Process+ component contains a pull port \verb+get_x+ that will be bound to the shared variable's \verb+Get+ getter so that the \verb+Process+ may access the shared variable.
@@ -797,13 +802,20 @@ Thus, the state of the component logically flows from idle, to access, to decide
 
 The preceding two paragraphs illustrate how the reactive component model and the proposed programming language achieve principled composition.
 The behavior of a component can be determined by only examining the text of the component.
-The is possible due to the strong guarantees that 1) component state cannot be manipulated outside of an action or reaction, 2) actions and reactions are logically atomic, and 3) the scheduler will eventually select and execute all enabled actions.
+This is possible due to the strong guarantees that 1) component state cannot be manipulated outside of an action or reaction, 2) actions and reactions are logically atomic, and 3) the scheduler will eventually select and execute all enabled actions.
 For compositional reasoning, the behavior of a component can be abstracted and stated in terms of assumptions and guarantees~\cite{Jones:1983:TST:69575.69577} about its interface elements, namely, push ports, reaction, pull ports, and getters.
 For example, a \verb+Process+ component will decide the value of the shared variable when initialized via the \verb+initr+ reaction.
 
+Figure~\ref{user1} shows the \verb+User+ component.
+The \verb+User+ component has three states indicating the user is waiting to make a request, waiting for a response, or done.
+The first state variable \verb+v+ contains the value sent in the request to a \verb+User+.
+The \verb+status+ state variable contains the state of the \verb+User+.
+The \verb+decision+ state variable contains the value of the response.
+The \verb+error+ state variable is a flag indicating that an error has occurred.
+\verb+User+ components contain a push port \verb+initp+ that sends the requested value to the corresponding \verb+Process+.
+The \verb+Init+ initializer sets the requested value to the supplied parameter, the state of the \verb+User+ to request, the \verb+decision+ variable to the sentinel value of -1, and the \verb+error+ flag to false.
+
 \begin{figure}
-\begingroup
-\fontsize{9pt}{11pt}\selectfont
 \begin{verbatim}
 type UserStatus int;
 const USER_REQUEST = 0;
@@ -824,7 +836,13 @@ init (this *User) Init (v int) {
     this.decision = -1;
     this.error = false;
 }
+\end{verbatim}
+\cprotect\caption{Code listing for \verb+User+ component (part 1)}
+\label{user1}
+\end{figure}
 
+\begin{figure}
+\begin{verbatim}
 action (this $const * User) _init (this.status == USER_REQUEST || this.error) {
     activate initp (this.v) {
         if !this.error {
@@ -849,25 +867,17 @@ reaction (this $const * User) Decide (v int) {
     }
 }
 \end{verbatim}
-\endgroup
-\cprotect\caption{Code listing for \verb+User+ component}
-\label{user}
+\cprotect\caption{Code listing for \verb+User+ component (part 2)}
+\label{user2}
 \end{figure}
 
-Figure~\ref{user} shows the \verb+User+ component.
-The \verb+User+ component has three states indicating the user is waiting to make a request, waiting for a response, or done.
-The first state variable \verb+v+ contains the value sent in the request to a \verb+User+.
-The \verb+status+ state variable contains the state of the \verb+User+.
-The \verb+decision+ state variable contains the value of the response.
-The \verb+error+ state variable is a flag indicating that an error has occurred.
-\verb+User+ components contain a push port \verb+initp+ that sends the requested value to the corresponding \verb+Process+.
-
-The \verb+Init+ initializer sets the requested value to the supplied parameter, the state of the \verb+User+ to request, the \verb+decision+ variable to the sentinel value of -1, and the \verb+error+ flag to false.
-The \verb+_init+ action moves the \verb+User+ component from the request state to the waiting state while initializing the corresponding \verb+Process+ component via the \verb+initp+ push port.
+The \verb+_init+ action shown in Figure~\ref{user2} moves the \verb+User+ component from the request state to the waiting state while initializing the corresponding \verb+Process+ component via the \verb+initp+ push port.
 The \verb+_dummy+ action and the treatment of the \verb+error+ flag by the \verb+_init+ action are for consistency with~\cite{nancy1996distributed}.
 The \verb+Decide+ reaction prints out the identity of the \verb+User+ and the value received by the \verb+User+.
 If the \verb+User+ is not in an error condition and waiting for a response, then the value of the decision is recorded and the \verb+User+ changes to the done state.
 Otherwise, the \verb+error+ flag is set meaning that the corresponding \verb+Process+ activated the \verb+Decide+ reaction before the \verb+_init+ action.
+
+\clearpage
 
 \begin{figure}
 \begin{verbatim}
@@ -1020,7 +1030,7 @@ As expected, the value returned to each \verb+User+ is consistent with how the \
 
 \subsection{Heap Channel System}
 
-In this example, we demonstrate how the \verb+heap+ data type may be used to transfer objects between components for efficient communciation.
+In this example, we demonstrate how the \verb+heap+ data type may be used to transfer objects between components for efficient communication.
 The example consists of two components:  a top-level \verb+System+ component and a \verb+Channel+ component.
 The \verb+Channel+ component is a reliable FIFO channel based on the Channel Automaton of~\cite{nancy1996distributed}.
 The \verb+System+ component transfers 100 messages to the \verb+Channel+ component which then transfers the same 100 messages back to the \verb+System+.
@@ -1136,13 +1146,13 @@ The reactive components of \rcgo{} are similar to the monitors of Guava in that 
 The approach taken by the languages cited thus far is to demonstrate freedom from data races through the type system exclusively.
 The type system of \rcgo{} is weaker than these languages in that it is only possible to prove that objects are not shared between components via \verb+foreign+ dereference mutability.
 The check for sound composition alluded to in Section~\ref{determinism} and described in Section~\ref{sound_composition} ensures that individual transactions are free from data races.
-As described in Section~\ref{execution} and Section~\ref{scheduler}, the scheduler has the responsibility of scheduling transactions in a way that avoids data races between transactions.
+As described in Section~\ref{execution} and Chapter~\ref{scheduler}, the scheduler has the responsibility of scheduling transactions in a way that avoids data races between transactions.
 
 \section{Summary}
 This chapter has presented the \rcgo programming language for reactive components.
 An implementation of reactive components tests whether the assumptions upon which the model rests are practical.
 Our approach is to design new programming language syntax and semantics to capture and enforce the semantics of reactive components.
-As a matter of practicality, we impose support for reference semantics which allow developers to use linked data structures and the ability to transfer data structures from one component to another.
+As a matter of practicality, we impose support for reference semantics which allow developers to use linked data structures and support for transferring data structures from one component to another.
 The corresponding features are a declarable dereference mutability that allows components to treat pointers as foreign and a transferable heap data type that represents a self-contained linked data structure.
 Components are expressed as a collection of fields (similar to a \verb+struct+).
 Ports (push and pull) are expressed as fields of a component.
@@ -1154,7 +1164,7 @@ The \rcgo{} programming language presented in this chapter allows developers to 
 First, a developer need not identify shared state and add appropriate locking because state is not shared between components and each action/reaction is atomic.
 Second, a developer need not worry about the consequences of composition.
 In paradigms where composition is accomplished through synchronous function call, developers must determine the conditions in which it is safe to transfer control to a function.
-In the reactive component paradigm, the semantics of activate statements and ports provide strong guarantees when composing and checking for illegal composition becomes the responsibility of the runtime environment (Section~\ref{sound_composition}).
+In the reactive component paradigm, the semantics of activate statements and ports provide strong guarantees when composing and checking for illegal composition, which is the responsibility of the run-time system (Section~\ref{sound_composition}).
 Third, developers are no longer burdened with mapping an inherently non-deterministic sequence of events onto one or more sequential threads of control.
 Combined, the features of the model and language allow developers to reason about the behavior of individual components by only examining their text.
-This, in turn, allows the behavior of a component to be abstracted which facilitates reasoning about components is the context of composition by using assume-guarantee reasoning~\cite{Jones:1983:TST:69575.69577}.
+This, in turn, allows the behavior of a component to be abstracted which facilitates reasoning about components in the context of composition by using assume-guarantee reasoning~\cite{Jones:1983:TST:69575.69577}.

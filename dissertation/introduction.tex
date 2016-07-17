@@ -19,7 +19,7 @@ The activities of input, processing, and output are thus recurring and often ove
 Designers of reactive programs then must often reason about infinite event sequences containing interleaved input, processing, and output.
 A web server is a example of a reactive program as it repeatedly receives requests, processes them, and sends responses.
 Reactive systems include operating systems, databases, networked applications, interactive applications, and embedded systems.
-A number of formal models have been developed to reason about reactive systems, and include the Calculus of Communicating Systems~\cite{milner1982calculus}, the Algebra of Communicating Processes~\cite{bergstra1982fixed}, Cooperating Sequential Processes~\cite{dijkstra1965cooperating}, Communicating Sequential Processes~\cite{hoare1978communicating}, Kahn process networks~\cite{kahn1974semantics}, the Actor Model~\cite{hewitt1973universal}\cite{clinger1981foundations}\cite{agha1985actors}, UNITY~\cite{chandy1989parallel}, and I/O automata~\cite{nancy1996distributed}.
+A number of formal models have been developed to reason about reactive systems, and include the Calculus of Communicating Systems~\cite{milner1982calculus}, the Algebra of Communicating Processes~\cite{bergstra1982fixed}, Cooperating Sequential Processes~\cite{dijkstra1965cooperating}, Communicating Sequential Processes~\cite{hoare1978communicating}, Kahn Process Networks~\cite{kahn1974semantics}, the Actor Model~\cite{hewitt1973universal}\cite{clinger1981foundations}\cite{agha1985actors}, UNITY~\cite{chandy1989parallel}, and I/O Automata~\cite{nancy1996distributed}.
 
 Asynchronous concurrency is a fundamental characteristic of reactive systems that makes them difficult to design and develop.
 Concurrency refers to the idea that a reactive program and its environment may act at the same time.
@@ -84,7 +84,7 @@ Timing bugs can escape even a rigorous software development process and may lay 
 Furthermore, timing bugs are notoriously difficult to diagnose, inspiring the term \emph{heisenbug}, a bug that disappears or changes its behavior when someone is attempting to find it (because the debugging process alters the timing of the program)~\cite{1983proceedings}.
 Timing bugs can cost many hours of debugging time and can lead to a poor user experience, e.g., a non-responsive device or application, and loss of revenue, e.g., when an advertisement service cannot be used while a server reboots.
 
-Introducing asynchronous concurrency into the imperative programming paradigm places a burden on developers as they must explicitly identify the statement sequences that must atomic.
+Introducing asynchronous concurrency into the imperative programming paradigm places a burden on developers as they must explicitly identify the statement sequences that must be atomic.
 The misuse of synchronization primitives, which becomes likely as state transitions become complex, may introduce concurrency hazards (e.g., deadlock~\cite{dijkstra1965cooperating}) which manifest themselves as timing bugs.
 
 A number of design patterns for concurrency have been developed to help developers avoid concurrency hazards~\cite{schmidt2000pattern}, \cite{lea2000concurrent}.
@@ -173,14 +173,14 @@ A model adhering to these principles facilitates and supports \emph{principled c
 Principled composition requires language support for interfaces, definitions, and substitutional equivalence.
 A variety of useful domains including mathematical expressions, object-oriented programming, functional programming, and digital logic circuits support principled composition.
 
-Reactive programs based on threads are not subject to principled decomposition and composition.
+Reactive programs based on threads are not necessarily subject to principled decomposition and composition.
 To illustrate, consider three imperative reactive programs (threads) $A$, $X$, and $Y$ where $A$ is composed of $X$ and $Y$.
 Principled composition requires that the definition of $A$ can be formed by substituting the definitions of $X$ and $Y$.
 To preserve the reactive semantics when composing $X$ and $Y$, one must consider all pairs of transitions, i.e., the Cartesian product, which represents all possible interleavings between the two statement sequences.
 The result of composition then is a two-dimensional torus where each node represents a compound state, each edge represents a transition, and each direction corresponds to executing a statement in $X$ and/or $Y$.
 Appropriate measures must be taken to ensure that all transitions, i.e., all vertical, horizontal, and diagonal moves in the torus, are well-defined, i.e., explicit atomicity.
 We observe that 1)~no existing platforms support the direct definition of such tori and 2)~reasoning about a two-dimensional torus (or $N$-dimensional for $N$ composed sequences) is qualitatively different that reasoning about a single sequence.
-Thus, reactive programs based on the imperative programming paradigm are not subject to recursive encapsulation and substitutional equivalence.
+Thus, reactive programs based on the imperative programming paradigm are not necessarily subject to recursive encapsulation and substitutional equivalence.
 
 \section{Approach and Contributions}
 

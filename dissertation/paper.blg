@@ -6,6 +6,7 @@ A level-1 auxiliary file: background.aux
 A level-1 auxiliary file: model.aux
 A level-1 auxiliary file: language.aux
 A level-1 auxiliary file: implementation.aux
+A level-1 auxiliary file: scheduler.aux
 A level-1 auxiliary file: conclusion.aux
 The style file: plain.bst
 Database file #1: paper.bib
@@ -24,7 +25,7 @@ Warning--can't use both volume and number fields in larus1988detecting
 Warning--empty journal in patrick1987general
 You've used 100 entries,
             2118 wiz_defined-function locations,
-            1049 strings with 18159 characters,
+            1050 strings with 18172 characters,
 and the built_in function-call counts, 31783 in all, are:
 = -- 3243
 > -- 1185
