@@ -160,6 +160,7 @@ Thus, when attempting to understand an entity resulting from composition, one ne
 To illustrate, consider a system $X$ that is a pipeline formed by composing a filter system $F$ with reliable FIFO channel system $C$.
 This principle states that the properties of the composed Filter-Channel $X$ can be expressed in terms of the properties of the Filter $F$ and Channel $C$.
 %% The more interesting question is if the properties of $X$ can be systematically derived from $F$ and $C$ as this facilitates hierarchical reasoning.
+Compositionality requires the ability to establish properties for units of composition that cannot be invalidated through subsequent composition.
 
 \item Units of composition should have some notion of substitutional equivalence.
 If a unit of composition $X$ contains a unit of composition $Y$, then a unit of composition $X'$ formed by substituting the definition of $Y$ into $X$ should be equivalent to $X$.

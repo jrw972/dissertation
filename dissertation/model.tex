@@ -260,7 +260,8 @@ The rest of the internal core of a reactive component is a set of atomic state t
 A precise definition of the atomicity of state transitions will be deferred to the subsequent sections on composition (Section~\ref{composition}) and execution (Section~\ref{execution}).
 State variables and state transitions are private, meaning that transitions can only refer to the state variables of the associated reactive component and a transition in one reactive component can only be linked to a transition in another component through the composition mechanisms.
 Thus, all initialization and updates to state variables can be determined by examining the transitions of the corresponding component.
-Thus, composition is \emph{compositional}, meaning that a property established for a reactive component independent of context can never be violated since the set of transitions from which the properties were derived is fixed.
+The encapsulation of state variables contribute to composition being \emph{compositional}.
+All properties established from the transitions of a component will continue to hold as the component participates in composition since the set of transitions that affect the state variables is fixed.
 State transitions must be deterministic meaning that the next value of every state variable is uniquely and well defined.
 State transitions defined by a sequence of simple assignments are implicitly deterministic.
 However, special care must be take to ensure that state transitions are deterministic when described using parallel assignment statements as the same variable may appear on the left-hand-side and be assigned two different values~\cite{chandy1989parallel}.
@@ -757,7 +758,7 @@ component Clock {
 \label{factored2_clock_component}
 \end{figure}
 
-Pull ports are subject to a compositional hazard similar to the recursive activation hazard of push ports.
+Pull ports are subject to a hazard of composition similar to the recursive activation hazard of push ports.
 A cycle in the graph of composed pull ports is equivalent to a recursively defined function.
 The recursion may be bounded but this is undecidable in the general case.
 Consequently, an implementation may reject recursively defined getters and pull ports.
