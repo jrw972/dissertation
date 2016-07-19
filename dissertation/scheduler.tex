@@ -1,7 +1,7 @@
 \chapter{Transaction Scheduler}
 \label{scheduler}
 
-A scheduler is responsible for selecting and executing transactions according to the weak fairness criteria set forth in Chapter~\ref{model}.
+A scheduler is responsible for executing transactions according to the fairness criteria set forth in Chapter~\ref{model}.
 Of particular interest is the design and implementation of general-purpose schedulers that are capable of executing transactions in parallel.
 The main inputs to a scheduler are the transactions enumerated by the composition analysis.
 The access sets calculated for each transaction are used by concurrent schedulers to avoid non-deterministic state transitions.
@@ -12,15 +12,13 @@ The two concrete implementations described later will draw upon the designs of t
 \label{scheduling_problem}
 
 A scheduler is responsible for mapping transactions to processor cores so that they can be executed according to the semantics of reactive components.
-As described in Chapter~\ref{model}, concurrent execution is modeled by a scheduler that serially and repeatedly selects and executes atomic transactions according to weak fairness, which means that an enabled transaction must eventually be selected and executed.
+As described in Chapter~\ref{model}, concurrent execution is modeled by a scheduler that serially and repeatedly executes atomic transactions according to fairness, which means that all enabled transaction must eventually be executed.
 A scheduler implementation supporting concurrent execution must take care to preserve the fairness and atomicity required by the model.
-A scheduler is \emph{fair} if it meets the weak-fairness criteria set forth in Chapter~\ref{model}.
+A scheduler is \emph{fair} if it executes each transaction an infinite number of times or terminates by reaching a fixed point.
 A scheduler is \emph{safe} if it avoids conditions where one transaction is changing the state of a component while another transaction is reading or writing the same state.
 The execution of a transaction in a safe scheduler is logically atomic.
 
-A scheduler is \emph{responsible} if it only terminates when the precondition for every transaction is false.
-Such a state is called a \emph{fixed point}.
-A scheduler may terminate responsibly when the system reaches a fixed point, because no action will be selected and executed, meaning that no component will change state.
+A scheduler is \emph{responsible} if it only terminates when a fixed point has been reached.
 Termination is not a requirement for a scheduler, but it is useful from the perspective of testing and evaluation.
 We are interested in designing fair, safe, and responsible schedulers, as these schedulers enforce the semantics of reactive components.
 
@@ -153,30 +151,30 @@ A scheduler is safe if it only enters safe states:
 %%   \mathit{next}(t) = \{ s \in candidates(t) : safe(s) \}
 %% \end{equation}
 
-In a weakly fair scheduler, an enabled transaction cannot be postponed indefinitely.
-Argument by contradiction is one approach to demonstrating that a scheduling algorithm is weakly fair.
-If one assumes that a scheduler is not weakly fair, then there must be some scheduler state $s(t_c)$ that contains a transaction $u$ that is enabled in every subsequent state but never executed.
+In a fair scheduler, an enabled transaction cannot be postponed indefinitely.
+Argument by contradiction is one approach to demonstrating that a scheduling algorithm is fair.
+If one assumes that a scheduler is not fair, then there must be some scheduler state $s(t_c)$ that contains a transaction $u$ that is enabled in every subsequent state but never executed.
 The ``enabledness'' described in the previous sentence is not the value $p$ in the definition of $s_u(t)$ which is the value known by the scheduler.
 Rather, it refers to the actual value of the precondition based on the state contained in the component instance.
 The argument is completed by demonstrating that the scheduler does in fact execute $u$.
-For example, a scheduler that processes transactions in first-in first-out (FIFO) order eventually selects and executes every transaction in the queue.
+For example, a scheduler that processes transactions in first-in first-out (FIFO) order eventually executes every transaction in the queue.
 
 A scheduler design must reconcile the forces arising from the basic execution model, fairness, safety, and efficiency.
 The basic execution model forces the scheduler to establish preconditions (Equation~\ref{pre_establish}) before executing the immutable and mutable phases (Equation~\ref{pre_true}).
-Weak fairness compels the scheduler to select and execute certain transactions while safety compels the scheduler to avoid selecting and executing certain transactions (Equation~\ref{race}).
+Fairness compels the scheduler to execute certain transactions while safety compels the scheduler to avoid executing certain transactions (Equation~\ref{race}).
 With respect to efficiency, a scheduler design may attempt to exploit the concurrency available in the set of transactions through parallel execution.
 
 To illustrate the interplay among these forces, consider a concurrent and work-conserving scheduler.
 Let the system consist of the set of transactions $S \cup \{ \tau \}$ where $S$ is a set of transactions that are safe with respect to each other and $\tau$ is a transaction that is not safe with respect to all transactions in $S$.
 Thus, at any given time, the scheduler can be executing transactions in $S$ or $\tau$.
 Suppose the scheduler is concurrently executing two transactions from $S$.
-When one of the transactions terminates, the scheduler must select another transaction since it is work conserving.
-For safety, the scheduler will select another transaction from $S$ as it is unsafe to select and execute $\tau$.
+When one of the transactions terminates, the scheduler must immediately execute another transaction since it is work conserving.
+For safety, the scheduler will execute another transaction from $S$ as it is unsafe to execute $\tau$.
 This pattern of behavior induced by the work conserving nature of the scheduler may perpetually deny service to $\tau$.
-For fairness, the scheduler must refrain from selecting another transaction to execute so that the $\tau$ transaction can be serviced.
+For fairness, the scheduler must refrain from executing another transaction so that the $\tau$ transaction can be serviced.
 Thus, with respect to parallel and concurrent execution, a scheduler design must balance gains in performance from exploiting parallelism with the requirement of fairness.
 
-The scheduling problem for reactive components, then, is:  given a set of active transactions, select the next transaction for evaluation (precondition) or execution (immutable and mutable phase) subject to weak fairness and safety.
+The scheduling problem for reactive components, then, is:  given a set of active transactions, select the next transaction for evaluation (precondition) or execution (immutable and mutable phase) subject to fairness and safety.
 
 \section{Scheduler Classes}
 
@@ -221,7 +219,7 @@ The goal of the following discussion is to introduce some of the issues when des
 We will describe the concurrent schedulers in terms of \emph{threads}, which may be dedicated to physical processor cores or scheduled on one or more cores by an operating system.
 
 %% \paragraph{Scheduler criteria.}
-%% A scheduler is \emph{fair} if it meets the weak-fairness criteria set forth in Chapter~\ref{model}.
+%% A scheduler is \emph{fair} if it meets the fairness criteria set forth in Chapter~\ref{model}.
 %% A scheduler is \emph{safe} if it avoids conditions where one transaction is changing the state of the component while another transaction is reading or writing the same state.
 %% A scheduler is \emph{responsible} if it only terminates when the precondition for every action is false.
 %% Obviously, we are interested in fair, safe, and responsible schedulers as these schedulers enforce the semantics of reactive components.
@@ -234,7 +232,7 @@ This design may be appropriate in the context of uniprocessor embedded systems w
 The scheduler repeatedly cycles through the list of transactions, evaluating the precondition of each transaction and executing the immutable and mutable phases if the precondition was true.
 If no transaction is executed in a cycle, then the scheduler terminates.
 This scheduling algorithm is fair by virtue of the strict round-robin policy, safe from the fact that it is serial and non-preemptive, and responsible by definition.
-The \emph{selection efficiency} of a scheduler is the number of transactions that must be selected before executing a transaction or terminating.
+The \emph{selection efficiency} of a scheduler is the number of transactions that must be selected before executing an enabled transaction or terminating.
 The selection efficiency of this algorithm is $O(|T|)$ as illustrated by a system where one transaction that is perpetually enabled while all of the other transactions are perpetually disabled.
 
 \paragraph{Serial scheduler with a transaction work queue.}

@@ -792,9 +792,9 @@ The \verb+Process+ component requires the ability to interrogate the value of th
 The state transitions of a \verb+Process+ component can be determined by tracing the \verb+status+ variable.
 A \verb+Process+ component starts in the idle state according to the \verb+Init+ initializer.
 The \verb+Process+ will stay idle until its \verb+initr+ reaction is activated at which point it will enter the access state.
-Given the weak fairness guarantees of the scheduler, the \verb+_access+ action will eventually be selected and executed as the \verb+Process+ is in the access state.
+Given the fairness guarantees of the scheduler, the \verb+_access+ action will eventually be executed as the \verb+Process+ is in the access state.
 The execution of \verb+_access+ is governed by an \verb+if+ statement but both branches set the state of the \verb+Process+ component to decide.
-Given the same weak fairness guarantees, the \verb+_decide+ action will eventually be selected and executed as the \verb+Process+ is in the decide state.
+Given the same fairness guarantees, the \verb+_decide+ action will eventually be executed as the \verb+Process+ is in the decide state.
 The \verb+_decide+ action unconditionally sets the state of the component to done.
 There is no way for a \verb+Process+ component to leave the done state as all of its actions are conditioned on the \verb+Process+ being in either the access or decide state.
 Similarly, the \verb+initr+ reaction only moves the \verb+Process+ from the idle to the access state.
@@ -802,7 +802,7 @@ Thus, the state of the component logically flows from idle, to access, to decide
 
 The preceding two paragraphs illustrate how the reactive component model and the proposed programming language achieve principled composition.
 The behavior of a component can be determined by only examining the text of the component.
-This is possible due to the strong guarantees that 1) component state cannot be manipulated outside of an action or reaction, 2) actions and reactions are logically atomic, and 3) the scheduler will eventually select and execute all enabled actions.
+This is possible due to the strong guarantees that 1) component state cannot be manipulated outside of an action or reaction, 2) actions and reactions are logically atomic, and 3) the scheduler will eventually execute all enabled actions.
 For compositional reasoning, the behavior of a component can be abstracted and stated in terms of assumptions and guarantees~\cite{Jones:1983:TST:69575.69577} about its interface elements, namely, push ports, reaction, pull ports, and getters.
 For example, a \verb+Process+ component will decide the value of the shared variable when initialized via the \verb+initr+ reaction.
 
@@ -1125,7 +1125,7 @@ The final statement in the reaction prints a message.
 The system consists of two transactions:  one that creates and transfers the heap from the \verb+System+ to the \verb+Channel+ and another that transfers the heap from the \verb+Channel+ to the \verb+System+.
 The output of the program, then, consists of 100 lines indicating that a message was sent and 100 lines indicating that a message was received.
 Each line of output contains the message number.
-Based on the weak fairness of the scheduler we expect 1) the 100 send lines to be in order, 2)~the 100 receive lines to be in order, and 3) the send line for message $n$ appears before the receive line for message $n$.
+Based on the fairness of the scheduler we expect 1) the 100 send lines to be in order, 2)~the 100 receive lines to be in order, and 3) the send line for message $n$ appears before the receive line for message $n$.
 
 \section{Related Work}
 

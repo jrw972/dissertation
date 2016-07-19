@@ -199,7 +199,7 @@ After presenting necessary background and related work in Chapter~\ref{backgroun
 In Chapter~\ref{language}, we present \rcgo{}:  a programming language for reactive components based on the Go programming language.
 For tractability, we assume systems with a fixed number of components in a fixed configuration.
 Chapter~\ref{implementation} describes the implementation of an interpreter for \rcgo{} including the algorithm that checks a system for sound composition, a calling convention for transitions, the implementation of move semantics, and an approach to file descriptor I/O.
-Chapter~\ref{implementation} also describes the design, implementation, and an evaluation of two concurrent weakly fair schedulers.
+Chapter~\ref{implementation} also describes the design, implementation, and an evaluation of two concurrent schedulers.
 The schedulers are compared to a custom multi-threaded application for two reactive systems.
 For one system, the reactive component implementation outperforms the custom application while the custom application outperforms the reactive component implementation for the other system.
 The results demonstrate that reactive components may be a viable alternative to threads but additional work is necessary to generalize this claim.

@@ -13,7 +13,7 @@ The semantic checks include type checking and enforcement of intrinsic and deref
 The code generation phase converts the AST into a tree of stack operations.
 The composition check synthesizes transactions and checks them for soundness (Section~\ref{sound_composition}).
 The execution phase begins by initializing component instances by calling the initializer associated with each instance.
-The scheduler then proceeds by selecting and executing transactions according to weak fairness (Chapter~\ref{scheduler}).
+The scheduler then proceeds by executing transactions according to the fairness criteria of Chapter~\ref{scheduler}.
 The scheduler implementations use the POSIX threads (pthreads) library for concurrent execution and synchronization.
 The code is available on GitHub\footnote{https://github.com/jrw972/rc}.
 
@@ -614,7 +614,7 @@ First, the state of each reactive component is isolated which allows garbage col
 Second, garbage collection can be framed as an action to be executed by the scheduler.
 Thus, associated with each component is an action that invokes the garbage collector on the implicit and explicit heaps of the corresponding component.
 Furthermore, the action is considered to modify the state of the component which prevents all transactions involving the component from executing concurrently with the garbage collection action.
-We assume that the scheduler selects the garbage collection action often enough that no additional invocations of the garbage collector are necessary.
+We assume that the scheduler executes the garbage collection action often enough that no additional invocations of the garbage collector are necessary.
 More plainly, we do not trigger the garbage collector in the allocation routine, which is the approach taken by many systems using garbage collection.
 Most garbage collection algorithms include a scan of the call stack as objects reachable from the call stack must not be collected.
 In our approach, such scanning is useless since the call stack is empty when executing the garbage collection action and the root object is embedded in the implicit heap that is being collected.
@@ -634,9 +634,9 @@ Our approach consists of two steps.
 The first step is to add file descriptors and operations for manipulating them, such as read and write, to the \rcgo{} language.
 The second step was to wrap file descriptors in reactive components to make their functionality available via a conventional reactive component interface.
 
-The main consideration when supporting file descriptors was to ensure that reads and writes were non-blocking, as a blocking read or write may violate weak fairness.
+The main consideration when supporting file descriptors was to ensure that reads and writes were non-blocking, as a blocking read or write may violate fairness.
 A transaction that blocks on a read or write would adversely affect the latency and throughput of the scheduler as the scheduler thread would be blocked and not able to service other transactions.
-Furthermore, a blocking transaction holds the locks for all components involved in that transaction, and other enabled transactions that also involve those components would be denied service which also violates the weak fairness requirement of the scheduler.
+Furthermore, a blocking transaction holds the locks for all components involved in that transaction, and other enabled transactions that also involve those components would be denied service which also violates the fairness requirement of the scheduler.
 To prevent these problems, all file descriptors when they are created are set to be non-blocking.
 Thus, all subsequent reads and writes are also non-blocking.
 

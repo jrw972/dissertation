@@ -102,8 +102,8 @@ Node.js~\cite{Surhone:2010:NOD:1941165} and ECMA Script (JavaScript)~\cite{EcmaS
 
 \paragraph{UNITY and I/O Automata.}
 The UNITY model of Chandy and Misra~\cite{chandy1989parallel} and the I/O Automata model of Lynch~\cite{nancy1996distributed} are two influential models for reactive systems based on non-deterministic sequencing.
-Execution in these models proceeds with a scheduler repeatedly selecting a transition, evaluating its guard, and executing it if the guard evaluates to true.
-The scheduler is assumed to be fair, meaning that it will select (but not necessary execute) a transition an infinite number of times in an infinite execution.
+In these models, a scheduler repeatedly executes transitions selected non-deterministically from the set of possible transitions.
+The scheduler is assumed to be fair, meaning that it will execute a transition an infinite number of times in an infinite execution.
 Transitions correspond to \emph{(parallel) assignment statements} in the UNITY model and \emph{actions} in the I/O Automata model.
 The UNITY model contains two means of composing programs which suggests that a model based on non-deterministic sequencing could support principled decomposition.
 Creating a program via the \emph{union} operation involves taking the union of the state variables (name-based equivalence) and assignment statements of the constituent programs.
@@ -128,7 +128,7 @@ The essence of superposition is that a transition in one program can be linked t
 Whereas UNITY lacks language support for doing so, the I/O Automata~\cite{nancy1996distributed} model presents a partial solution by associating names with transitions (actions).
 Actions in different Automata can then be composed on the basis of name matching.
 The I/O Automata model defines three kinds of actions:  output actions, input actions, and internal actions.
-Output actions and internal actions, collectively called local actions, contain guards and may be selected and executed by the scheduler.
+Output actions and internal actions, collectively called local actions, contain guards and may be executed by the scheduler.
 Each input action must be composed with an output action to be executed.
 Output actions can produce values that are consumed by input actions.
 Since the state of each I/O automaton is private, composition in the I/O Automata model is property-preserving.
@@ -157,8 +157,8 @@ Go with CSP-style primitives is an example of the former and Erlang as a realiza
 Language support has the potential to raise the level of abstraction and provides the opportunity to check and enforce reactive semantics.
 To date, the main focus areas of languages designed around the atomic transition paradigm have been parallel computing and simulation.
 The \rcgo{} language presented in Chapter~\ref{language} of this dissertation instead focuses on practical concerns of software engineering such a reference semantics for the efficient implementation of data structures, move semantics for efficient communication, and the isolation of state for property-preserving composition.
-Similarly, there are few results concerning the design, implementation, and evaluation of weakly-fair schedulers, which are a necessary piece of run-time systems that support atomic transitions.
-Chapter~\ref{implementation} of this dissertation describes the design, implementation, and evaluation of two concurrent weakly-fair schedulers.
+Similarly, there are few results concerning the design, implementation, and evaluation of fair schedulers, which are a necessary piece of run-time systems that support atomic transitions.
+Chapter~\ref{implementation} of this dissertation describes the design, implementation, and evaluation of two concurrent fair schedulers.
 
 %% Andrews and Schneider survey preliminary work in reactive systems which grew out of operating systems research and was concerned with reactive programs based on deterministic sequencing~\cite{andrews1983concepts}.
 %% We argue that the ideas and techniques in \cite{andrews1983concepts}, e.g., coroutines, fork/join, spin locks, semaphores, conditional critical regions (condition variables), monitors (active objects, thread-safe interface), message passing, remote procedure call, atomic transactions (databases, software-transactional memory), are still representative of the state of the art in reactive systems.

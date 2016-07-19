@@ -171,7 +171,8 @@ A passive push port names the corresponding transition that will be executed whe
 This combination of passive push port and transition is called a \emph{reaction} because it reacts to a transition in another component.
 
 The atomic linkage of a transition in one component to a transition in another component through the push port mechanism allows the properties of each component to be related to one another and more complex systems to be constructed by composing simpler systems.
-Transitions that are not executed via a passive push port have a precondition that nominates them for execution by a weakly fair scheduler.
+Transitions that are not executed via a passive push port are executed by the scheduler.
+A transition of this kind may be governed by a Boolean expression called a \emph{precondition}.
 The combination of a precondition and transition is called an \emph{action} because it is a voluntary transition under the control of the containing component.
 
 An \emph{active pull port} represents an immutable external data dependency.
@@ -314,25 +315,15 @@ The edges between activations and push ports and between push ports and reaction
 
 \subsection{Execution}
 \label{execution}
-As with UNITY~\cite{chandy1989parallel} and I/O Automata~\cite{nancy1996distributed}, we assume the existence of a weakly fair scheduler that \emph{selects} and \emph{executes} enabled transactions.
-Selection is \emph{serial}, meaning that one transaction is considered (and therefore executed) at a time.
-Thus, each action is atomic with respect to all other actions.
-Selection is also \emph{non-deterministic}, meaning that the scheduler is free to select any enabled transaction according to weak fairness (which is described below).
-This falls in line with the common practice of modeling concurrency with non-deterministically scheduled atomic actions as is done in UNITY~\cite{chandy1989parallel}, I/O Automata~\cite{nancy1996distributed}, and the Actor Model~\cite{agha1985actors}.
-
-A \emph{trace} is the sequence of transactions executed by the scheduler.
-Weak fairness says that all transactions are selected an infinite number of times in any infinite run of the system.
-
-The key point to understanding weak fairness is the difference between selection and execution.
-To illustrate, consider a system consisting of a single Boolean flag $b$ that is initially false and three transactions labeled $A$, $B_0$, and $B_1$.
-Transaction $A$ is enabled when $b = false$ and sets $b$ to true.
-Transactions $B_0$ and $B_1$ are enabled when $b = true$ and set $b$ to false.
-A trace for this system is a string from the regular expression $(A(B_0|B_1))^*$.
-Thus, an infinite trace will contain an infinite number of $A$s.
-However, the same trace may contain an infinite number of $B_0$s with no $B_1$s, an infinite number of $B_1$s with no $B_0$s, or some combination of $B_0$s and $B_1$s.
-The extreme cases of traces with no $B_0$s or $B_1$s illustrate weak fairness.
-Assume the trace contains no $B_1$s.
-From this, we can conclude that the scheduler always selected $B_0$ when $b = false$, which occurred an infinite number of times.
+We adopt the common practice of modeling concurrency with non-deterministically executed atomic actions as is done in UNITY~\cite{chandy1989parallel}, I/O Automata~\cite{nancy1996distributed}, and the Actor Model~\cite{agha1985actors}.
+The execution of transactions is performed by a \emph{scheduler}.
+The scheduler executes one transaction at a time, thus, each transaction is \emph{atomic} with respect to all other transactions.
+A transaction is \emph{enabled} if its precondition is true.
+When executing a transaction, the scheduler first evaluates the precondition and then executes the body of the transaction if the transaction is enabled.
+Thus, executing an enabled transaction \emph{may} result in a state change while executing a disabled transaction \emph{never} causes a state change.
+The scheduler is \emph{fair} meaning that each transaction is executed an infinite number of times.
+The system may reach a \emph{fixed point} where all transactions are disabled.
+The order in which transactions are executed is not determined, thus, execution is \emph{non-deterministic}.
 
 We divide a state transition into two phases called the \emph{immutable phase} and the \emph{mutable phase}.
 Logically, a transition assigns values to a set of state variables.
@@ -654,7 +645,7 @@ Substitutional equivalence implies that the process of substituting the definiti
 %% One motivation for extracting sub-components is to support the software engineering practice of refactoring where common code is extracted so that it can be reused in various places.
 
 Another motivation for decomposition is potentially increased performance through parallelism.
-Recall that true concurrency in reactive Components is modeled as the non-deterministic selection and serial execution of actions.
+Recall that true concurrency in reactive components is modeled as the serial and non-deterministic execution of atomic actions.
 Two transactions can be safely executed concurrently if it can be shown that the state variables involved in each transaction are disjoint.
 As was previously mentioned, making this determination is undecidable for Turing-complete languages in the general case.
 However, the problem becomes decidable if the component instance is used as a proxy for its constituent state variables.

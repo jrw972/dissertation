@@ -62,8 +62,8 @@ All component state in \rcgo{} may be attributed to exactly one reactive compone
 This admits an embarrassingly parallel garbage collection algorithm, as garbage collection can be performed on each component in parallel.
 
 The schedulers described in Chapter~\ref{scheduler} are the most significant parts of the \rcgo{} implementation.
-A scheduler has the responsibility of selecting and executing transactions with weak fairness.
-The challenge when designing and implementing a scheduler is to convert the logically serial selection and execution of the reactive component model to physically concurrent selection and execution.
+A scheduler has the responsibility of executing transactions with fairness.
+The challenge when designing and implementing a scheduler is to convert the logically serial execution of the reactive component model to physically concurrent execution.
 To do this, the scheduler utilizes the composition analysis to determine which transactions may be executed in parallel.
 We present two scheduler implementations:  one is based on a globally shared work queue while the other is based on static partitioning of the transactions.
 To evaluate the scheduler, we simulate a number of rounds in a simple request-response protocol.

@@ -9,7 +9,7 @@ Based on these problems with the state of the art, we believe a new model for de
 This dissertation makes four contributions to the state of the art in reactive systems.
 First, we propose a formal yet practical model for (asynchronous) reactive systems called \emph{reactive components}.
 A reactive component is a set of state variables and atomic transitions that can be composed with other reactive components to yield another reactive component.
-The transitions in a system of reactive components are executed by a weakly fair scheduler.
+The transitions in a system of reactive components are executed by a scheduler.
 The reactive component model is based on concepts from temporal logic and models like UNITY~\cite{chandy1989parallel} and I/O Automata~\cite{nancy1996distributed}.
 The major contribution of the reactive component model is a formal method for \emph{principled composition}, which ensures that 1) the result of composition is always another reactive component, for consistency of reasoning; 2) systems may be decomposed to an arbitrary degree and depth, to foster divide-and-conquer approaches when designing and re-use when implementing; 3)~the behavior of a reactive component can be stated in terms of its interface, which is necessary for abstraction; and 4) properties of reactive components established independent of context can never be violated, which permits assume-guarantee reasoning.
 
@@ -20,7 +20,7 @@ For tractability, we assume that each system contains a fixed set of components 
 Third, we provide an interpreter for the \rcgo{} language to test the practicality of the assumptions upon which the reactive component model are founded.
 The interpreter contains an algorithm that checks for composition hazards like recursively defined transitions and non-deterministic transitions.
 Transitions are executed using a novel calling convention that can be implemented efficiently on existing architectures.
-The run-time system also contains two weakly fair schedulers that use the results of composition analysis to execute non-interfering transitions concurrently.
+The run-time system also contains two schedulers that use the results of composition analysis to execute non-interfering transitions concurrently.
 Fourth, we compare the performance of each scheduler in the interpreter to the performance of a custom compiled multi-threaded program, for two reactive systems.
 For one system, the combination of the implementation and hardware biases it toward an event-based solution, which was confirmed when the reactive component implementation outperformed the custom implementation due to reduced context switching.
 For the other system, the custom implementation is not prone to excessive context switches and outperformed the reactive component implementations.
