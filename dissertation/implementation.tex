@@ -1,7 +1,7 @@
-\chapter{Implementation and Evaluation}
+\chapter{Implementation}
 \label{implementation}
 
-This chapter presents the algorithm for checking composition; the implementation of activations, heaps, and (two) schedulers; and I/O facilities for an interpreter designed for the \rcgo programming language presented in Chapter~\ref{language}.
+This chapter presents the algorithm for checking composition, the implementation of activations and heaps, and I/O facilities for an interpreter designed for the \rcgo programming language presented in Chapter~\ref{language}.
 
 \section{Interpreter Organization and Implementation}
 \label{interpreter}
@@ -9,13 +9,13 @@ This chapter presents the algorithm for checking composition; the implementation
 The interpreter consists of a scanner, a parser, a sequence of semantic checks, a code generation phase, composition checks, and an execution phase.
 The interpreter is implemented in C++.
 Flex and Bison were used to implement the scanner and parser, respectively.
-The semantic checks include type checking and enforcement of intrinsic and dereference mutability as set forth in Chapter~\ref{language}.
+The semantic checks include type checking and enforcement of intrinsic and indirection mutability as set forth in Chapter~\ref{language}.
 The code generation phase converts the AST into a tree of stack operations.
 The composition check synthesizes transactions and checks them for soundness (Section~\ref{sound_composition}).
 The execution phase begins by initializing component instances by calling the initializer associated with each instance.
 The scheduler then proceeds by executing transactions according to the fairness criteria of Chapter~\ref{scheduler}.
 The scheduler implementations use the POSIX threads (pthreads) library for concurrent execution and synchronization.
-The code is available on GitHub\footnote{https://github.com/jrw972/rc}.
+The code is available on GitHub\footnote{\href{https://github.com/jrw972/rcgo}{https://github.com/jrw972/rcgo}}.
 
 \section{Enforcing Sound Composition}
 \label{sound_composition}
@@ -162,7 +162,7 @@ The possible access patterns include:
 \end{description}
 The current implementation uses a conservative static analysis of the body of an activate statement to determine if the activation mutates the state of the component.
 For composition analysis, state variable access need only be determined for the mutable phase.
-However, also performing a similar analysis for the immutable phase and precondition provides a complete description of state access in a transaction, which is used by multi-threaded schedulers to determine which transactions can be executed in parallel.
+However, performing a similar analysis for the immutable phase and precondition provides a complete description of state access in a transaction, which is used by multi-threaded schedulers to determine which transactions can be executed in parallel.
 
 The check for non-deterministic transactions continues by confirming that all possible executions of a transaction are deterministic in two steps.
 First, two \emph{access sets} are computed for each node in the transaction.
@@ -299,6 +299,7 @@ The ordinary call mechanism in the \rcgo{} run-time system is similar to the C-d
 It assumes the existence of an \emph{instruction pointer}, which contains the address of the currently executing instruction, and a \emph{base pointer} that points to a location in the stack, which can be offset to access arguments and local variables.
 An ordinary call in the language is accomplished through the following sequence:
 \begin{enumerate}
+\item (Caller) Create space for return values.
 \item (Caller) Push arguments onto the stack, left to right.
 \item (Caller) Push the instruction pointer onto the stack and transfer control to the body of the function, method, action, reaction, getter, or initializer.
 \item (Callee) Push the base pointer onto the stack and set the base pointer to the top of the stack.
@@ -306,6 +307,7 @@ An ordinary call in the language is accomplished through the following sequence:
 \item (Callee) Execute the body of the function, method, etc.
 \item (Callee) Pop the stack, pop and restore the base pointer, pop and restore the instruction pointer.
 \item (Caller) Pop the arguments.
+\item (Caller) Pop the return values.
 \end{enumerate}
 The major difference between this calling convention and C-decl is that the arguments are pushed in the opposite order to match the semantics of Go.
 The collection of arguments, previous instruction pointer, previous base pointer, and reserved space is called a \emph{stack frame} (or \emph{call frame}).
@@ -320,10 +322,12 @@ For this presentation, we assume that the stack grows down, i.e., the previous b
 \begin{tikzpicture}
 %% component boundary
 
-\draw (0,1) -- (0,7);
-\draw (5,1) -- (5,7);
+\draw (0,1) -- (0,8);
+\draw (5,1) -- (5,8);
 
-\node at (2.5, 6.5) { ... };
+\node at (2.5, 7.5) { ... };
+\draw (0,7) -- (5, 7);
+\node at (2.5, 6.7) { return values };
 \draw (0,6) -- (5,6);
 \node at (2.5, 5.5) { arguments };
 \draw (0,5) -- (5,5);
@@ -341,7 +345,8 @@ For this presentation, we assume that the stack grows down, i.e., the previous b
 \end{tikzpicture}
 \endgroup
 }%
-\caption{Diagram of a stack frame\label{frame}.  The stack is depicted as growing down.}
+\caption[Diagram of a stack frame]{Diagram of a stack frame.  The stack is depicted as growing down.}
+\label{frame}
 \end{figure}
 
 \paragraph{Push ports.}
@@ -480,7 +485,8 @@ Control is transferred to the previous instruction pointer which contains the bo
 \end{tikzpicture}
 \endgroup
 }%
-\caption{Diagram of the stack after the immutable phase when an action activates a single reaction.\label{activation_ex_1}}
+\caption[Diagram of the stack after the immutable phase for single action-reaction]{Diagram of the stack after the immutable phase when an action activates a single reaction}
+\label{activation_ex_1}
 \end{figure}
 
 \paragraph{Example:  one action, one reaction.}
@@ -569,7 +575,7 @@ Heaps are exposed to users via pointers to heaps, e.g., \verb+*heap int+.
 These pointers to heaps can be stored in objects allocated in another heap.
 The semantics of \verb+change+, \verb+merge+, and \verb+move+ ensure that the parent-child relationships formed by pointers to heaps match exactly those known by the run-time system.
 The two rules that enforce this behavior are that 1) \verb+merge+ and \verb+move+ fail for any heap that is already on the stack of active heaps and 2) all pointers in scope become foreign in the body of a change statement.
-The second rule forces the user to \verb+move+ heaps if they desire to change the hierarchy, because pointers with foreign dereference mutability cannot be stored.
+The second rule forces the user to \verb+move+ heaps if they desire to change the hierarchy, because pointers with foreign indirection mutability cannot be stored.
 Recall that the stack of active heaps is set up by active \verb+change+ statements.
 Using the inductive argument that the parent-child relationship was previously correct, then the ancestors of the active heap must all appear in the stack of active heaps.
 Thus, failing to \verb+merge+ and \verb+move+ heaps on the active stack prevents the formation of cycles.
@@ -596,7 +602,7 @@ Thus, failing to \verb+merge+ and \verb+move+ heaps on the active stack prevents
 \end{tikzpicture}
 \endgroup
 %%}%
-\cprotect\caption{Example illustrating heap links.  The objects on the far left represent user-level pointers to heaps, e.g., \verb+* heap int+.  The middle object is a heap link, which contains the address of the child heap that appears on the far right.}
+\cprotect\caption[Heap link example]{Example illustrating heap links.  The objects on the far left represent user-level pointers to heaps, e.g., \verb+* heap int+.  The middle object is a heap link, which contains the address of the child heap that appears on the far right.}
 \label{heap_link}
 \end{figure}
 
@@ -645,19 +651,18 @@ The goal in doing so is to allow a thread to service multiple file descriptors a
 To map this concept into reactive components, we introduced a \verb+readable+ function that tests if a file descriptor is ready for reading and a \verb+writable+ function that tests if a file descriptor is ready for writing.
 These functions are intended to be used in preconditions so that an action becomes enabled when the corresponding file descriptor is ready.
 
-The \verb+readable+ and \verb+writable+ functions are also used as part of the termination protocol.
+The \verb+readable+ and \verb+writable+ functions are also used as part of the termination protocol of the Partitioned scheduler described in Section~\ref{scheduler_implementation}.
 When the termination protocol enters the checking phase where it attempts to prove that every precondition is false, it records which file descriptors are being checking for readability and writability.
 If the termination protocol proves that all preconditions are false but some preconditions depend on readability or writability, it enters a state where it waits for one of the file descriptors to become ready.
 This allows a system of reactive components to sleep while it waits for external input like a message from a remote host or a timer.
-Currently, the Partitioned scheduler described in Chapter~\ref{scheduler} is the only scheduler that supports this behavior.
 
 Conceptually, a file descriptor contains component state and should be subject to all of the constraints of normal component state.
 The two main constraints are 1) it cannot be shared by another component and 2) it cannot change in the immutable phase of a transaction.
 To enforce the first constraint, file descriptors are implemented as dynamically allocated opaque data structures.
-Forcing dynamic allocation makes file descriptors subject to the pointer sharing rules, i.e., they can only be shared via foreign dereference mutability in the immutable phase.
+Forcing dynamic allocation makes file descriptors subject to the pointer sharing rules, i.e., they can only be shared via foreign indirection mutability in the immutable phase.
 Making the data structure opaque prevents sharing through copying.
 The normal immutable phase rules in concert with properly declared built-in functions prevent file descriptors from changing in the immutable phase.
-That is, functions like \verb+read+ and \verb+write+ require a pointer to a file descriptor with mutable dereference mutability.
+That is, functions like \verb+read+ and \verb+write+ require a pointer to a file descriptor with mutable indirection mutability.
 
 To test these ideas, we implemented a Simple Network Time Protocol (SNTP) client.
 SNTP attempts to acquire the current time from a server while simultaneously measuring a round-trip latency to determine an accurate local time.

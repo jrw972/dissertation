@@ -58,7 +58,7 @@ Embedded systems continue to proliferate due to advances in hardware that contin
 Individuals, businesses, and governments are also deploying networks of sensors and actuators to monitor, control, and coordinate critical infrastructures such as power grids and telecommunication networks.
 These advances also have led to platforms for individual users, such as smart phones, e-readers, and tablets.
 Applications for these personal platforms are necessarily interactive and therefore reactive.
-The leveling-off of processor speeds and the resulting trend toward multicore processors is also creating demand for reactive systems, as increases in performance must come through increasingly concurrent applications~\cite{sutter2005software}.
+The leveling-off of processor speeds and the resulting trend toward multi-core processors is also creating demand for reactive systems, as increases in performance must come through increasingly concurrent applications~\cite{sutter2005software}.
 
 A general trend toward distribution is also driving demand for reactive systems.
 Increasingly, network services form the core (or are at least a critical component) of many applications and are fundamental to delivering the content (e.g., downloading books and movies) and communication (e.g., using social media) that drive the application.
@@ -160,7 +160,7 @@ Thus, when attempting to understand an entity resulting from composition, one ne
 To illustrate, consider a system $X$ that is a pipeline formed by composing a filter system $F$ with reliable FIFO channel system $C$.
 This principle states that the properties of the composed Filter-Channel $X$ can be expressed in terms of the properties of the Filter $F$ and Channel $C$.
 %% The more interesting question is if the properties of $X$ can be systematically derived from $F$ and $C$ as this facilitates hierarchical reasoning.
-Compositionality requires the ability to establish properties for units of composition that cannot be invalidated through subsequent composition.
+Compositionality requires the ability to establish properties for units of composition that cannot be violated through subsequent composition.
 
 \item Units of composition should have some notion of substitutional equivalence.
 If a unit of composition $X$ contains a unit of composition $Y$, then a unit of composition $X'$ formed by substituting the definition of $Y$ into $X$ should be equivalent to $X$.
@@ -195,11 +195,11 @@ The composability of transitions allows developers to create complex state trans
 This relieves developers from needing a holistic understanding of the call graph when composing a complex state transition.
 
 This research makes the following contributions to the state of the art in reactive system development.
-After presenting necessary background and related work in Chapter~\ref{background}, we present a novel reactive component model in Chapter~\ref{model}.
+After presenting necessary background and related work in Chapter~\ref{background}, we present the novel reactive component model in Chapter~\ref{model}.
 In Chapter~\ref{language}, we present \rcgo{}:  a programming language for reactive components based on the Go programming language.
 For tractability, we assume systems with a fixed number of components in a fixed configuration.
 Chapter~\ref{implementation} describes the implementation of an interpreter for \rcgo{} including the algorithm that checks a system for sound composition, a calling convention for transitions, the implementation of move semantics, and an approach to file descriptor I/O.
-Chapter~\ref{implementation} also describes the design, implementation, and an evaluation of two concurrent schedulers.
+Chapter~\ref{scheduler} describes the design, implementation, and evaluation of two concurrent schedulers.
 The schedulers are compared to a custom multi-threaded application for two reactive systems.
 For one system, the reactive component implementation outperforms the custom application while the custom application outperforms the reactive component implementation for the other system.
 The results demonstrate that reactive components may be a viable alternative to threads but additional work is necessary to generalize this claim.

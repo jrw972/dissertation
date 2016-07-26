@@ -35,14 +35,14 @@ The detection of non-deterministic state transitions arising from composition is
 However, allowing a reactive component instance to serve as a proxy for its state variables reduces the problem of detecting non-deterministic transitions to simple graph and set theoretic problems.
 
 Practicality was one of our goals when designing the reactive component model.
-That is, we intended it to be implemented and used to design and build real-world systems in an effort to reduce the accidental complexity associated with reasoning about a system using one set of semantics and implementing using another.
+That is, we intended it to be implemented and used to design and build real-world systems in an effort to reduce the accidental complexity associated with reasoning about a system using one set of semantics and implementing it using another.
 Thus, we presented the \rcgo{} programming language for reactive components in Chapter~\ref{language}.
 We adopted the Go programming language as the basis for \rcgo{} and added syntax and semantics to support the elements of the reactive component model.
 The major challenge when designing the language was supporting reference and move semantics while preserving the isolation of state between reactive components.
 Reference semantics are important as they allow the construction of arbitrary linked data structures and move semantics are important for efficient communication between reactive components.
 Supporting these features required techniques from race-free programming languages.
-Thus, we added intrinsic and dereference mutability attributes to pointer types.
-Immutable dereference mutability is used to enforce the immutable phase of state transitions while foreign dereference mutability prevents pointers referring to a component's state from being saved by another component.
+Thus, we added intrinsic and indirection mutability attributes to pointer types.
+Immutable indirection mutability is used to enforce the immutable phase of state transitions while foreign indirection mutability prevents pointers referring to a component's state from being saved by another component.
 To facilitate move semantics, we introduced a transferrable heap type which facilitates the construction and transfer of self-contained linked data structures.
 
 Chapter~\ref{implementation} described the implementation of key features for the \rcgo{} run-time system.
@@ -65,7 +65,7 @@ The schedulers described in Chapter~\ref{scheduler} are the most significant par
 A scheduler has the responsibility of executing transactions with fairness.
 The challenge when designing and implementing a scheduler is to convert the logically serial execution of the reactive component model to physically concurrent execution.
 To do this, the scheduler utilizes the composition analysis to determine which transactions may be executed in parallel.
-We present two scheduler implementations:  one is based on a globally shared work queue while the other is based on static partitioning of the transactions.
+We present two scheduler implementations:  one is based on a globally shared work queue while the other is based on a static partitioning of the transactions.
 To evaluate the scheduler, we simulate a number of rounds in a simple request-response protocol.
 In the first design, the \rcgo{} schedulers outperform a custom multi-threaded implementation due to excessive context switching in the multi-threaded program.
 This suggests that reactive components are viable as a concurrent event-based approach to reactive systems.
@@ -81,13 +81,13 @@ Furthermore, we observe that sequential multi-threaded techniques fail to adequa
 There are three main ideas in the reactive component model that make it a viable solution to these problems.
 First, the reactive component model addresses the semantics of reactive systems by interpreting computation in reactive systems as a non-deterministic sequence of atomic events which have the added benefit of composing well.
 Second, the reactive component model uses encapsulation to guarantee compositionality.
-The state of each reactive component instance may only be manipulated by the transitions of that component and therefore properties established independent of context may be never be violated through subsequent composition.
+The state of each reactive component instance may only be manipulated by the transitions of that component and therefore properties established from the transitions may never be violated through subsequent composition.
 This principle extends to constellations of interacting (composed) components that are themselves encapsulated.
 Third, compound state transitions spanning multiple components are formed using parallel composition instead of sequential composition.
 Parallel composition as expressed through the immutable phase and mutable phase concepts in the reactive component model provides a clear interpretation of compound atomic transactions.
 
 The semantics of reactive components can be checked efficiently.
-The three main checks are 1) the enforcement of immutability during the immutable phase, 2) prevention of shared state, and 3) the detection of non-deterministic transitions.
+The three main checks are 1)~the enforcement of immutability during the immutable phase, 2) prevention of shared state, and 3) the detection of non-deterministic transitions.
 The first two properties are enforced through the type system and type checking algorithm.
 The detection of non-deterministic state transitions can only be performed once the set of concrete instances is known.
 The current algorithm leverages the static system assumption to create concrete transactions from compound transitions.
@@ -143,7 +143,7 @@ Supporting this level of dynamism requires support for programmatic loading and 
 In terms of enforcing the reactive component model, the check for sound composition must be performed at runtime and constitutes a form of admission control.
 Thus, additional work is needed to determine if the sound composition check can be modified for use in an on-line setting or if additional restrictions must be placed on the model to ensure an efficient on-line check.
 
-\subsection{Scheduler}
+\subsection{Scheduling}
 \label{future_scheduler}
 
 There are three main areas that may be addressed to improve the performance of the Instance and Partitioned schedulers.
@@ -196,7 +196,7 @@ This procedure can be used to create complex transactions that amortize the lock
 Most likely, the merging algorithm would make use of some heuristic that measures the perceived benefit of merging the transactions.
 For example, the edges in the race graph could be weighted with the Jacquard Index of the instance sets, i.e., the edges are weighted with a score indicating that the set of locks are similar.
 The merging algorithm must balance the goal of simplifying the locking with the goal of exploiting concurrency.
-For example, merging Request and Response eliminates the potential concurrency between Request and Tick in the \emph{AsyncClock} system.
+For example, merging the Request and Response transactions eliminates the potential concurrency between the Request and Tick transactions in the \emph{AsyncClock} system.
 
 Similarity between instance sets suggests that locks may be eliminated by combining them.
 To illustrate, the \emph{AsyncClock} system contains three locks corresponding to the three components.
@@ -206,7 +206,7 @@ This reduces the number of locks needed to execute the Request transaction from 
 The challenges associated with locking invite us to step back and consider the fundamental aspects of the problem that necessitate a locking protocol.
 The scheduler designs put forth so far are distributed in the sense that each scheduler thread is making an independent decision about the next transaction to execute.
 Locking is the means by which the scheduler thread discovers the decisions made by the other scheduler threads to determine if the transaction under consideration is compatible with the transactions already chosen by the other threads.
-The locking protocol becomes unnecessary if the decisions made by the other threads are already available, i.e., to a knowledgeable scheduler.
+The locking protocol becomes unnecessary if the decisions made by the other threads are already available, i.e., a knowledgeable scheduler.
 This suggests that orchestration may be used to ensure safety in a multi-threaded scheduler without locking.
 In this model, a manager thread assigns transactions to scheduler threads who execute the transactions without acquiring locks.
 The primary job of the manager thread is to enforce safety by only allowing the concurrent execution of disconnected transactions in the race graph.

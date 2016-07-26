@@ -238,7 +238,7 @@ The first is an unnamed top-level component representing the complete applicatio
 This component has four sub-components representing a web server, the application logic, a database, and a logging service.
 The ports of the application logic component have been bound to the corresponding ports in the web server, database, and logging service components.
 The interface of a component, which consists of its ports, provides insight into the behavior of the component.
-For example, based on the interface of the web server component we may expect it to 1)~verify incoming HTTP requests\footnote{A production web server may verify that the requested HTTP method can be applied to the given URI, that content length limits are respected, that content types are supported, etc.}, 2)~pass on valid HTTP requests to the application, and 3)~send HTTP responses to the web client.
+For example, based on the interface of the web server component we may expect it to 1)~verify incoming HTTP requests\footnote{A production web server may verify that the requested HTTP method can be applied to the given URI, that content length limits are respected, that content types are supported, etc.}, 2)~pass on valid HTTP requests to the application, and 3)~accept HTTP responses from the application.
 
 Figure~\ref{web_server} also demonstrates how reactive programs can be constructed by composing reactive components, so that a developer may focus on the application logic and use existing components for the web server, database, and logging service.
 Furthermore, one can imagine developing three stateless components surrounding the application logic that do nothing but translate messages between application specific message types and the generic types required by the web server, database, and logging service.
@@ -246,8 +246,8 @@ The application logic, then, is completely isolated from the surrounding librari
 The application logic itself has a well-defined interface and could be reused, say, by implementing a graphical front-end to drive the application instead of a web service.
 
 \subsection{State Variables}
-Part of the internal core of a reactive component is a set of state variables, which are the subject of the various propositions that demonstrate the behavior of the system.
-The state variables are manipulated by the various assignment statements that constitute the transitions.
+Part of the internal core of a reactive component is a set of state variables, which are the subject of the propositions that demonstrate the behavior of the system.
+The state variables are manipulated by the assignment statements that constitute the transitions.
 As in other formal models, the types of the state variables may be selected to make writing proofs easier.
 %% That is, the state variables have mathematically friendly types like integers, sets, and lists.
 However, implementations of the reactive component model must provide a concrete type system that allows the state variables to be realized on a given machine.
@@ -295,7 +295,7 @@ A reaction, therefore, is the combination of a passive push port and a state tra
 
 A \emph{binding} is a declaration that associates an active push port in one component with a reaction in another component.
 The transition associated with the reaction is executed atomically with the transition that activates the active push port.
-Composition in the reactive component model is achieved by declaring sub-components (recursive encapsulation) and link transitions via bindings.
+Composition in the reactive component model is achieved by declaring sub-components (recursive encapsulation) and linking transitions via binding.
 
 \subsection{Transactions}
 
@@ -327,7 +327,7 @@ The order in which transactions are executed is not determined, thus, execution 
 
 We divide a state transition into two phases called the \emph{immutable phase} and the \emph{mutable phase}.
 Logically, a transition assigns values to a set of state variables.
-This can be modeled as a multiple assignment statement with a left-hand side (LHS) consisting of a list of state variables and a right-hand side (RHS) consisting of a list of expressions that provide the next value for each corresponding state variable.
+This can be modeled as a parallel assignment statement with a left-hand side (LHS) consisting of a list of state variables and a right-hand side (RHS) consisting of a list of expressions that provide the next value for each corresponding state variable.
 The immutable phase corresponds to the computation of the RHS in a state transition.
 The mutable phase corresponds to the update of the values on the LHS with the values on the RHS.
 When transitions are linked with composition, we must relate the mutable and immutable phase in one state transition to the mutable and immutable phases of the other transitions in the transaction.
@@ -342,7 +342,7 @@ This leaves three possible sequences:
 \end{itemize}
 Thus, with respect to transactions, all immutable phases (which includes all push port activations) are performed before all mutable phases.
 
-\section{Illustrative Example}
+\section{Example:  Clock System}
 To illustrate the behavior of reactive components under this model, we rewrite the \emph{Clock automaton} example in \cite{nancy1996distributed} using reactive components.
 The Clock automaton consists of a free-running counter and flag used to implement a request-response protocol.
 Our Clock component is defined in Figure~\ref{clock_component}.
@@ -368,7 +368,7 @@ component Clock {
   Tick: counter := counter + 1
 }
 \end{verbatim}
-\caption{Definition of the Clock component}
+\caption{Definition of the Clock component of the Clock System}
 \label{clock_component}
 \end{figure}
 
@@ -383,7 +383,7 @@ component Client {
   reaction clock(int t) flag := false || /* do something with t */
 }
 \end{verbatim}
-\caption{Definition of a client for the Clock component of Figure~\ref{clock_component}}
+\caption{Definition of the Client of the Clock System}
 \label{client_component}
 \end{figure}
 
@@ -408,7 +408,7 @@ component System {
   }
 }
 \end{verbatim}
-\caption{Definition of a System component that composes the Clock component of Figure~\ref{clock_component} and the Client component of Figure~\ref{client_component}}
+\caption{Definition of the System component of the Clock System}
 \label{system_component}
 \end{figure}
 
@@ -445,7 +445,7 @@ component System {
 \end{tikzpicture}
 \endgroup
 %%}%
-\cprotect\caption{Transaction diagram for the \verb+client.Request+ action for the System component of Figure~\ref{system_component}}
+\cprotect\caption{Transaction diagram for the \verb+client.Request+ action of the Clock System}
 \label{request_transaction}
 \end{figure}
 
@@ -482,7 +482,7 @@ component System {
 \end{tikzpicture}
 \endgroup
 %%}%
-\cprotect\caption{Transaction diagram for the \verb+clock.Clock+ action for the System component of Figure~\ref{system_component}}
+\cprotect\caption{Transaction diagram for the \verb+clock.Clock+ action of the Clock System}
 \label{clock_transaction}
 \end{figure}
 
@@ -492,7 +492,6 @@ In this section, we examine various features related to reactive components and 
 Substitutional equivalence for reactive components is demonstrated by outlining a procedure for in-lining sub-components.
 Hazards of composition, namely, non-deterministic state transitions resulting from conflicting and recursive composition, are identified and a means of detecting them is proposed.
 The issue of decomposition is considered and \emph{pull ports} are introduced as a mechanism for decomposition.
-Finally, the points of principled composition presented in Section~\ref{challenges} are reviewed for reactive components.
 
 \begin{figure}
 \begin{verbatim}
@@ -522,7 +521,7 @@ component System {
   }
 }
 \end{verbatim}
-\caption{Substitution of state variables, ports, actions, and reactions for the sub-components of the System component in Figure~\ref{system_component}}
+\caption[Substitution of sub-components for the Clock System]{Substitution of state variables, ports, actions, and reactions for the sub-components of the System component of the Clock System}
 \label{se1}
 \end{figure}
 
@@ -545,18 +544,14 @@ component System {
   clock_Tick: clock_counter := clock_counter + 1
 }
 \end{verbatim}
-\caption{Simplification of ports, bindings, and transitions in the expanded System component of Figure~\ref{se1}}
+\caption[Simplification of expanded System component of the Clock System]{Simplifications of ports, bindings, and transitions in the expanded System component of the Clock System}
 \label{se2}
 \end{figure}
 
 \subsection{Substitutional Equivalence}
 \label{substitutional_equivalence}
 For reactive components, substitutional equivalence means that a sub-component can be replaced with its definition and the result is a well-defined entity in the model.
-To this end, a procedure for substituting the definition of a sub-component involves:
-\begin{enumerate}
-\item Renaming and adding all state variables, ports, actions, and reactions to the parent component.
-\item Simplifying bindings by substituting the transitions associated with a reaction into the action or reaction that activates the reaction in question.
-\end{enumerate}
+To this end, a procedure for substituting the definition of a sub-component involves 1) renaming and adding all state variables, ports, actions, and reactions to the parent component and 2) simplifying bindings by substituting the transitions associated with a reaction into the action or reaction that activates the reaction in question.
 
 To illustrate, Figure~\ref{se1} shows the result of substituting state variables, ports, actions, and reactions into the System component of Figure~\ref{system_component}.
 Identifiers in the sub-components have been prefixed with the name of the sub-component instance to avoid name clashes.
@@ -622,7 +617,7 @@ Suppose that the setTrue reaction sets a flag to true while the setFalse reactio
 The transaction is non-deterministic because the value of the flag after the (A,set) transaction may either be true or false.
 An offending pair of transitions may appear anywhere in a transaction graph given that arbitrary transaction graphs may be constructed through composition.
 If the underlying language used to define transitions admits pointers, dynamic memory, if statements, and loops (i.e., is Turing-complete), then the problem of determining if two transitions operate on the same state variable is undecidable in general~\cite{Landi:1992:USA:161494.161501, Ramalingam:1994:UA:186025.186041}.
-For a transaction graph $G$ and action/reaction $t_1$ and $t_2$, a necessary (but not sufficient) condition for non-deterministic assignment $\mathit{NDA}$ from composition is $\mathit{NDA}(G): \exists (i_1, t_1), (i_2, t_2) \in G.N, i_1 = i_2, t_1 \ne t_2$ which says that the transaction must contain two different transitions involving the same component instance.
+For a transaction graph $G$, instances $i_1$ and $i_2$, and actions/reactions $t_1$ and $t_2$, a necessary (but not sufficient) condition for non-deterministic assignment $\mathit{NDA}$ from composition is $\mathit{NDA}(G): \exists (i_1, t_1), (i_2, t_2) \in G.N, i_1 = i_2, t_1 \ne t_2$ which says that the transaction must contain two different transitions involving the same component instance.
 
 A recursively activated transition occurs when the transaction graph has a cycle.
 The execution of such a transaction may result in well-defined next values for all state variables assuming that 1)~the recursion is bounded and 2)~the parameters passed to every reaction result in identical computations.
@@ -632,7 +627,7 @@ A bounded recursion means that the execution of the transaction will generate a 
 For each activation $a \in A$, we must determine what state is updated by $a$.
 If the language is Turing-complete, then this problem is undecidable in general~\cite{Landi:1992:USA:161494.161501, Ramalingam:1994:UA:186025.186041}.
 For state variables that are updated by more than one activation, we must then show that each activation sets the state variable to the exact same next state.
-If we treat each activation as a program, then we require a function that determine if two (arbitrary) programs compute the same function, which is again, undecidable in general~\cite{Rice:53}.
+If we treat each activation as a program, then we require a function that determines if two (arbitrary) programs compute the same function, which is again, undecidable in general~\cite{Rice:53}.
 
 The difficulty of detecting composition that results in non-deterministic assignments suggests that these problems are best checked by a machine.
 That is, an implementation of reactive components may prevent non-deterministic assignment by checking that $\mathit{NDA}(G)$ is false for all transaction graphs in the system.
@@ -681,7 +676,7 @@ component Counter {
   }
 }
 \end{verbatim}
-\caption{Definition of the Counter component}
+\caption{Definition of the Counter component of the Factored Clock System}
 \label{counter_component}
 \end{figure}
 
@@ -697,7 +692,7 @@ component Clock {
   Clock: flag -> flag := false activates clock(c.getCounter())
 }
 \end{verbatim}
-\caption{Redefinition of the Clock component of Figure~\ref{clock_component} using the Counter component of Figure~\ref{counter_component}}
+\caption{Definition of the Clock component of the Factored Clock System}
 \label{factored_clock_component}
 \end{figure}
 
@@ -725,7 +720,7 @@ component RequestResponse {
   Response: flag -> flag := false activates response(getValue())
 }
 \end{verbatim}
-\caption{Definition of the RequestResponse component}
+\caption{Definition of the RequestResponse component of the Factored Clock System}
 \label{request_response_component}
 \end{figure}
 
@@ -745,7 +740,7 @@ component Clock {
   export rr.response as clock
 }
 \end{verbatim}
-\caption{Definition of the Clock component (Figure~\ref{clock_component}) using the Counter (Figure~\ref{counter_component}) and RequestResponse (Figure~\ref{request_response_component}) components}
+\caption{Definition of the Clock component of the Factored Clock System (fully-factored)}
 \label{factored2_clock_component}
 \end{figure}
 

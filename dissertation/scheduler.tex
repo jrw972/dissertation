@@ -1,18 +1,19 @@
 \chapter{Transaction Scheduler}
 \label{scheduler}
 
-A scheduler is responsible for executing transactions according to the fairness criteria set forth in Chapter~\ref{model}.
+A scheduler is responsible for executing transactions according to the fairness criteria set forth in Section~\ref{execution}.
 Of particular interest is the design and implementation of general-purpose schedulers that are capable of executing transactions in parallel.
 The main inputs to a scheduler are the transactions enumerated by the composition analysis.
 The access sets calculated for each transaction are used by concurrent schedulers to avoid non-deterministic state transitions.
 In this chapter, we introduce some of the issues involved in designing and implementing a scheduler for reactive components, through a series of increasingly complex scheduler designs.
 The two concrete implementations described later will draw upon the designs of these schedulers.
+An evaluation of these schedulers indicates that reactive components may be a viable event-based alternative to threads in terms of performance but additional work is necessary to generalize this claim.
 
 \section{The Transaction Scheduling Problem}
 \label{scheduling_problem}
 
 A scheduler is responsible for mapping transactions to processor cores so that they can be executed according to the semantics of reactive components.
-As described in Chapter~\ref{model}, concurrent execution is modeled by a scheduler that serially and repeatedly executes atomic transactions according to fairness, which means that all enabled transaction must eventually be executed.
+As described in Section~\ref{execution}, concurrent execution is modeled by a scheduler that serially and repeatedly executes atomic transactions according to fairness, which means that all enabled transaction must eventually be executed.
 A scheduler implementation supporting concurrent execution must take care to preserve the fairness and atomicity required by the model.
 A scheduler is \emph{fair} if it executes each transaction an infinite number of times or terminates by reaching a fixed point.
 A scheduler is \emph{safe} if it avoids conditions where one transaction is changing the state of a component while another transaction is reading or writing the same state.
@@ -70,7 +71,7 @@ After a transaction, all preconditions based on any mutated state are undefined 
 \end{tikzpicture}
 \endgroup
 %}%
-\caption{State transition diagram for the state component of the dynamic transaction state.
+\caption[Transition diagram for the state component of the dynamic transaction state]{State transition diagram for the state component of the dynamic transaction state.
   $I$ represents $\mathit{Idle}$, $V$ represents $\mathit{Eval}$, and $X$ represents $\mathit{Exec}$.
   \label{dt_state}}
 \end{figure}
@@ -87,7 +88,7 @@ The following condition states that every transition in a scheduler must obey th
 \begin{equation}
   \forall t, u : (s_u(t).q, s_u(t+1).q) \in \Gamma
 \end{equation}
-The precondition of a transaction is established as true or false as a result of leaving the $\mathit{Eval}$ state (transitions $b$ and $d$ in figure~\ref{dt_state}):
+The precondition of a transaction is established as true or false as a result of leaving the $\mathit{Eval}$ state (transitions $b$ and $d$ in Figure~\ref{dt_state}):
 \begin{equation}
   \label{pre_establish}
   \forall t, u, s_u(t).q = \mathit{Eval} \land s_u(t+1).q \neq \mathit{Eval} : s_u(t+1).p \in \{0,1\}
@@ -102,7 +103,7 @@ A transaction that mutates the state of one or more components invalidates the p
 Let $\mathit{pre}: T \to H$ be a function that maps a transaction to the set of access pairs corresponding to the precondition of a transaction.
 Let $\mathit{imm}(u)$ and $\mathit{mut}(u)$ be similarly defined functions that return the immutable phase access set and mutable phase access set for transaction $u \in T$.
 All of these functions may be computed as part of composition analysis.
-The set of transactions that are potentially affected by a given transaction $u \in T$ is given by the following function:
+The set of transactions whose ``enabledness'' is potentially affected by a given transaction $u \in T$ is given by the following function\footnote{The $\mathit{race}$ function is defined in Section~\ref{sound_composition}.}:
 \begin{equation}
   \label{affected}
   \mathit{affected}(u) = { v \in T : \mathit{race}(\mathit{mut}(u), \mathit{pre}(v)) }
@@ -301,6 +302,7 @@ Similarly, the scheduler threads can check for the termination condition in para
 Finally, the manager thread may be done away with entirely and the protocol rewritten as a distributed protocol, as we discuss below.
 
 \section{Scheduler Implementations}
+\label{scheduler_implementation}
 
 We now describe two specific scheduler designs that we chose for implementation and evaluation.
 Each scheduler takes a different approach to the design dimensions described previously, resulting in distinct consequences for systems that use it.
@@ -378,7 +380,7 @@ Both throughput and latency may be considered for individual transactions, or ma
 
 \paragraph{Evaluation approach.}
 We used two variants of the clock system from Chapter~\ref{model} to evaluate the two scheduler implementations.
-The first variant is the fully-factored clock system augmented with counters that cause termination\footnote{https://github.com/jrw972/rc/blob/master/samples/clock3.rc}.
+The first variant is the fully-factored clock system augmented with counters that cause termination\footnote{\href{https://github.com/jrw972/rcgo/blob/master/samples/clock3.rc}{https://github.com/jrw972/rcgo/blob/master/samples/clock3.rc}}.
 In this system, there are three components of interest:  the Client, the Server, and the Counter.
 This system has three transactions:
 \begin{itemize}
@@ -405,7 +407,7 @@ This system will be denoted as the \emph{AsyncClock} system.
 \end{tikzpicture}
 \endgroup
 }%
-\caption{Race graph for the AsyncClock system.  Each node is a transaction.  Nodes sharing an edge cannot be executed concurrently due to potentially mutated shared state. \label{clock_system_mutex}}
+\caption[Race graph for the AsyncClock system]{Race graph for the AsyncClock system.  Each node is a transaction.  Nodes sharing an edge cannot be executed concurrently due to potentially mutated shared state. \label{clock_system_mutex}}
 \end{figure}
 
 Figure~\ref{clock_system_mutex} shows a \emph{race graph} for the AsyncClock system.
@@ -417,14 +419,14 @@ Conversely, nodes that are not linked by an edge can be executed concurrently.
 For the purpose of evaluating schedulers, the clock system has the important characteristic that Request and Tick can be executed concurrently while Response must be executed independently.
 Another useful feature of this system is that each component has exactly one transaction, and thus, a  work queue of instances may also be viewed as a work queue of transactions.
 
-The second variant is a simplified version of the clock system consisting of a Tick transaction that increments the counter and a Request transaction that uses a getter to sample the counter\footnote{https://github.com/jrw972/rc/blob/master/samples/clock4.rc}.
+The second variant is a simplified version of the clock system consisting of a Tick transaction that increments the counter and a Request transaction that uses a getter to sample the counter\footnote{\href{https://github.com/jrw972/rcgo/blob/master/samples/clock4.rc}{https://github.com/jrw972/rcgo/blob/master/samples/clock4.rc}}.
 The counter creates a race between the two transactions so that they cannot be executed concurrently.
 This system will be denoted as the \emph{SyncClock} system.
 
 For comparison, we implemented threaded versions of the AsyncClock and SyncClock systems using the POSIX threads library (pthreads).
 The AsyncClock implementation attempts to preserve the spirit of the AsyncClock system by being as asynchronous as possible.
 This implementation uses three threads corresponding to the Request, Response, and Tick transactions.
-The Request and Response threads share a flag variable that is protected by a mutex and condition variable, to implement the asynchronous request/response protocol.
+The Request and Response threads share a flag variable that is protected by a mutex and condition variable to implement the asynchronous request/response protocol.
 The Response and Tick threads share a counter variable that is protected by a mutex.
 The SyncClock implementation attempts to preserve the spirit of the SyncClock system.
 In this design, there is one thread sampling the counter while another thread is incrementing the counter.
@@ -451,7 +453,7 @@ The entanglement is used to measure the granularity of the concurrency between t
 Given that each run executes the same number of transactions, a high entanglement indicates ``fine'' concurrency, i.e., threads are executing transactions in parallel or execution is rapidly alternating between the threads, while a low entanglement indicates ``coarse'' concurrency.
 Entanglement may be forced by the scheduler, or may occur opportunistically, or not at all.
 The start time for threads influences entanglement as an operating system may execute a thread to completion before starting another thread.
-The garbage collection actions are not included in the entanglement calculation to facilitate comparison with the pthread implementations.
+The garbage collection transactions are not included in the entanglement calculation to facilitate comparison with the pthread implementations.
 
 \begin{table}
 \center
@@ -468,14 +470,15 @@ C library:        & glibc 2.19 \\
 POSIX threads:    & glibc 2.19 \\
 C++ library:      & glibc++ 3.4.19 \\
 \end{tabular}
-\caption{Experimental environment used for scheduler testing.\label{environment}}
+\caption{Experimental environment used for scheduler testing}
+\label{environment}
 \end{table}
 
-Table~\ref{environment} describes the environment used to perform the scheduler experiments\footnote{The version of the code used for this evaluation bears the tag ``clock\_experiment2'' and can be found at https://github.com/jrw972/rc/releases/tag/clock\_experiment2.}.
+Table~\ref{environment} describes the environment used to perform the scheduler experiments\footnote{The version of the code used for this evaluation bears the tag ``clock\_experiment2'' and can be found at \href{https://github.com/jrw972/rcgo/releases/tag/clock\_experiment2}{https://github.com/jrw972/rcgo/releases/tag/clock\_experiment2}.}.
 The timestamp resolution reported by the operating system was 1 ns.
 The Instance and Partitioned schedulers were configured to use two threads.
 The Thread applications for the AsyncClock and SyncClock systems were designed to use three and two threads, respectively.
-The raw data for the experiments can be obtained by emailing the author\footnote{jrw972@gmail.com}.
+The raw data for the experiments is available\footnote{\href{https://drive.google.com/open?id=0BwSc4YwTjv7TOHdVMENkU000WUU}{https://drive.google.com/open?id=0BwSc4YwTjv7TOHdVMENkU000WUU}}.
 
 \begin{figure}[H]
 \center
@@ -499,15 +502,16 @@ The raw data for the experiments can be obtained by emailing the author\footnote
 
 \paragraph{AsyncClock results.}
 Figures~\ref{async_thread_throughput}, \ref{async_instance_throughput}, and \ref{async_partitioned_throughput} show histograms of the throughput for the Thread, Instance, and Partitioned experiments, respectively.
-The throughput for the Thread and Instance experiments appear to have ``regular'' distributions while the throughput for Partitioned is ``irregular.''
-Transactions are randomly and statically allocated to execution threads in the Partitioned scheduler.
-In the AsyncClock system, there are seven transactions where three correspond to Request, Response, and Tick, and the other four correspond to garbage collection actions for Client, Server, Counter, and System components.
+The throughput for the Thread and Instance experiments appear to have ``regular'' distributions while the throughput for the Partitioned experiment is ``irregular.''
+Transactions are randomly and statically allocated to execution threads in the Partitioned experiment.
+In the AsyncClock system, there are seven transactions where three correspond to the Request, Response, and Tick transactions, and the other four correspond to garbage collection transactions for the Client, Server, Counter, and System components.
+For convenience, garbage collection transactions will be named by the corresponding component.
 Thus, there are $2^7 = 128$ mappings of transactions to execution threads.
 Given the symmetry of threads, this results in 64 possible arrangements which are shown in Appendix~\ref{partition_tables} in Table~\ref{async_partitions}.
 Some of these arrangements will place all transactions in one thread, leading to improved or degraded performance, e.g., `A'.
-Some arrangements will place Request and Tick in different threads, allowing the potential concurrency among these actions to be exploited, e.g., `B'.
-Some arrangements will place the Tick transaction and garbage collection action for Counter on different threads, creating lock contention, e.g., `C'.
-Thus, the throughput for the Partitioned scheduler is a mixture of distributions corresponding to the different partitioning schemes.
+Some arrangements will place the Request and Tick transactions in different threads, allowing the potential concurrency among these transactions to be exploited, e.g., `B'.
+Some arrangements will place the Tick and Counter transactions on different threads, creating lock contention, e.g., `C'.
+Thus, the throughput for the Partitioned experiment is a mixture of distributions corresponding to the different partitioning schemes.
 
 \begin{figure}[H]
 \center
@@ -532,7 +536,7 @@ Thus, the throughput for the Partitioned scheduler is a mixture of distributions
 
 Figures~\ref{async_thread_throughput_utilization}, \ref{async_instance_throughput_utilization}, and \ref{async_partitioned_throughput_utilization} show plots of utilization versus throughput for the Thread, Instance, and Partitioned experiments, respectively.
 Most of the runs achieve a utilization greater than 100\%.
-For the Instance and Partitioned schedulers, there appears to be slight trend where utilization decreases with increased throughput.
+For the Instance and Partitioned experiments, there appears to be slight trend where utilization decreases with increased throughput.
 This is most likely the result of locking behavior where runs that (randomly) experience better locking behavior simultaneously achieve higher throughput and lower utilization due to less locking overhead.
 
 \begin{figure}[H]
@@ -558,17 +562,17 @@ This is most likely the result of locking behavior where runs that (randomly) ex
 
 Figures~\ref{async_thread_throughput_context}, \ref{async_instance_throughput_context}, and \ref{async_partitioned_throughput_context} show plots of voluntary context switches versus throughput for the Thread, Instance, and Partitioned experiments, respectively.
 Voluntary context switches include the situation where a thread blocks while waiting for a lock and is swapped out.
-The Thread scheduler appears to have a consistently high number of context switches.
+The Thread experiment appears to have a consistently high number of context switches.
 This is expected since there are three threads competing for two processors.
-The Instance scheduler has fewer context switches and perhaps shows a slight trend where throughput increases with fewer context switches.
+The Instance experiment has fewer context switches and perhaps shows a slight trend where throughput increases with fewer context switches.
 As previously stated, this is most likely the result of locking behavior.
-The Partitioned scheduler shows a strong trend of throughput increasing with fewer context switches.
+The Partitioned experiment shows a strong trend of throughput increasing with fewer context switches.
 Furthermore, the partitions appear to cluster together.
 For example, all of the runs for partition `o' of Table~\ref{async_partitions} appear in the upper left of Figure~\ref{async_partitioned_throughput_context}, while the runs for partition `t' appear in the lower right.
-In partition `o', thread 0 contains System, Counter, Tick, Request, and Response while thread 1 contains Server and Client.
-This mapping serializes the execution (Request, Response, and Tick are on one thread) and is subject to contention arising from the Server and Client garbage collection actions competing with Request and Response.
-In partition `t', thread 0 contains System, Counter and Tick while thread 1 contains Server, Client, Response, and Request.
-The only contention in this mapping is between Response in thread 1 and Counter and Tick in thread 0.
+In partition `o', thread 0 contains the System, Counter, Tick, Request, and Response transactions while thread 1 contains the Server and Client transactions.
+This mapping serializes the execution (the Request, Response, and Tick transactions are on one thread) and is subject to contention arising from the Server and Client transactions competing with the Request and Response transactions.
+In partition `t', thread 0 contains the System, Counter and Tick transactions while thread 1 contains the Server, Client, Response, and Request transactions.
+The only contention in this mapping is between the Response transaction in thread 1 and the Counter and Tick transactions in thread 0.
 
 \begin{figure}[H]
 \center
@@ -578,7 +582,7 @@ The only contention in this mapping is between Response in thread 1 and Counter 
 \end{figure}
 
 Figure~\ref{async_thread_throughput_entanglement} shows a plot of entanglement versus throughput for the Thread experiment.
-The Thread scheduler has a minimum entanglement of 20,000, which is caused by the forced interleaving of the Request and Response threads, and a maximum entanglement of 30,000.
+The Thread experiment has a minimum entanglement of 20,000, which is caused by the forced interleaving of the Request and Response threads, and a maximum entanglement of 30,000.
 Thus, the lowest band in Figure ~\ref{async_thread_throughput_entanglement} corresponds to no entanglement with the Tick thread.
 In these cases, the Linux thread scheduler executes the Request/Response threads first and the Tick thread second (or vice versa).
 The generally low entanglement shows that the Linux scheduler prefers to serialize the execution.
@@ -607,10 +611,10 @@ This plot does not appear to show a strong relationship between throughput and e
 
 Figure~\ref{async_partitioned_throughput_entanglement} shows a plot of entanglement versus throughput for the Partitioned experiment.
 This plot has a band at 20,000 that contains roughly half of the samples (513/1000).
-These correspond to arrangements where Request and Response are mapped to different execution threads which forces an entanglement of 20,000.
+These correspond to arrangements where the Request and Response transactions are mapped to different execution threads which forces an entanglement of 20,000.
 Half of the remaining samples have no entanglement (246/1000).
 These correspond to arrangements where the Request, Response, and Tick transactions are mapped to the same execution thread where no entanglement is possible.
-The remaining quarter of the samples (241/1000) correspond to arrangements where Request and Response are in one execution thread while Tick is in the other.
+The remaining quarter of the samples (241/1000) correspond to arrangements where the Request and Response transactions are in one execution thread while the Tick transaction is in the other.
 These show varying degrees of entanglement with perhaps a slight trend toward increasing throughput with greater entanglement.
 This is expected because the concurrency between Request and Tick can be exploited in these arrangements.
 
@@ -637,7 +641,7 @@ This is expected because the concurrency between Request and Tick can be exploit
 
 Figures~\ref{async_thread_latency}, \ref{async_instance_latency}, and \ref{async_partitioned_latency} show histograms of the latency for the Thread, Instance, and Partitioned experiments, respectively.
 All plots of latency use a logarithmic x-axis, as the latency distributions have very long tails.
-For Thread, the mean latency of the transactions are as follows:
+For the Thread experiment, the mean latency of the transactions are as follows:
 \begin{center}
 \begin{tabular}{cr}
 Tick     & 0.11769us \\
@@ -645,9 +649,9 @@ Request  & 5.30299us \\
 Response & 5.63980us \\
 \end{tabular}
 \end{center}
-Thus, the distribution on the left in Figure~\ref{async_thread_latency} corresponds to the latency of the Tick transaction while the distribution on the right corresponds to the latency of Request and Response.
-In the Thread scheduler, Tick transactions can be executed in quick succession as they are in a tight loop.
-For the Instance scheduler, the mean latency of the transactions are as follows:
+Thus, the distribution on the left in Figure~\ref{async_thread_latency} corresponds to the latency of the Tick transaction while the distribution on the right corresponds to the latency of the Request and Response transactions.
+In the Thread experiment, Tick transactions can be executed in quick succession as they are in a tight loop.
+For the Instance experiment, the mean latency of the transactions are as follows:
 \begin{center}
 \begin{tabular}{cr}
 Tick     & 5.22393us \\
@@ -655,9 +659,9 @@ Request  & 2.83083us \\
 Response & 2.58799us \\
 \end{tabular}
 \end{center}
-The Instance scheduler tends to serialize the execution of transactions for AsyncClock to avoid race conditions.
-Thus, Tick has roughly twice the latency of Request and Response since Tick is always enabled while Request and Response are enabled by each other.
-For Partitioned, the mean latency of the transactions are as follows:
+The Instance scheduler tends to serialize the execution of transactions for the AsyncClock system which has the effect of minimizing race conditions.
+Thus, the Tick transaction has roughly twice the latency of the Request and Response transactions since the Tick transaction is always enabled while the Request and Response transactions are enabled by each other.
+For the Partitioned experiment, the mean latency of the transactions are as follows:
 \begin{center}
 \begin{tabular}{cr}
 Tick     & 2.49278us \\
@@ -739,9 +743,9 @@ Ideally, a scheduler would be designed to not even select a garbage collection a
 \end{figure}
 
 \paragraph{SyncClock results.}
-Figures~\ref{sync_thread_throughput}, \ref{sync_instance_throughput}, and \ref{sync_partitioned_throughput} show histograms of the throughput for Thread, Instance, and Partitioned experiments, respectively.
+Figures~\ref{sync_thread_throughput}, \ref{sync_instance_throughput}, and \ref{sync_partitioned_throughput} show histograms of the throughput for the Thread, Instance, and Partitioned experiments, respectively.
 The throughput curves of the Thread and Instance experiments appear to be combinations of two or three distributions.
-As in the AsyncClock experiments, the throughput for the Partitioned scheduler is a mixture of distributions arising from different partitioning schemes.
+As in the AsyncClock experiments, the throughput for the Partitioned experiment is a mixture of distributions arising from different partitioning schemes.
 In the SyncClock system, there are two components and two transactions resulting in 8 possible partitions.
 The list of partitions is given in Appendix~\ref{partition_tables} in Table~\ref{sync_partitions}.
 
@@ -767,10 +771,10 @@ The list of partitions is given in Appendix~\ref{partition_tables} in Table~\ref
 \end{figure}
 
 Figures~\ref{sync_thread_throughput_utilization}, \ref{sync_instance_throughput_utilization}, and \ref{sync_partitioned_throughput_utilization} show plots of utilization versus throughput for the Thread, Instance, and Partitioned experiments, respectively.
-The utilization for the Thread scheduler decreases with increasing throughput.
+The utilization for the Thread experiment decreases with increasing throughput.
 This suggests that the Linux scheduler is serializing the execution of the threads which decreases utilization while avoiding lock contention which results in increased throughput.
-Most of the runs for the Instance scheduler and Partitioned scheduler achieve a utilization greater than 100\% while a number of runs for the Thread scheduler do not.
-The Instance scheduler shows a weak trend of increased utilization with throughput while the Partitioned scheduler shows a trend of decreased utilization with throughput.
+Most of the runs for the Instance and Partitioned experiments achieve a utilization greater than 100\% while a number of runs in the Thread experiment do not.
+The Instance experiment shows a weak trend of increased utilization with throughput while the Partitioned experiment shows a trend of decreased utilization with throughput.
 
 \begin{figure}[H]
 \center
@@ -796,7 +800,7 @@ The Instance scheduler shows a weak trend of increased utilization with throughp
 Figures~\ref{sync_thread_throughput_context}, \ref{sync_instance_throughput_context}, and \ref{sync_partitioned_throughput_context} show plots of voluntary context switches versus throughput for the Thread, Instance, and Partitioned experiments, respectively.
 All show a trend where throughput increases with decreasing context switches.
 Both the Thread and Instance experiments have a threshold where high throughput appears to require minimizing the number of context switches.
-The plot for the Partitioned scheduler clearly shows an inverse relationship between throughput and context switches.
+The plot for the Partitioned experiment clearly shows an inverse relationship between throughput and context switches.
 
 \begin{figure}[H]
 \center
@@ -820,17 +824,17 @@ The plot for the Partitioned scheduler clearly shows an inverse relationship bet
 \end{figure}
 
 Figures~\ref{sync_thread_throughput_entanglement}, \ref{sync_instance_throughput_entanglement}, and \ref{sync_partitioned_throughput_entanglement} show plots of entanglement versus throughput for the Thread, Instance, and Partitioned experiments, respectively.
-The maximum entanglement for SyncClock is 20,000.
-The plot of entanglement for the Thread scheduler resembles the plots of utilization and context switches.
+The maximum entanglement for the SyncClock system is 20,000.
+The plot of entanglement for the Thread experiment resembles the plots of utilization and context switches.
 The samples appear to be divided between concurrent (high entanglement, high context switch) and serial executions (low entanglement, low context switch).
 For this system, it seems that it is more efficient to serialize the execution of the threads than to execute the threads concurrently and suffer context switches.
 
-The plot of entanglement for the Instance scheduler shows a different trend where throughput increases with entanglement.
-Thus, the Instance scheduler achieves high throughput when execution alternates between the threads.
-The entanglement for the Partitioned scheduler appears to be a combination of three distributions.
+The plot of entanglement for the Instance experiment shows a different trend where throughput increases with entanglement.
+Thus, the Instance experiment achieves high throughput when execution alternates between the threads.
+The entanglement for the Partitioned experiment appears to be a combination of three distributions.
 The vertical line on the left consists of samples from the `G' partition which has maximal inter-thread conflicts and minimal opportunities for concurrent execution.
-The horizontal line on the bottom (no entanglement) consists of samples from the `A', `D', `E', and `H' partitions which map Tick and Request to the same thread.
-The execution is serialized with varying degrees of interference from the garbage collection actions.
+The horizontal line on the bottom (no entanglement) consists of samples from the `A', `D', `E', and `H' partitions which map the Tick and Request transactions to the same thread.
+The execution is serialized with varying degrees of interference from the garbage collection transactions.
 The other samples contain the `B', `C', and `F' partitions which appear to show increasing throughput with entanglement.
 The `F' partition has minimal inter-thread conflicts with maximal opportunities for concurrent execution.
 
@@ -857,22 +861,22 @@ The `F' partition has minimal inter-thread conflicts with maximal opportunities 
 
 Figures~\ref{sync_thread_latency}, \ref{sync_instance_latency}, and \ref{sync_partitioned_latency} show histograms of the latency for the Thread, Instance, and Partitioned experiments, respectively.
 All plots of latency use a logarithmic x-axis, as the latency distributions have very long tails.
-For the Thread scheduler, the mean latency of the transactions are as follows:
+For the Thread experiment, the mean latency of the transactions are as follows:
 \begin{center}
 \begin{tabular}{cr}
 Request &  72.952ns \\
 Tick    & 207.145ns \\
 \end{tabular}
 \end{center}
-The Request action does nothing more than acquire and release a lock which may explain its reduced latency.
-For the Instance scheduler, the mean latency of the transactions are as follows:
+The Request transaction does nothing more than acquire and release a lock which may explain its reduced latency.
+For the Instance experiment, the mean latency of the transactions are as follows:
 \begin{center}
 \begin{tabular}{cr}
 Request & 1,085.32ns \\
 Tick    & 1,070.57ns \\
 \end{tabular}
 \end{center}
-For the Partitioned scheduler, the mean latency of the transactions are as follows:
+For the Partitioned experiment, the mean latency of the transactions are as follows:
 \begin{center}
 \begin{tabular}{cr}
 Request & 4,117.71ns \\
@@ -899,7 +903,7 @@ Thread      & 2,005,940.0 & 4,308,048.0 & 5,382,440.0 & 5,983,532.0 & 10,428,200
 \end{tabular}
 \end{center}
 The Thread scheduler is clearly the best in terms of throughput.
-The better performing partitions of the Partitioned scheduler are able to achieve the low end performance of the Thread scheduler.
+The best partitions of the Partitioned scheduler almost achieve the worst performance of the Thread scheduler.
 In aggregate, however, the Instance scheduler appears to be better than the Partitioned scheduler.
 
 \begin{figure}[H]
@@ -936,7 +940,7 @@ The reactive component schedulers were then compared to custom implementations o
 
 The AsyncClock and SyncClock experiments demonstrate both the viability of reactive components as an event system and that more work is necessary to improve the design and implementation of the run-time system.
 The motivation for events was to facilitate (logical) concurrency while avoiding the overhead of context switching associated with assigning each task to a thread.
-The performance of the Partitioned scheduler over the Thread implementation of AsyncClock demonstrates this idea.
+The performance of the Partitioned scheduler over the Thread implementation for the AsyncClock system demonstrates this idea.
 As was previously mentioned, events can be combined with multi-threading but care must be taken to ensure proper synchronization.
 In the reactive component model, the burden of correct synchronization is placed on the scheduler instead of the developer.
 

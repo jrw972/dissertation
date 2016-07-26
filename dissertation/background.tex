@@ -147,7 +147,7 @@ The IOA toolkit does contain a source-to-source compiler (IOA to Java) and a run
 \paragraph{Summary.}
 Formal models of reactive systems may be organized around sequential threads with shared variables, e.g., Cooperating Sequential Processes~\cite{dijkstra1965cooperating}, sequential threads with message-passing, e.g., Communicating Sequential Processes~\cite{hoare1978communicating}, atomic transitions with shared variables, e.g., UNITY~\cite{chandy1989parallel}, and atomic transitions with message-passing, e.g., I/O Automata~\cite{nancy1996distributed}.
 Models based on atomic transitions avoid reasoning about the interleaved execution of threads which may simplify reasoning about reactive systems.
-Combining atomic transitions with message passing (I/O Automata) creates the opportunity for property-preserving composition which is problematic in models based on shared variables (UNITY).
+Combining atomic transitions with message passing (I/O Automata) creates the opportunity for property-preserving composition which is problematic in models based on shared variables, e.g., UNITY.
 The reactive component model described in Chapter~\ref{model} of this dissertation extends the property-preserving composition techniques of I/O Automata by permitting composition to an arbitrary depth and degree using the superposition technique of UNITY to link transitions in different modules in a principled way.
 
 Reactive semantics may be introduced via libraries or built into a language.

@@ -194,7 +194,7 @@ We leave the implementation of extensions that facilitate the dynamic creation a
 \end{tikzpicture}
 \endgroup
 }%
-\caption{Memory model.
+\caption[Memory model for the \rcgo{} run-time system]{Memory model for the \rcgo{} run-time system.
 An edge from one segment to another indicates that a pointer in one segment (source) may refer to a location in another segment (target).
 Any pointer may refer to a location in the constant segment (these edges are not shown).}
 \label{memory_model}
@@ -205,7 +205,7 @@ Figure~\ref{memory_model} illustrates the memory model for \rcgo{}.
 A pointer may refer to a location in the constant segment, a stack segment, a component segment, a heap segment, or a transferable heap segment.
 The edges in the figure indicate that a pointer in one segment may refer to a location in another segment.
 As implied by the name, the constant segment is used to store constants like string literals.
-A pointer in any segment may refer to the constant segment:  these edges are not shown shown in the figure.
+A pointer in any segment may refer to the constant segment (these edges are not shown shown in the figure).
 
 Function parameters and local variables are allocated on a call stack as they are in C or C++.
 Multiple stacks may be present if multiple transactions are executed concurrently.
@@ -284,13 +284,13 @@ func (ID *TYPE_ID) METHOD_ID Signature Body
 The first form operates on a copy of a value of type \verb+TYPE_ID+.
 The second form operates on a pointer to a value of type \verb+TYPE_ID+.
 The parameter \verb+ID+ names the receiver of the method and performs the same function as the \verb+this+ keyword in C++ and Java.
-The syntax \verb+(ID TYPE_ID)+ is called a receiver and the syntax \verb+(ID *TYPE_ID)+ is called a pointer receiver.
+The syntax \verb+(ID TYPE_ID)+ is called a \emph{receiver} and the syntax \verb+(ID *TYPE_ID)+ is called a \emph{pointer receiver}.
 Actions, reactions, getters, and initializers use a pointer receiver.
 
-\paragraph{Intrinsic and dereference mutability.}
-Variables and parameters are declared with both an \emph{intrinsic mutability} and a \emph{dereference mutability}.
-Intrinsic mutability limits the operations that can be performed on the lvalue of the variable or parameter while dereference mutability limits the operations that can be performed on lvalues derived from the rvalue of the variable or parameter.
-By default, variables and parameters have mutable intrinsic and dereference mutability.
+\paragraph{Intrinsic and indirection mutability.}
+Variables and parameters are declared with both an \emph{intrinsic mutability} and a \emph{indirection mutability}.
+Intrinsic mutability limits the operations that can be performed on the lvalue of the variable or parameter while indirection mutability limits the operations that can be performed on lvalues derived from the rvalue of the variable or parameter.
+By default, variables and parameters have mutable intrinsic and indirection mutability.
 The following code is legal and sets \verb+z+ to 6.
 \begin{verbatim}
 var x uint = 3;
@@ -313,10 +313,10 @@ var a uint = *z;         // Legal
 *z = 5;                  // Illegal
 \end{verbatim}
 The second line is illegal because \verb+x+ could change through a statement like \verb+*y = 5;+.
-The third line causes \verb+z+ to have immutable dereference mutability (\verb|$const|).
+The third line causes \verb+z+ to have immutable indirection mutability (\verb|$const|).
 The expression \verb+*z+ can serve as an rvalue (line 4) but it cannot serve as an lvalue (line 5).
 
-Dereference mutability is ``sticky.''
+Indirection mutability is ``sticky.''
 For example:
 \begin{verbatim}
 var x $const **uint = ...;
@@ -324,9 +324,9 @@ var y $const *uint = *x; // Legal
 var z *uint = *x;        // Illegal
 \end{verbatim}
 The second line honors the guarantee that all of the memory accessible through \verb+x+ is immutable.
-Dereference mutability is checked in assignments and calls.
-Dereference mutability affects types from which lvalues can be derived, namely, pointers and slices\footnote{A \emph{slice} represents a portion of an array and consists of a pointer, a size, and a capacity.}.
-Immutable dereference mutability is one of the techniques that is used to enforce the immutable phase of state transitions.
+Indirection mutability is checked in assignments and calls.
+Indirection mutability affects types from which lvalues can be derived, namely, pointers and slices\footnote{A \emph{slice} represents a portion of an array and consists of a pointer, a size, and a capacity.}.
+Immutable indirection mutability is one of the techniques that is used to enforce the immutable phase of state transitions.
 
 The second kind of mutability is called \emph{foreign} mutability.
 Foreign mutability is like immutable mutability with the added condition that an address with foreign mutability cannot be stored in a component segment, heap segment, or transferable heap segment.
@@ -344,16 +344,16 @@ The fourth line is illegal because it casts away the \verb|$foreign| attribute o
 The fifth line is legal because the lvalue is mutable and the \verb|$foreign| attribute is preserved.
 The consequence of these semantics is that variables that contain pointers that are declared \verb|$foreign| may only be stored in stack segments.
 
-%% Table~\ref{mutability} describes how the intrinsic and dereference mutability is computed for various expressions.
-%% The operation of interest is the dereference operation which shows how dereference mutability is ``sticky'' and conservatively assumes that all pointers refer to an address on the heap.
+%% Table~\ref{mutability} describes how the intrinsic and indirection mutability is computed for various expressions.
+%% The operation of interest is the indirection operation which shows how indirection mutability is ``sticky'' and conservatively assumes that all pointers refer to an address on the heap.
 
 The following checks are applied to assignment statements:
 \begin{enumerate}
 \item The lvalue and rvalue must be type compatible.
 \item The lvalue must have mutable intrinsic mutability.
-\item If the type involved contains a pointer, check for compatible dereference mutability (see Table~\ref{assignmut}).
-  Essentially, the dereference mutability of the lvalue must be at least as ``weak'' as the dereference mutability of the rvalue.
-  This enforces the ``stickiness'' of dereference mutability.
+\item If the type involved contains a pointer, check for compatible indirection mutability (see Table~\ref{assignmut}).
+  Essentially, the indirection mutability of the lvalue must be at least as ``weak'' as the indirection mutability of the rvalue.
+  This enforces the ``stickiness'' of indirection mutability.
 \end{enumerate}
 
 %% \begin{table}
@@ -367,7 +367,7 @@ The following checks are applied to assignment statements:
 %%     lvalue & S & A & B & select (\verb+.+) & lvalue & S    & A & B \\
 %%     lvalue & S & A & B & index (\verb+[]+) & lvalue & S    & A & B \\
 %%   \end{tabular}
-%%   \caption{Intrinsic and dereference mutability for various operations\label{mutability}.  The possible choices for segment are constant, stack or heap (includes the component segment).  The possible choices for the intrinsic and dereference mutability are mutable, immutable, and foreign.}
+%%   \caption{Intrinsic and indirection mutability for various operations\label{mutability}.  The possible choices for segment are constant, stack or heap (includes the component segment).  The possible choices for the intrinsic and indirection mutability are mutable, immutable, and foreign.}
 %% \end{table}
 
 \begin{table}[H]
@@ -378,12 +378,12 @@ The following checks are applied to assignment statements:
     Immutable & Yes     & Yes       & No      \\
     Foreign   & Yes     & Yes       & Yes     \\
     \end{tabular}
-  \caption{Dereference mutability compatibility for assignment.  The rows represent the dereference mutability of the lvalue and the columns represent the dereference mutability of the rvalue.\label{assignmut}}
+  \caption[Indirection mutability compatibility for assignment]{Indirection mutability compatibility for assignment.  The rows represent the indirection mutability of the lvalue and the columns represent the indirection mutability of the rvalue.\label{assignmut}}
 \end{table}
 
-A parameter is \emph{foreign safe} if 1) the type of the parameter does not contain pointers or slices or 2) the parameter is declared with foreign dereference immutability.
+A parameter is \emph{foreign safe} if 1) the type of the parameter does not contain pointers or slices or 2) the parameter is declared with foreign indirection immutability.
 A parameter list is foreign safe if all parameters in the list are foreign safe.
-A signature (a parameter list with a return parameter) is foreign safe if the parameter list and return parameter are both foreign safe.
+A signature (a parameter list and a return parameter list) is foreign safe if the parameter list and return parameter list are both foreign safe.
 Signatures used in inter-component communication, such as push ports and reactions, must be foreign safe to permit reference semantics while enforcing the isolation of state between components.
 
 \paragraph{Initializers.}
@@ -416,7 +416,7 @@ An action has the form:
 \begin{verbatim}
 action (ID $const *TYPE_ID) ACTION_ID (BooleanExpression) Body
 \end{verbatim}
-The immutable dereference mutability of the receiver enforces the immutable phase of transitions.
+The immutable indirection mutability of the receiver enforces the immutable phase of transitions.
 Actions may only be defined for component types.
 The Boolean expression is the precondition of the action.
 The receiver variable is in scope for the evaluation of the precondition.
@@ -428,7 +428,7 @@ A reaction has the form:
 \begin{verbatim}
 reaction (ID $const *TYPE_ID) REACTION_ID (ParameterList) Body
 \end{verbatim}
-As with actions, the immutable dereference mutability of the receiver enforces the immutable phase of transitions.
+As with actions, the immutable indirection mutability of the receiver enforces the immutable phase of transitions.
 Reactions may only be defined for component types.
 The name of a reaction is used when binding to push ports.
 The parameter list declares the parameters that are passed to the reaction.
@@ -460,7 +460,7 @@ getter (ID $const *TYPE_ID) GETTER_ID Signature Body
 \end{verbatim}
 A getter is similar to a method but has additional semantics:
 \begin{itemize}
-\item A getter must have a pointer receiver to a component type declared with immutable dereference mutability.
+\item A getter must have a pointer receiver to a component type declared with immutable indirection mutability.
 \item The signature must be foreign safe.
 \item A getter may only be invoked by an initializer, another getter, or an action or reaction in the immutable phase.
 \item A getter sets the heap on entry and resets the heap on exit so that all allocated memory is attributed to the receiver.
@@ -470,10 +470,10 @@ A getter is similar to a method but has additional semantics:
 A pull port is declared as a field (of a component) with pull port type.
 A pull port type has the form:
 \begin{verbatim}
-pull (ParameterList) ReturnParameter
+pull (ParameterList) ReturnParameterList
 \end{verbatim}
-The parameter list declares the parameters that are passed to the bound getter.
-The parameter list and return parameter must be foreign safe.
+The parameter list declares the parameters that are passed to the bound getter and the return parameter list declares the return values of the getter.
+The parameter list and return parameter list must be foreign safe.
 Pull ports are called like getters and place the same restriction on the caller, that is, a pull port may only be invoked by a getter or an action or reaction in the immutable phase.
 The following example declares a pull port named \verb+isOutputBufferFull+ in the \verb+Producer+ component:
 \begin{verbatim}
@@ -527,10 +527,12 @@ When an activate statement is executed, the named push ports are activated meani
 These reactions, in turn, may execute other activate statements.
 %% This chaining of activations forms a transaction that resembles a tree where the root of the tree is a component/action pair, the other nodes are component/reaction pairs, and the links represent port activations.
 Once all of the actions and reactions in the transaction have activated their last push ports, they proceed to execute the bodies of the activate statements.
-Recall that the receiver \verb+this+ has immutable dereference mutability.
+Recall that the receiver \verb+this+ has immutable indirection mutability.
 Thus, all computation up to and including the last port activation constitutes the immutable phase of the transaction since the state of the components is not allowed to change.
-Within the scope of the body, the receiver \verb+this+ changes to mutable dereference mutability which then allows the state of a component to be changed.
+Within the scope of the body, the receiver \verb+this+ changes to mutable indirection mutability which then allows the state of a component to be changed.
 Thus, the bodies of activate statements form the mutable phase of the transaction.
+Parameters and variables declared with foreign indirection mutability are hidden within the body of an activate statement.
+This prevents one component from accessing the state of another component during the mutable phase.
 Actions and reactions return, i.e., their flow of control is halted, after the execution of the body of a activate statement.
 Activate statements guarded by \verb+if+ statements facilitate \emph{conditional activation}.
 An activate statement may not appear in another activate statement.
@@ -581,7 +583,7 @@ bind (this *System) {
 
 \paragraph{Transferable heaps.}
 A key requirement for implementing reactive components is that the state of each component remain disjoint.
-Foreign dereference mutability allows components to safely communicate with pointers because it ensures that those pointers are forgotten after the transaction.
+Foreign indirection mutability allows components to safely communicate with pointers because it ensures that those pointers are forgotten after the transaction.
 For efficient communication, we also desire the ability to transfer a data structure (a heap) from one component (the sender) to another component (the receiver).
 The sender offers the heap to its receivers and one of the receivers may claim the heap.
 If the heap is accepted, the sender must forget all references to the heap.
@@ -609,7 +611,7 @@ change (x, y) {
 In the example, \verb+x+ is a pointer to a heap and \verb+y+ is a variable that points to the root of the heap.
 The root variable is valid for the scope introduced by the \verb+change+ statement.
 The root variable will be set to \verb+nil+ if the heap is no longer valid.
-Within the scope of the \verb+change+ statement, all other variables and parameters that may contain pointers are re-entered with foreign dereference immutability.
+Within the scope of the \verb+change+ statement, all other variables and parameters that may contain pointers are re-entered with foreign indirection immutability.
 This enforces the isolation of heaps by preventing the heap from storing a pointer that refers to a location in another heap.
 
 Logically, the run-time system maintains a stack of heaps.
@@ -645,7 +647,7 @@ For example, if two components attempt to \verb+move+ the same heap, one will su
 
 To demonstrate the features of \rcgo{}, we present two examples.
 The first example simulates three users using three processes which communicate using a shared variable.
-This example shows all of the major syntactic elements such as component types, initializers, action, reactions, getters, push ports, pull ports, binders, activate statements, arrays, and \verb+$const+.
+This example shows all of the major syntactic elements such as component types, initializers, actions, reactions, getters, push ports, pull ports, binders, activate statements, arrays, and \verb+$const+.
 The second example consists of a system and a channel.
 The system sends an object to the channel and then receives the object from the channel.
 This example demonstrates the transferable heap type, \verb+$foreign+, \verb+new+, \verb+change+, \verb+move+, and \verb+merge+.
@@ -679,7 +681,7 @@ getter (this $const * Variable) Get () int {
     return this.value;
 }
 \end{verbatim}
-\cprotect\caption{Code listing for \verb+Variable+ component}
+\cprotect\caption{Code listing for \verb+Variable+ component of the Shared Variable System}
 \label{variable}
 \end{figure}
 
@@ -688,14 +690,14 @@ getter (this $const * Variable) Get () int {
 A \verb+Variable+ component has a single integer state variable named \verb+value+.
 This variable is initialized to the sentinel value -1 in the initializer \verb+Init+.
 Notice that the initializer has a pointer receiver \verb+(this *Variable)+.
-The receiver \verb+this+ has mutable dereference mutability so that the state variable can be assigned.
+The receiver \verb+this+ has mutable indirection mutability so that the state variable can be assigned.
 The value of the \verb+Variable+ is set in the dimensioned reaction \verb+Set+.
 The reaction has a dimension of three as three \verb+Process+ actions will be bound to this reaction.
 The new value for the variable is communicated via the parameter \verb+v+.
-Notice that the receiver for the reaction \verb+(this $const * Variable)+ has immutable dereference mutability.
-In the body of the activate statement, the receiver is implicitly converted to have mutable dereference mutability.
+Notice that the receiver for the reaction \verb+(this $const * Variable)+ has immutable indirection mutability.
+In the body of the activate statement, the receiver is implicitly converted to have mutable indirection mutability.
 The final element of the \verb+Variable+ component is the getter \verb+Get+ that returns the value of the variable.
-Since getters are not allowed to change the state of the component, they must be declared with immutable dereference mutability \verb+(this $const * Variable)+.
+Since getters are not allowed to change the state of the component, they must be declared with immutable indirection mutability \verb+(this $const * Variable)+.
 
 \begin{figure}
 \begin{verbatim}
@@ -729,7 +731,7 @@ reaction (this $const * Process) initr (v int) {
     }
 }
 \end{verbatim}
-\cprotect\caption{Code listing for \verb+Process+ component (part 1)}
+\cprotect\caption{Code listing for \verb+Process+ component of the Shared Variable System (part 1)}
 \label{process1}
 \end{figure}
 
@@ -758,7 +760,7 @@ action (this $const * Process) _decide (this.status == PROCESS_DECIDE) {
     }
 }
 \end{verbatim}
-\cprotect\caption{Code listing for \verb+Process+ component (part 2)}
+\cprotect\caption{Code listing for \verb+Process+ component of the Shared Variable System (part 2)}
 \label{process2}
 \end{figure}
 
@@ -775,7 +777,7 @@ The \verb+initr+ reaction allows a \verb+User+ to asynchronously initialize the 
 From the listing, this reaction sets the \verb+input+ variable to the value supplied in the argument \verb+v+ and causes the \verb+Process+ to prepare to access the shared variable if the \verb+Process+ was previously idle.
 
 The most interesting part of the \verb+Process+ component is the \verb+_access+ action.
-Like reactions, actions honor the immutable phase by requiring a receiver with immutable dereference mutability \verb+(this $const * Process)+.
+Like reactions, actions honor the immutable phase by requiring a receiver with immutable indirection mutability \verb+(this $const * Process)+.
 The precondition for \verb+_access+ tests that the \verb+Process+ is ready to access the shared variable.
 When executed, the \verb+_access+ action samples the state of the shared variable by calling the \verb+get_x+ pull port and assigns this to the local variable \verb+x+.
 Note that pull ports may only be called in the immutable phase.
@@ -837,7 +839,7 @@ init (this *User) Init (v int) {
     this.error = false;
 }
 \end{verbatim}
-\cprotect\caption{Code listing for \verb+User+ component (part 1)}
+\cprotect\caption{Code listing for \verb+User+ component of the Shared Variable System (part 1)}
 \label{user1}
 \end{figure}
 
@@ -867,7 +869,7 @@ reaction (this $const * User) Decide (v int) {
     }
 }
 \end{verbatim}
-\cprotect\caption{Code listing for \verb+User+ component (part 2)}
+\cprotect\caption{Code listing for \verb+User+ component of the Shared Variable System (part 2)}
 \label{user2}
 \end{figure}
 
@@ -906,7 +908,7 @@ bind (this *System) _bind {
 
 instance s System Init ();
 \end{verbatim}
-\cprotect\caption{Code listing for \verb+System+ component}
+\cprotect\caption{Code listing for \verb+System+ component of the Shared Variable System}
 \label{system}
 \end{figure}
 
@@ -1006,7 +1008,7 @@ Figure~\ref{system_instance} shows a graphical representation of a \verb+System+
 \end{tikzpicture}
 \endgroup
 }%
-\cprotect\caption{Diagram of a \verb+System+ instance}
+\cprotect\caption{Diagram of a \verb+System+ component of the Shared Variable System}
 \label{system_instance}
 \end{figure}
 
@@ -1017,7 +1019,7 @@ x set to 102
 0x1fd71f8 decided value is 102
 0x1fd7228 decided value is 102
 \end{verbatim}
-\cprotect\caption{Sample output for a \verb+System+ instance}
+\cprotect\caption{Sample output for a \verb+System+ instance of the Shared Variable System}
 \label{system_output}
 \end{figure}
 
@@ -1056,21 +1058,21 @@ action (this $const * Channel) _receive (!this.queue.Empty ()) {
   };
 }
 \end{verbatim}
-\cprotect\caption{Listing for a \verb+Channel+ component}
+\cprotect\caption{Code listing for \verb+Channel+ component of the Heap Channel System}
 \label{channel_listing}
 \end{figure}
 
 Figure~\ref{channel_listing} shows the \verb+Channel+ component.
 A \verb+Channel+ component consists of a queue of messages and a push port named \verb+receive+ which offers up a pointer to a heap with a \verb+uint+ root.
-Since the parameter contains (is) a pointer, it must be declared with \verb+$foreign+ dereference mutability.
+Since the parameter contains (is) a pointer, it must be declared with \verb+$foreign+ indirection mutability.
 The elements of the \verb+Channel+ are named from the perspective of the process that uses the \verb+Channel+.
 
 The \verb+send+ reaction moves the heap which makes the \verb+Channel+ the new owner of the heap.
 Any heap operations on \verb+message+ after the move statement will return \verb+nil+.
 The move occurs outside of the activation because the \verb+message+ parameter is not available in the body of the activation.
-Parameters and variables with types that contain pointers and have foreign dereference mutability are not available in the body of an activate statement because they may represent the state of another component which must be assumed to be invalid in the mutable phase of a transaction.
+Parameters and variables with types that contain pointers and have foreign indirection mutability are not available in the body of an activate statement because they may represent the state of another component which must be assumed to be invalid in the mutable phase of a transaction.
 After a move, the state contained in a heap is no longer available to the component that offered it up as an argument to a reaction.
-Thus, the result of the move does not have foreign dereference mutability and is available in the body of the activate statement.
+Thus, the result of the move does not have foreign indirection mutability and is available in the body of the activate statement.
 
 \begin{figure}
 \begin{verbatim}
@@ -1105,7 +1107,7 @@ bind (this *System) Bind {
 
 instance s System Initially ();
 \end{verbatim}
-\cprotect\caption{Listing for a \verb+System+ component that transfers heaps to and from a \verb+Channel+ component}
+\cprotect\caption{Code listing for \verb+System+ component of the Heap Channel System}
 \label{channel_system_listing}
 \end{figure}
 
@@ -1144,7 +1146,7 @@ Locks are explicit in Cyclone while they are implicitly associated with the moni
 The reactive components of \rcgo{} are similar to the monitors of Guava in that access to shared state is implicitly synchronized.
 
 The approach taken by the languages cited thus far is to demonstrate freedom from data races through the type system exclusively.
-The type system of \rcgo{} is weaker than these languages in that it is only possible to prove that objects are not shared between components via \verb+foreign+ dereference mutability.
+The type system of \rcgo{} is weaker than these languages in that it is only possible to prove that objects are not shared between components via \verb+foreign+ indirection mutability.
 The check for sound composition alluded to in Section~\ref{determinism} and described in Section~\ref{sound_composition} ensures that individual transactions are free from data races.
 As described in Section~\ref{execution} and Chapter~\ref{scheduler}, the scheduler has the responsibility of scheduling transactions in a way that avoids data races between transactions.
 
@@ -1153,7 +1155,7 @@ This chapter has presented the \rcgo programming language for reactive component
 An implementation of reactive components tests whether the assumptions upon which the model rests are practical.
 Our approach is to design new programming language syntax and semantics to capture and enforce the semantics of reactive components.
 As a matter of practicality, we impose support for reference semantics which allow developers to use linked data structures and support for transferring data structures from one component to another.
-The corresponding features are a declarable dereference mutability that allows components to treat pointers as foreign and a transferable heap data type that represents a self-contained linked data structure.
+The corresponding features are a declarable indirection mutability that allows components to treat pointers as foreign and a transferable heap data type that represents a self-contained linked data structure.
 Components are expressed as a collection of fields (similar to a \verb+struct+).
 Ports (push and pull) are expressed as fields of a component.
 Actions and reactions are expressed as method-like elements.
