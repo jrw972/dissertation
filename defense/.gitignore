@@ -1,0 +1,12 @@
+*.aux
+slides.dvi
+slides.log
+slides.pdf
+slides.lof
+slides.lot
+slides.out
+slides.toc
+slides.nav
+slides.pgf
+slides.snm
+slides.vrb
