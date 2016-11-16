@@ -1,8 +1,11 @@
 all: slides.pdf
 
-slides.pdf: slides.tex basics.tex branching.tex remotes.tex history.tex rewriting.tex workflows.tex miscellaneous.tex
+slides.pdf: slides.tex
 
-%.pdf: %.tex
+%.pdf: %.tex slides.bib
+	pdflatex $<
+	bibtex slides
+	pdflatex $<
 	pdflatex $<
 
 clean:

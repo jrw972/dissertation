@@ -9,6 +9,7 @@
 \usepackage{array}
 \usepackage{listings}
 \usepackage{adjustbox}
+\usepackage{cprotect}
 
 \usetikzlibrary{calc,trees,positioning,arrows,chains,%
   decorations.pathreplacing,decorations.pathmorphing,decorations.markings,%
@@ -511,17 +512,29 @@
    of Washington University in partial fulfillment of the\\
    requirements for the degree of\\
    Doctor of Philosophy\\
-   September 2016\\
+   November 2016\\
    Saint Louis, Missouri
  \end{center}
 }
 
-\begin{frame}{Introduction}
+\begin{frame}{Introduction\cite{manna1992temporal}}
 
-  \begin{center}
-    {\Large Transformational Programs}
-    \vspace*{12pt}
+  \begin{columns}
+    \begin{column}{.5\textwidth}
+      \begin{center}
+        {\Large Transformational Program}
+      \end{center}
+    \end{column}
+    \begin{column}{.5\textwidth}
+      \begin{center}
+        {\Large Reactive  \\ Program}
+      \end{center}
+    \end{column}
+  \end{columns}
 
+  \begin{columns}
+    \begin{column}{.5\textwidth}
+    \resizebox{\textwidth}{!}{
     \begin{tikzpicture}
       [>=stealth',
         element/.style={
@@ -539,14 +552,16 @@
       \node[element, join] (processing) {Processing};
       \node[element, join] (output) {Output};
     \end{tikzpicture}
-  \end{center}
+    }
 
-  \rule{\textwidth}{0.4pt}
+      {\small
+        \bibliographystyle{plain}
+        \bibliography{slides}{}
+      }
 
-  \begin{center}
-    {\Large Reactive Programs}
-    \vspace*{12pt}
-
+    \end{column}
+    \begin{column}{.5\textwidth}
+    \resizebox{\textwidth}{!}{
     \begin{tikzpicture}
       [>=stealth',
         line/.style={draw, thick, ->},
@@ -569,17 +584,77 @@
       ]
       (program) circle (0.5) node [label={[label distance=.3cm]90:Processing}] {};
     \end{tikzpicture}
-  \end{center}
+    }
+    \end{column}
+  \end{columns}
+
+  %%\rule{\textwidth}{0.4pt}
+
+  \begin{columns}
+    \begin{column}{.7\textwidth}
+      \begin{center}
+      {\Large Contributions}
+      \end{center}
+
+      \begin{itemize}
+        \item Formal Model - Reactive Components
+        \item Programming Language - \rcgo{}
+        \item Platform
+        \item Scheduler Evaluation
+      \end{itemize}
+    \end{column}
+    \begin{column}{.3\textwidth}
+
+      \begin{center}
+        \includegraphics[width=1.25cm]{smartphone.jpg}\includegraphics[width=1.25cm]{embedded.jpg}
+
+        \vspace*{12pt}
+
+        \includegraphics[height=1cm]{servers.jpg}
+      \end{center}
+
+    \end{column}
+  \end{columns}
+
 \end{frame}
 
-\begin{frame}{Trends:  Enabling Technologies}
+\begin{frame}{Fundamental Characteristics of Reactive Systems}
+
+  \begin{block}{Concurrency}
+    A program and its environment may act at the same time.
+  \end{block}
+
+  \begin{block}{Synchronous Systems}
+    Program and environment share a common clock.
+
+    Impractical for many systems.  Not considered in this work.
+  \end{block}
+
+  \begin{block}{Asynchronous Systems}
+    Program and environment do not share a common clock.
+  \end{block}
+
+  \begin{block}{State (and Time)}
+    To simplify reasoning, we assume reactive programs have state variables manipulated by assignment statements.
+  \end{block}
+
+  %% \begin{block}{Examples}
+  %%   Operating Systems, Clients/Servers, Databases, Embedded Systems, Smart Phone Apps, Web Applications, etc.
+  %% \end{block}
+
+\end{frame}
+
+\begin{frame}{Trends}
+
+  \begin{block}{Enabling Technologies}
+
   \begin{columns}
     \begin{column}{.5\textwidth}
       \begin{itemize}
       \item \emph{Form Factors} \\ new domains
-      \item \emph{Wireless Networking} \\ new frontiers
-      \item \emph{IaaS/PaaS/SaaS} \\ rapid deployment
-      \item \emph{Services and Microservices} \\ integration over implementation
+      \item \emph{(Wireless) Networking} \\ new frontiers
+      %% \item \emph{IaaS/PaaS/SaaS} \\ rapid deployment
+      %% \item \emph{Services and Microservices} \\ integration over implementation
       \end{itemize}
     \end{column}
     \begin{column}{.5\textwidth}
@@ -591,20 +666,19 @@
 
       \includegraphics[height=1.25cm]{cellmap.jpg}\includegraphics[height=1.25cm]{wirelessrouter.jpg}
 
-      \vspace*{12pt}
+      %% \vspace*{12pt}
 
-      \includegraphics[height=1.25cm]{cloud.png}
+      %% \includegraphics[height=1.25cm]{cloud.png}
 
-      \vspace*{12pt}
+      %% \vspace*{12pt}
 
-      \includegraphics[height=1.25cm]{kafka_logo.png}\includegraphics[height=1.25cm]{elasticsearch.png}
+      %% \includegraphics[height=1.25cm]{kafka_logo.png}\includegraphics[height=1.25cm]{elasticsearch.png}
 
     \end{column}
   \end{columns}
+  \end{block}
 
-\end{frame}
-
-\begin{frame}{Trends:  Consequences}
+  \begin{block}{Consequences}
 
   \begin{columns}
     \begin{column}{.5\textwidth}
@@ -613,28 +687,45 @@
 
       \item \emph{Complexity} \\ systems of systems of \ldots
 
-      \item \emph{Heterogeneity} \\ systems incorporate software/services from a variety of sources
+      %\item \emph{Heterogeneity} \\ systems incorporate software/services from a variety of sources
       \end{itemize}
 
     \end{column}
     \begin{column}{.5\textwidth}
       \centering
 
-      \includegraphics[height=1.5cm]{servers.jpg}
+      \includegraphics[height=1cm]{servers.jpg}
 
       \vspace*{12pt}
 
-      \includegraphics[height=2cm]{system.jpg}
+      \includegraphics[height=1.5cm]{system.jpg}
 
-      \vspace*{12pt}
+      %% \vspace*{12pt}
 
-      \includegraphics[height=2cm]{integration.png}
+      %% \includegraphics[height=1.5cm]{integration.png}
     \end{column}
   \end{columns}
 
+  \end{block}
 \end{frame}
 
-\begin{frame}{Limitations of the State of the Art}
+\begin{frame}{The Goal}
+
+  \Large
+
+  An abstraction that makes reactive programs easy to
+  \begin{itemize}
+  \item design
+  \item implement
+  \item test
+  \item debug
+  \item reuse
+  \end{itemize}
+  without sacrificing performance.
+
+\end{frame}
+
+\begin{frame}{Limitations of the State of the Art:  Threads and Events}
   \begin{columns}
     \begin{column}{.6\textwidth}
 
@@ -705,7 +796,6 @@
         \begin{itemize}
         \item identify and protect shared state
         \item understand call graph
-        \item write reactive ``glue code''
         \end{itemize}
       \end{block}
 
@@ -715,62 +805,61 @@
 \end{frame}
 
 \begin{frame}{Challenges}
-  \centering
 
   \begin{block}{Reduce Accidental Complexity}
     \begin{itemize}
-    \item eliminate shared state
+    \item eliminate (uncoordinated access to) shared state
     \item implicit atomicity
     \end{itemize}
   \end{block}
 
   \begin{block}{Achieve Principled Composition}
     \begin{itemize}
-    \item Units and means of composition
+    \item Define units and means of composition
     \item ``Well-formed-ness''
-    \item Encapsulation
-    \item Interface
-    \item \emph{Compositionality}
-    \item \emph{Substitutional Equivalence}
+    \item Recursive Encapsulation - units may contain other units (hierarchical reasoning)
+    \item Interfaces - reason about interface instead of implementation
+    \item Compositionality - reason about whole from parts
+    \item Substitutional Equivalence - substitute definition for use
     \end{itemize}
   \end{block}
 \end{frame}
 
-\begin{frame}{Achieve Principled Composition}
+%% \begin{frame}{Compositionality and Substitutional Equivalence}
 
-  \begin{columns}
-    \begin{column}[T]{.45\textwidth}
-      \begin{block}{Compositionality}
-        $f(x) \mod 2 = 1$ (odd)
+%%   \begin{columns}
+%%     \begin{column}[T]{.45\textwidth}
+%%       \begin{block}{Compositionality}
+%%         $f(x) \mod 2 = 1$ (odd)
 
-        $g(x) \mod 2 = 1$ (odd)
+%%         $g(x) \mod 2 = 1$ (odd)
 
-        $h(x) = f(x) + g(x)$
+%%         $h(x) = f(x) + g(x)$
 
-        $h(x) \mod 2 = ?$
-      \end{block}
-    \end{column}
-    \begin{column}[T]{.45\textwidth}
-      \begin{block}{Substitutional Equivalence}
-        $f(x) = 2x$
+%%         $h(x) \mod 2 = ?$
+%%       \end{block}
+%%     \end{column}
+%%     \begin{column}[T]{.45\textwidth}
+%%       \begin{block}{Substitutional Equivalence}
+%%         $f(x) = 2x$
 
-        $g(x) = x+1$
+%%         $g(x) = x+1$
 
-        $h(x) = f(g(x)) = 2(x+1)$
+%%         $h(x) = f(g(x)) = 2(x+1)$
 
-        $h(x) = 2x + 2$
-      \end{block}
-    \end{column}
-  \end{columns}
+%%         $h(x) = 2x + 2$
+%%       \end{block}
+%%     \end{column}
+%%   \end{columns}
 
-  \vspace*{24pt}
+%%   \vspace*{24pt}
 
-  \begin{center}
-    \LARGE
-    Straightforward for simple algebras.  How can we achieve this in reactive systems?
-  \end{center}
+%%   \begin{center}
+%%     \LARGE
+%%     Straightforward for simple algebras.  How can we achieve this in reactive systems?
+%%   \end{center}
 
-\end{frame}
+%% \end{frame}
 
 \begin{frame}{Related Work}
 
@@ -796,13 +885,13 @@
 \begin{frame}{Related Work}
   UNITY
   \begin{itemize}
-  \item State variables, assignment statements, non-deterministic execution
+  \item State variables, parallel assignment statements, non-deterministic selection and execution
   \item Lack of encapsulation/interface precludes compositionality
   \end{itemize}
 
   I/O Automata
   \begin{itemize}
-  \item State variables, pre/post conditions, signatures (interfaces)
+  \item State variables, input/output/internal actions, pre/post conditions, signatures (interfaces)
   \item Composition limited in depth, no third-party composition
   \end{itemize}
 
@@ -956,8 +1045,46 @@ type Clock component {
 
 \end{frame}
 
-\begin{frame}{Reactive Components Model}
+\begin{frame}{Preliminaries}
   \centering
+
+    \resizebox{\textwidth}{!}{
+    \begin{tikzpicture}
+      [>=stealth',
+        line/.style={draw, thick, ->},
+        entity/.style={
+          rectangle,
+          rounded corners,
+          draw=black, very thick,
+          text centered,
+          text width=6em,
+          minimum height=8em,
+}]
+      \node[entity, label={Environment}] (environment) {};
+      \node[entity, right=4cm, label={Program}] (program) at (environment) {};
+      \draw[line] ($(environment.south east)!0.66!(environment.north east)$) -- ($(program.south west)!0.66!(program.north west)$) node [midway, above] {Input};
+      \draw[line] ($(program.south west)!0.33!(program.north west)$) -- ($(environment.south east)!0.33!(environment.north east)$) node [midway, below] {Output};
+
+      \draw[line,
+        decoration={markings, mark=at position 0.0 with {\arrow{<}}},
+        postaction={decorate}
+      ]
+      (program) circle (0.5) node [label={[label distance=.3cm]90:Processing}] {};
+    \end{tikzpicture}
+    }
+
+    \begin{itemize}
+    \item Output/input is atomic
+    \item Interface consists of input/output structures
+    \item Processing/output is sporadic
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}{The Reactive Components Model}
+  \centering
+
+  \vspace*{24pt}
 
         \resizebox{\textwidth}{!}{%
 \begin{tikzpicture}
@@ -979,7 +1106,7 @@ arrowstyle/.style={
 \node (ppull1) [shape=rightout, draw, text=gray, fill=gray] at (10, 1.5) {man};
 \node [align=center] at (11,1.5) {passive\\pull port};
 \node (ppull2) [shape=rightout, draw, text=gray, fill=gray] at (10, .5) {man};
-\draw [thick] (apull2.east) -- (ppull2.west);
+\draw [thick,arrowstyle] (apull2.east) -- (ppull2.west);
 %% actions and reactions
 \node [draw, diamond, minimum height=15, minimum width=20] (pre) at (2.5,3) {};
 \node at (2.5,2.5) {precondition};
@@ -988,8 +1115,9 @@ arrowstyle/.style={
 \node at (3.5,3.5) {\textbf{\emph{action}}};
 \node [draw, minimum height=15, minimum width=50, rounded corners=5] (trans2) at (5,5) {};
 \node at (5,4.5) {transition};
+\node at (5,3.5) {transition};
 \draw [thick,arrowstyle] (pre) -- (trans1);
-\draw [thick] (apull1.east) -| (trans1) node[pos=.5,right] {\textbf{call}};
+\draw [thick,arrowstyle] (trans1) |- (apull1.east) node[pos=.5,right] {\textbf{call}};
 %% active push ports
 \node (apush1) [shape=rightout, draw, text=white, fill=white] at (10, 3) {man};
 \node (apush2) [shape=rightout, draw, text=white, fill=white] at (10, 4) {man};
@@ -1009,10 +1137,102 @@ arrowstyle/.style={
 \node [draw, cylinder, shape border rotate=90, minimum height=40, minimum width=40] (sv1) at (5,7.25) {};
 \node [align=center] at (5,6.25) {state variables};
 \end{tikzpicture}
-}%
+        }%
+
+% State variables
+\onslide<2>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=50, minimum width=60, red, very thick] at (.3,2.3) {};
+\end{tikzpicture}
+
+% Passive push port
+\onslide<3>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=20, minimum width=60, red, very thick] at (-3.6,.8) {};
+\end{tikzpicture}
+
+% Transition
+\onslide<4>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=30, minimum width=60, red, very thick] at (.3,.8) {};
+\end{tikzpicture}
+
+% Reaction
+\onslide<5>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=30, minimum width=170, red, very thick] at (-1.7,.8) {};
+\end{tikzpicture}
+
+% Precondition
+\onslide<6>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=25, minimum width=50, red, very thick] at (-1.5,-.75) {};
+\end{tikzpicture}
+
+% Transition
+\onslide<7>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=25, minimum width=50, red, very thick] at (.3,-.75) {};
+\end{tikzpicture}
+
+% Action
+\onslide<8>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=35, minimum width=100, red, very thick] at (-.6,-.7) {};
+\end{tikzpicture}
+
+% Active Push Port
+\onslide<9>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=20, minimum width=70, red, very thick] at (4.1,.8) {};
+  \node [draw, rectangle, minimum height=20, minimum width=60, red, very thick, dashed] at (-3.6,.8) {};
+\end{tikzpicture}
+
+% Active Pull Port
+\onslide<10>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=20, minimum width=70, red, very thick, dashed] at (4.1,-1.7) {};
+  \node [red] at (4.1,-3.2) {interrogate state variables};
+  \node [draw, rectangle, minimum height=20, minimum width=60, red, very thick] at (-3.6,-1.7) {};
+\end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}{Transitions, Transactions, and Execution}
+
+\begin{block}{Transitions}
+  Conceptually, a \emph{transition} is an atomic parallel assignment statement:
+
+  \hspace{4em} var1, var2, ... := expr1, expr2, ...
+
+  \hspace{4em} \emph{Mutable Phase} := \emph{Immutable Phase}
+\end{block}
+
+\begin{block}{Transactions}
+  A \emph{transaction} is a set of transitively linked transitions.
+\end{block}
+
+\begin{block}{(Logical) Execution}
+  Repeatedly select and execute transactions.
+\end{block}
+
+\begin{block}{Fairness}
+  All transactions are selected an infinite number of times.
+\end{block}
 \end{frame}
 
 \begin{frame}{Clock System Example \includegraphics[height=12pt]{CLOCK01-300px.png}}
+
+\vspace*{36pt}
 
 \centering
 \resizebox{\textwidth}{!}{%
@@ -1104,13 +1324,39 @@ arrowstyle/.style={
 \end{tikzpicture}
 }%
 
+% Variables
+\onslide<2>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=20, minimum width=270, red, very thick] at (-.1,1.9) {};
+\end{tikzpicture}
+
+\onslide<3>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=60, minimum width=170, red, very thick] at (-2.05,.4) {};
+\end{tikzpicture}
+
+\onslide<4>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=60, minimum width=270, red, very thick] at (-.35,-1.9) {};
+\end{tikzpicture}
+
+\onslide<5>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=60, minimum width=80, red, very thick] at (3.75,.4) {};
+\end{tikzpicture}
+
+
 \end{frame}
 
 \begin{frame}{Simplification of Clock System \includegraphics[height=12pt]{CLOCK01-300px.png}}
 
   \centering
 
-  Reactive components allow composition.
+  Reactive components allow principled composition.
 
 \resizebox{\textwidth}{!}{%
 \begin{tikzpicture}
@@ -1253,33 +1499,92 @@ arrowstyle/.style={
 
   \begin{columns}
     \begin{column}{.5\textwidth}
+      \begin{itemize}
+      \item \rcgo{} is based on \emph{Go} \includegraphics[height=32pt]{gopher.png}
+        \begin{itemize}
+        \item Go is like C with methods, interfaces, and garbage collection
+        \end{itemize}
+      \item rc\textsubscript{java} would be different
+      \end{itemize}
+    \end{column}
+    \begin{column}{.5\textwidth}
       \fbox{
         \parbox{\linewidth}{\raggedright
           \emph{Static System Assumption}:\\Number and configuration of components is fixed.
         }
       }
     \end{column}
-    \begin{column}{.5\textwidth}
-      \begin{itemize}
-      \item \rcgo{} is based on Go \includegraphics[height=32pt]{gopher.png}
-      \item C with methods, interfaces, and garbage collection
-      \item rc\textsubscript{java} would be different
-      \end{itemize}
-    \end{column}
   \end{columns}
 
 
 \end{frame}
 
-\begin{frame}[fragile]{\rcgo{}:  Keywords}
+\begin{frame}{Model $\to$ Language}
+  \centering
+
+        \resizebox{\textwidth}{!}{%
+\begin{tikzpicture}
+[
+arrowstyle/.style={
+  decoration={markings,mark=at position 1 with {\arrow[scale=2,]{stealth}}},
+  postaction={decorate},
+  shorten >=0.4pt
+}
+]
+
+%% component boundary
+\draw (0,0) rectangle (10,8.25);
+%% active pull ports
+\node (apull1) [shape=leftin, draw, text=gray, fill=gray] at (0,1.5) {man};
+\node [align=center] at (-1,1.5) {active\\pull port};
+\node (apull2) [shape=leftin, draw, text=gray, fill=gray] at (0,.5) {man};
+%% passive pull ports
+\node (ppull1) [shape=rightout, draw, text=gray, fill=gray] at (10, 1.5) {man};
+\node [align=center] at (11,1.5) {passive\\pull port};
+\node (ppull2) [shape=rightout, draw, text=gray, fill=gray] at (10, .5) {man};
+\draw [thick] (apull2.east) -- (ppull2.west);
+%% actions and reactions
+\node [draw, diamond, minimum height=15, minimum width=20] (pre) at (2.5,3) {};
+\node at (2.5,2.5) {precondition};
+\node [draw, minimum height=15, minimum width=50, rounded corners=5] (trans1) at (5,3) {};
+\draw [dashed] (3.5,3) ellipse (3 and 1);
+\node at (3.5,3.5) {\textbf{\emph{action}}};
+\node [draw, minimum height=15, minimum width=50, rounded corners=5] (trans2) at (5,5) {};
+\node at (5,4.5) {transition};
+\draw [thick,arrowstyle] (pre) -- (trans1);
+\draw [thick] (apull1.east) -| (trans1) node[pos=.5,right] {\textbf{call}};
+%% active push ports
+\node (apush1) [shape=rightout, draw, text=white, fill=white] at (10, 3) {man};
+\node (apush2) [shape=rightout, draw, text=white, fill=white] at (10, 4) {man};
+\node (apush3) [shape=rightout, draw, text=white, fill=white] at (10, 5) {man};
+\node [align=center] at (11.1,5) {active\\push port};
+\draw [thick,dashed,arrowstyle] (trans1) -- (apush1.west);
+\draw [thick,dashed,arrowstyle] (trans1) -- (apush2.west);
+\node at(7.5,4) {\textbf{activate}};
+\draw [thick,dashed,arrowstyle] (trans2) -- (apush2.west);
+\draw [thick,dashed,arrowstyle] (trans2) -- (apush3.west);
+%% passive push ports
+\node (ppush1) [shape=leftin, draw, text=white, fill=white] at (0, 5) {man};
+\draw [thick,arrowstyle] (ppush1.east) -- (trans2);
+\node [align=center] at (-1.1,5) {passive\\push port};
+\draw [dashed] (2,5) ellipse (5 and 1);
+\node at (2,5.5) {\textbf{\emph{reaction}}};
+\node [draw, cylinder, shape border rotate=90, minimum height=40, minimum width=40] (sv1) at (5,7.25) {};
+\node [align=center] at (5,6.25) {state variables};
+\end{tikzpicture}
+        }%
+
+\end{frame}
+
+\begin{frame}[fragile]{\rcgo{}:  Keywords for Defining Components}
 
 {\small
 \begin{lstlisting}
 type Clock component {
   counter uint;
   flag bool;
-  response push (t uint);
-  counter pull () uint;
+  response push (t uint);     // active
+  counter pull () uint;       // active
 };
 
 init (c *Clock) Initialize () {.}
@@ -1296,58 +1601,205 @@ instance s System Initialize ();
 \end{lstlisting}
 }
 
-\onslide<2->
+\onslide<2>
 \begin{tikzpicture}[overlay,remember picture]
   \pgftransformshift{\pgfpointanchor{current page}{center}}
-  \node [draw, cylinder, shape border rotate=90, minimum height=20, minimum width=20, fill=white] (sv1) at (-1.5,2.75) {};
+  \node [draw, rectangle, minimum height=15, minimum width=60, red] at (-1.9,3.5) {};
 \end{tikzpicture}
 
 \onslide<3->
 \begin{tikzpicture}[overlay,remember picture]
   \pgftransformshift{\pgfpointanchor{current page}{center}}
-  \node [shape=rightout, draw, text=white, fill=white] at (1, 2.3) {man};
+  \node [draw, cylinder, shape border rotate=90, minimum height=20, minimum width=20, fill=white] (sv1) at (-1.5,2.75) {};
+\end{tikzpicture}
+
+\onslide<4>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=15, minimum width=35, red] at (-2.5,2.25) {};
 \end{tikzpicture}
 
 \onslide<4->
 \begin{tikzpicture}[overlay,remember picture]
   \pgftransformshift{\pgfpointanchor{current page}{center}}
-  \node [shape=leftin, draw, text=gray, fill=gray] at (.4,1.8) {man};
+  \node [shape=rightout, draw, text=white, fill=white] at (1, 2.3) {man};
+\end{tikzpicture}
+
+\onslide<5>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=15, minimum width=35, red] at (-2.7,1.8) {};
 \end{tikzpicture}
 
 \onslide<5->
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [shape=leftin, draw, text=gray, fill=gray] at (.4,1.8) {man};
+\end{tikzpicture}
+
+\onslide<6>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=15, minimum width=35, red] at (-5,.6) {};
+\end{tikzpicture}
+
+\onslide<7->
 \begin{tikzpicture}[overlay,remember picture]
   \pgftransformshift{\pgfpointanchor{current page}{center}}
   \node [draw, diamond, minimum height=15, minimum width=20, fill=white] at (3.1,.5) {};
   \node [draw, minimum height=15, minimum width=20, rounded corners=5, fill=white] at (4.88,.6) {};
 \end{tikzpicture}
 
-\onslide<6->
+\onslide<7>
 \begin{tikzpicture}[overlay,remember picture]
   \pgftransformshift{\pgfpointanchor{current page}{center}}
-  \node [shape=leftin, draw, text=white, fill=white] at (4,-.25) {man};
-\end{tikzpicture}
-
-\onslide<7->
-\begin{tikzpicture}[overlay,remember picture]
-  \pgftransformshift{\pgfpointanchor{current page}{center}}
-  \node [shape=rightout, draw, text=gray, fill=gray] at (6, -.7) {man};
+  \node [draw, rectangle, minimum height=15, minimum width=45, red] at (-4.8,.1) {};
 \end{tikzpicture}
 
 \onslide<8->
 \begin{tikzpicture}[overlay,remember picture]
   \pgftransformshift{\pgfpointanchor{current page}{center}}
-  \draw[thick] (4,-2.1) -- (6,-2.1);
+  \node [shape=leftin, draw, text=white, fill=white] at (4,-.25) {man};
+\end{tikzpicture}
+
+\onslide<8>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=15, minimum width=55, red] at (-4.5,-.3) {};
 \end{tikzpicture}
 
 \onslide<9->
 \begin{tikzpicture}[overlay,remember picture]
   \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [shape=rightout, draw, text=gray, fill=gray] at (6, -.7) {man};
+\end{tikzpicture}
+
+\onslide<9>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=15, minimum width=50, red] at (-4.75,-.7) {};
+\end{tikzpicture}
+
+\onslide<10->
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \draw[thick] (4,-2.1) -- (6,-2.1);
+\end{tikzpicture}
+
+\onslide<10>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=15, minimum width=40, red] at (-5,-1.5) {};
+\end{tikzpicture}
+
+\onslide<11->
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
   \node [rectangle, draw, minimum height=15, minimum width=20, fill=white] at (2.1, -3.625) {};
+\end{tikzpicture}
+
+\onslide<11>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=15, minimum width=55, red] at (-4.5,-3.65) {};
 \end{tikzpicture}
 
 \end{frame}
 
-\begin{frame}[fragile]{\rcgo{}:  Activations}
+\begin{frame}{Model $\to$ Language}
+  \centering
+
+        \resizebox{\textwidth}{!}{%
+\begin{tikzpicture}
+[
+arrowstyle/.style={
+  decoration={markings,mark=at position 1 with {\arrow[scale=2,]{stealth}}},
+  postaction={decorate},
+  shorten >=0.4pt
+}
+]
+
+%% component boundary
+\draw (0,0) rectangle (10,8.25);
+%% active pull ports
+\node (apull1) [shape=leftin, draw, text=gray, fill=gray] at (0,1.5) {man};
+\node [align=center] at (-1,1.5) {active\\pull port};
+\node (apull2) [shape=leftin, draw, text=gray, fill=gray] at (0,.5) {man};
+%% passive pull ports
+\node (ppull1) [shape=rightout, draw, text=gray, fill=gray] at (10, 1.5) {man};
+\node [align=center] at (11,1.5) {passive\\pull port};
+\node (ppull2) [shape=rightout, draw, text=gray, fill=gray] at (10, .5) {man};
+\draw [thick] (apull2.east) -- (ppull2.west);
+%% actions and reactions
+\node [draw, diamond, minimum height=15, minimum width=20] (pre) at (2.5,3) {};
+\node at (2.5,2.5) {precondition};
+\node [draw, minimum height=15, minimum width=50, rounded corners=5] (trans1) at (5,3) {};
+\draw [dashed] (3.5,3) ellipse (3 and 1);
+\node at (3.5,3.5) {\textbf{\emph{action}}};
+\node [draw, minimum height=15, minimum width=50, rounded corners=5] (trans2) at (5,5) {};
+\node at (5,4.5) {transition};
+\draw [thick,arrowstyle] (pre) -- (trans1);
+\draw [thick] (apull1.east) -| (trans1) node[pos=.5,right] {\textbf{call}};
+%% active push ports
+\node (apush1) [shape=rightout, draw, text=white, fill=white] at (10, 3) {man};
+\node (apush2) [shape=rightout, draw, text=white, fill=white] at (10, 4) {man};
+\node (apush3) [shape=rightout, draw, text=white, fill=white] at (10, 5) {man};
+\node [align=center] at (11.1,5) {active\\push port};
+\draw [thick,dashed,arrowstyle] (trans1) -- (apush1.west);
+\draw [thick,dashed,arrowstyle] (trans1) -- (apush2.west);
+\node at(7.5,4) {\textbf{activate}};
+\draw [thick,dashed,arrowstyle] (trans2) -- (apush2.west);
+\draw [thick,dashed,arrowstyle] (trans2) -- (apush3.west);
+%% passive push ports
+\node (ppush1) [shape=leftin, draw, text=white, fill=white] at (0, 5) {man};
+\draw [thick,arrowstyle] (ppush1.east) -- (trans2);
+\node [align=center] at (-1.1,5) {passive\\push port};
+\draw [dashed] (2,5) ellipse (5 and 1);
+\node at (2,5.5) {\textbf{\emph{reaction}}};
+\node [draw, cylinder, shape border rotate=90, minimum height=40, minimum width=40] (sv1) at (5,7.25) {};
+\node [align=center] at (5,6.25) {state variables};
+\end{tikzpicture}
+        }%
+
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=60, minimum width=55, red, very thick] at (.3,.05) {};
+\end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}[fragile]{\rcgo{}:  The Immutable Phase}
+
+  \begin{block}{Immutability}
+    \begin{itemize}
+      \item \verb+const+ - lvalue and lvalues derived through indirection are immutable.
+      \item \verb+$const+ - lvalues derived through indirection are immutable.
+    \end{itemize}
+  \end{block}
+
+\begin{lstlisting}
+action   (c $const *Clock) Respond (this.flag) {.}
+reaction (c $const *Clock) Request () {.}
+getter   (c $const *Counter) Counter () uint {.}
+\end{lstlisting}
+
+\onslide<1>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=40, minimum width=40, red] at (-2.1,-.8) {};
+\end{tikzpicture}
+
+\onslide<1>
+\fbox{
+  \parbox{\linewidth}{\centering
+    Actions/reactions start in immutable phase. \\
+    Getters only called in immutable phase.
+  }
+}
+
+\end{frame}
+
+\begin{frame}[fragile]{\rcgo{}:  The Mutable Phase (Activations)}
 
 \begin{lstlisting}
 action (this $const *QueueProcessor) _dequeue
@@ -1366,52 +1818,55 @@ action (this $const *QueueProcessor) _dequeue
 \onslide<2>
 \begin{tikzpicture}[overlay,remember picture]
   \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node[draw, rectangle, minimum height=14, minimum width=170, red] (box) at (0,.1) {};
   \node[
     rectangle callout,
     draw=eclipseGreen,
     ultra thick,
     fill=white,
     decorate,
-    callout absolute pointer={(-.75,1.75)},
+    callout absolute pointer={(box.south)},
     font=\Large,
     text width=0.6\textwidth,
     align=center,
     anchor=center
-  ] at (2.5,-3) {actions/reactions start in immutable phase};
+  ] at (0,-2.5) {list of push ports to activate};
 \end{tikzpicture}
 
 \onslide<3>
 \begin{tikzpicture}[overlay,remember picture]
   \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=14, minimum width=10, red] (box) at (3.35,.1) {};
   \node[
     rectangle callout,
     draw=eclipseGreen,
     ultra thick,
     fill=white,
     decorate,
-    callout absolute pointer={(-.75,-.25)},
+    callout absolute pointer={(box.south)},
     font=\Large,
     text width=0.6\textwidth,
     align=center,
     anchor=center
-  ] at (2.5,-3) {activate bodies are in mutable phase};
+  ] at (0,-2.5) {\verb+this+ is not \verb+$const+ in activate body};
 \end{tikzpicture}
 
 \onslide<4>
 \begin{tikzpicture}[overlay,remember picture]
   \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node [draw, rectangle, minimum height=14, minimum width=10, red] (box) at (-4.85,-.75) {};
   \node[
     rectangle callout,
     draw=eclipseGreen,
     ultra thick,
     fill=white,
     decorate,
-    callout absolute pointer={(-4.8,-1.1)},
+    callout absolute pointer={(box.south)},
     font=\Large,
     text width=0.6\textwidth,
     align=center,
     anchor=center
-  ] at (2.5,-3) {activate terminates action/reaction};
+  ] at (0,-2.5) {activate terminates action/reaction};
 \end{tikzpicture}
 
 \end{frame}
@@ -1496,13 +1951,14 @@ reaction (this $const *C2) R (w $foreign *heap W) {
 \onslide<2>
 \begin{tikzpicture}[overlay,remember picture]
   \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node[draw, rectangle, minimum height=14, minimum width=75, red] (box) at (-.2,3.1) {};
   \node[
     rectangle callout,
     draw=eclipseGreen,
     ultra thick,
     fill=white,
     decorate,
-    callout absolute pointer={(-1,2.9)},
+    callout absolute pointer={(box.south)},
     font=\Large,
     text width=0.6\textwidth,
     align=center,
@@ -1513,30 +1969,50 @@ reaction (this $const *C2) R (w $foreign *heap W) {
 \onslide<3>
 \begin{tikzpicture}[overlay,remember picture]
   \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node[draw, rectangle, minimum height=14, minimum width=60, red] (box) at (-3.95,2.7) {};
   \node[
     rectangle callout,
     draw=eclipseGreen,
     ultra thick,
     fill=white,
     decorate,
-    callout absolute pointer={(-2.2,2.5)},
+    callout absolute pointer={(box.south)},
     font=\Large,
     text width=0.6\textwidth,
     align=center,
     anchor=center
-  ] at (2.5,0) {x is a *W};
+  ] at (2.5,0) {direct allocations to \verb+w+};
 \end{tikzpicture}
 
 \onslide<4>
 \begin{tikzpicture}[overlay,remember picture]
   \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node[draw, rectangle, minimum height=14, minimum width=15, red] (box) at (-2.3,2.7) {};
   \node[
     rectangle callout,
     draw=eclipseGreen,
     ultra thick,
     fill=white,
     decorate,
-    callout absolute pointer={(-2.2,2.3)},
+    callout absolute pointer={(box.south)},
+    font=\Large,
+    text width=0.6\textwidth,
+    align=center,
+    anchor=center
+  ] at (2.5,0) {\verb+x+ is a \verb+*W+};
+\end{tikzpicture}
+
+\onslide<5>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node[draw, rectangle, minimum height=50, minimum width=100, red] (box) at (-3.25,2.1) {};
+  \node[
+    rectangle callout,
+    draw=eclipseGreen,
+    ultra thick,
+    fill=white,
+    decorate,
+    callout absolute pointer={(box.east)},
     font=\Large,
     text width=0.6\textwidth,
     align=center,
@@ -1544,16 +2020,17 @@ reaction (this $const *C2) R (w $foreign *heap W) {
   ] at (2.5,0) {all variables outside of \verb+change+ are \verb+foreign+};
 \end{tikzpicture}
 
-\onslide<5>
+\onslide<6>
 \begin{tikzpicture}[overlay,remember picture]
   \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node[draw, rectangle, minimum height=14, minimum width=50, red] (box) at (-.65,-1.1) {};
   \node[
     rectangle callout,
     draw=eclipseGreen,
     ultra thick,
     fill=white,
     decorate,
-    callout absolute pointer={(-1,-1)},
+    callout absolute pointer={(box.north)},
     font=\Large,
     text width=0.6\textwidth,
     align=center,
@@ -1561,16 +2038,17 @@ reaction (this $const *C2) R (w $foreign *heap W) {
   ] at (2.5,0) {take ownership};
 \end{tikzpicture}
 
-\onslide<6>
+\onslide<7>
 \begin{tikzpicture}[overlay,remember picture]
   \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node[draw, rectangle, minimum height=14, minimum width=55, red] (box) at (-1.7,-1.95) {};
   \node[
     rectangle callout,
     draw=eclipseGreen,
     ultra thick,
     fill=white,
     decorate,
-    callout absolute pointer={(-1.8,-1.8)},
+    callout absolute pointer={(box.north)},
     font=\Large,
     text width=0.6\textwidth,
     align=center,
@@ -1578,22 +2056,48 @@ reaction (this $const *C2) R (w $foreign *heap W) {
   ] at (2.5,0) {take ownership and unbox};
 \end{tikzpicture}
 
-\onslide<7>
+\onslide<8>
 \begin{tikzpicture}[overlay,remember picture]
   \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node[draw, rectangle, minimum height=14, minimum width=25, red] (box) at (-4.2,.6) {};
   \node[
     rectangle callout,
     draw=eclipseGreen,
     ultra thick,
     fill=white,
     decorate,
-    callout absolute pointer={(-3.5,.5)},
+    callout absolute pointer={(box.east)},
     font=\Large,
     text width=0.6\textwidth,
     align=center,
     anchor=center
-  ] at (2.5,0) {content behind w is gone};
+  ] at (2.5,0) {content behind \verb+w+ may be gone \\
+    (\verb+change+, \verb+move+, \verb+merge+ will return \verb+nil+)};
 \end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}{Enforcing Sound Composition:  Non-determinism}
+
+  \begin{block}{Problem}
+  Suppose there are two transitions $t_1$ and $t_2$:
+
+  $t_1: x, y := 1, 2$
+
+  $t_2: x, z := 3, 4$
+
+  Composing them results in a non-deterministic transaction!
+
+  $t_1 || t_2: x, y, x, z := 1, 2, 3, 4$
+  \end{block}
+
+  \begin{block}{Challenge}
+    Reject programs with non-deterministic transactions.
+  \end{block}
+
+  \begin{block}{Solution}
+    Let component instances be a proxy for their state variables.
+  \end{block}
 
 \end{frame}
 
@@ -1601,11 +2105,15 @@ reaction (this $const *C2) R (w $foreign *heap W) {
 
   \centering
 
+  \vspace*{12pt}
+
   \begin{description}
   \item[Transaction Graph] follow activations through code and bindings
   \end{description}
 
   Action/Reaction $\to$ Activation $\to$ Port $\to$ Reaction $\to$ \ldots
+
+  \vspace*{12pt}
 
   \resizebox{.9\textwidth}{!}{
   \begin{tikzpicture}[
@@ -1665,6 +2173,36 @@ reaction (this $const *C2) R (w $foreign *heap W) {
 
   * indicates instance is mutated
 
+\onslide<2>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node[draw, rectangle, minimum height=30, minimum width=280, red, very thick] (box) at (0,1.5) {};
+\end{tikzpicture}
+
+\onslide<3>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node[draw, rectangle, minimum height=30, minimum width=280, red, very thick] (box) at (0,.35) {};
+\end{tikzpicture}
+
+\onslide<4>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node[draw, rectangle, minimum height=30, minimum width=280, red, very thick] (box) at (0,-.75) {};
+\end{tikzpicture}
+
+\onslide<5>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node[draw, rectangle, minimum height=30, minimum width=280, red, very thick] (box) at (0,-1.9) {};
+\end{tikzpicture}
+
+\onslide<6>
+\begin{tikzpicture}[overlay,remember picture]
+  \pgftransformshift{\pgfpointanchor{current page}{center}}
+  \node[draw, rectangle, minimum height=30, minimum width=280, red, very thick] (box) at (0,-3.05) {};
+\end{tikzpicture}
+
 \end{frame}
 
 \begin{frame}{Enforcing Sound Composition:  Instance Sets}
@@ -1705,7 +2243,7 @@ reaction (this $const *C2) R (w $foreign *heap W) {
     }
   }
   child {
-    node (Activation02) [activation,red] {Instance1 Instance2* Instance3}
+    node (Activation02) [activation] {Instance1 Instance2* Instance3}
     child {
       node (Push03) [push] {Instance2* Instance3}
       child {
@@ -1731,7 +2269,7 @@ reaction (this $const *C2) R (w $foreign *heap W) {
 
   \begin{itemize}
   \item Activations at same level are \emph{mutually exclusive}
-  \item Actions, reactions, and ports are \emph{potentially coincidental}
+  \item Ports and reactions are activated as a group
   \end{itemize}
 
 \onslide<2>
@@ -1748,6 +2286,252 @@ reaction (this $const *C2) R (w $foreign *heap W) {
   ] at (2.8,.6) {};
 \end{tikzpicture}
 
+\end{frame}
+
+\begin{frame}{Platform Details}
+
+  \begin{block}{Synchronized Two-Phase Calling Convention}
+    \begin{itemize}
+    \item Transactions can be executed efficiently
+    \end{itemize}
+    \end{block}
+
+  \begin{block}{Heaps}
+    \begin{itemize}
+    \item Each component has one (or more) heaps
+    \item Scoping and one level of indirection enforces encapsulation
+    \item Encapsulation enables parallel garbage collection
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{I/O}
+    \begin{itemize}
+    \item Extend language with host OS types, e.g., file descriptors
+    \item Non-blocking I/O for fairness
+    \item Timer + UDP $\to$ Prototype SNTP client
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{The Scheduling Problem}
+
+  \begin{columns}
+    \begin{column}{.5\textwidth}
+      \resizebox{\textwidth}{!}{
+      \begin{tikzpicture}
+        [trans/.style={
+            circle,
+            draw,
+            on chain},
+          start chain=going above,
+          node distance = .5cm]
+        \node[text centered, text width=5em] at (0,0) {Idle \\ Transactions};
+        \node[trans,red] at (0,1) {$t_0$};
+        \node[trans,red] {$t_1$};
+        \node[trans,green] {$t_2$*};
+        \node[trans,green] {$t_4$*};
+
+        \node[text centered, text width=5em] at (3,0) {Active \\ Transactions};
+        \node[trans] at (3,1) {$t_3$};
+        \node[trans] {$t_5$};
+      \end{tikzpicture}
+      }
+    \end{column}
+    \begin{column}{.5\textwidth}
+      Fairly pick an idle transaction that is {\color{green}safe*} with respect to the set of active transactions.
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\begin{frame}{Scheduler Design Criteria}
+
+  When are preconditions evaluated?
+  \begin{itemize}
+  \item before execution (\emph{lazy}) or after execution (\emph{eager})
+  \end{itemize}
+
+  \vspace*{12pt}
+
+  How is safety checked?
+  \begin{itemize}
+  \item every time (\emph{oblivious}) or \emph{a priori} (\emph{knowledgeable})
+  \end{itemize}
+
+  \vspace*{12pt}
+
+  How are race conditions handled?
+  \begin{itemize}
+  \item avoid (\emph{cautious}) or recover (\emph{speculative})
+  \end{itemize}
+
+  \vspace*{12pt}
+
+  Is the execution of a transaction physically atomic?
+  \begin{itemize}
+  \item yes (\emph{non-preemptive}) or no (\emph{preemptive})
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Scheduler Implementation}
+
+  \begin{columns}
+    \begin{column}[T]{.5\textwidth}
+
+      \centering
+
+      {\Large Instance Scheduler}
+
+      \vspace*{8pt}
+
+      \begin{tikzpicture}
+        [thread/.style={draw, rounded corners}]
+        %\draw[help lines] (-2,-2) grid (2,4);
+        \draw[ystep=.5cm] (0,0) grid (1,3);
+        \node[text centered, text width=2cm] at (-1,1.5) {Queue of Instances};
+        \node[thread] (t1) at (-.5,-1) {Thread 1};
+        \node[thread] (t2) at (1.5,-1) {Thread 2};
+        \draw[->,thick,>=stealth] (.5,0) -> (t1.north);
+        \draw[->,thick,>=stealth] (.5,0) -> (t2.north);
+        \node at (.5,-2) {Execute all transactions in instance};
+        \draw[thick] (t1.west) to[out=135,in=225] (-2,3);
+        \draw[->,thick,>=stealth] (-2,3) to[out=45,in=90] (.5,3);
+      \end{tikzpicture}
+
+    \end{column}
+    \begin{column}[T]{.5\textwidth}
+
+      \centering
+
+      {\Large Partitioned Scheduler}
+
+      \vspace*{8pt}
+
+      \begin{tikzpicture}
+        [thread/.style={draw, rounded corners}]
+        %\draw[help lines] (-2,-2) grid (2,4);
+        \node[thread] (t1) at (0,0) {Thread 1};
+        \node[thread] (t2) at (3,0) {Thread 2};
+        \node[thread] (t3) at (3,2) {Thread 3};
+        \node[thread] (t4) at (0,2) {Thread 4};
+        \draw[->,thick,>=stealth] (t1.east) -- (t2.west);
+        \draw[->,thick,>=stealth] (t2.north) -- (t3.south);
+        \draw[->,thick,>=stealth] (t3.west) -- (t4.east);
+        \draw[->,thick,>=stealth] (t4.south) -- (t1.north);
+        \node at (1.5, 1) {Termination Ring};
+      \end{tikzpicture}
+
+      \vspace*{8pt}
+
+      Thread
+
+      \vspace*{8pt}
+
+      \begin{tikzpicture}
+        \draw[ystep=.5cm] (0,0) grid (1,3);
+        \node[text centered, text width=2.5cm] at (-1.5,1.5) {List of Transactions};
+        \node at (.5, 2.75) {Idle};
+        \node at (.5, 2.25) {Idle};
+        \node[blue] at (.5, 1.75) {Exec};
+        \node[green] at (.5, 1.25) {Wait};
+        \node[green] at (.5,  .75) {Wait};
+        \node at (.5,  .25) {Idle};
+      \end{tikzpicture}
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\begin{frame}{Scheduler Evaluation: AsyncClock \includegraphics[height=12pt]{CLOCK01-300px.png}}
+
+  \begin{columns}
+    \begin{column}{.4\textwidth}
+      \begin{itemize}
+      \item Machine:  2 cores
+      \item Instance/Partitioned:  2 threads
+      \item Thread:  3 threads
+      \end{itemize}
+
+      \vspace*{8pt}
+
+      \emph{Thread suffers excessive context switches}
+    \end{column}
+    \begin{column}{.6\textwidth}
+      \includegraphics[width=.6\textheight]{async_throughput_box.png}
+    \end{column}
+  \end{columns}
+
+  \vspace*{12pt}
+
+  \fbox{
+    \parbox{\linewidth}{
+      \centering
+      Instance/Partitioned are viable multi-threaded event schedulers!
+    }
+  }
+
+\end{frame}
+
+\begin{frame}{Scheduler Evaluation: SyncClock \includegraphics[height=12pt]{CLOCK01-300px.png}}
+
+    \begin{columns}
+    \begin{column}{.4\textwidth}
+      \begin{itemize}
+      \item Machine:  2 cores
+      \item Instance/Partitioned:  2 threads
+      \item Thread:  \emph{2 threads}
+      \end{itemize}
+    \end{column}
+    \begin{column}{.6\textwidth}
+      \includegraphics[width=.6\textheight]{sync_throughput_box.png}
+    \end{column}
+  \end{columns}
+
+  \vspace*{12pt}
+
+  \fbox{
+    \parbox{\linewidth}{
+      \centering
+      Compilation beats interpretation!
+    }
+  }
+
+\end{frame}
+
+\begin{frame}{Conclusions and Future Work}
+  \begin{block}{Conclusions}
+    \begin{enumerate}
+    \item Reactive component model enables principled composition/decomposition of reactive systems.
+    \item Reactive component semantics can be checked efficiently.
+    \item Empirical results suggest that reactive components could compete with optimized multi-threaded approaches.
+    \end{enumerate}
+  \end{block}
+
+  \begin{block}{Future Work}
+    \begin{itemize}
+    \item Extend model for introduction and dynamic composition
+    \item Explore additional scheduler classes and algorithms
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \centering
+  \Huge
+  Questions?
+\end{frame}
+
+%% \begin{frame}
+%%   \bibliographystyle{plain}
+%%   \bibliography{slides}{}
+%% \end{frame}
+
+\begin{frame}
+    \centering
+  \Huge
+  Bonus Slides
 \end{frame}
 
 \begin{frame}{Synchronized Two-Phase Calling Convention}
@@ -1837,6 +2621,7 @@ reaction (this $const *C2) R (w $foreign *heap W) {
       \item Run-time maintains a stack of heaps
       \item Top heap services allocation requests
       \item \verb+change+ scoping rules enforce encapsulation
+      \item encapsulation enables parallel garbage collection
       \end{itemize}
     \end{column}
 
@@ -1861,17 +2646,25 @@ reaction (this $const *C2) R (w $foreign *heap W) {
 
     \begin{tikzpicture}
       \node [rectangle, draw] (p2) at (0,0) {0x12345678};
-      \node at (0,-1) {* heap W};
+      \node [rectangle, draw] (p3) at (0,-1) {0x56781234};
+      \node at (0,1) {* heap W};
       \node [rectangle, draw,blue] (hl) at (4,0) {0x90ABCDEF};
-      \node at (4,-1) {heap link};
+      \node at (4,1) {heap link};
       \node [rectangle, draw] (heap) at (8,0) {heap object};
-      \node at (8,-1) {heap (W root)};
+      \node at (8,1) {heap (W root)};
       \draw [->,thick] (p2) -- (hl);
+      \draw [->,thick] (p3) -- (hl);
       \draw [->,thick] (hl) -- (heap);
       \draw [dashed] (6, -.5) -- (6, .5);
     \end{tikzpicture}
-
   \end{center}
+
+  \onslide<2>
+  \begin{tikzpicture}[overlay,remember picture]
+    \pgftransformshift{\pgfpointanchor{current page}{center}}
+    \draw[red, very thick] (-1.3,-3.15) -- (1.1,-3.15);
+  \end{tikzpicture}
+
 \end{frame}
 
 %% \begin{frame}
@@ -2077,216 +2870,6 @@ _send (!this.outQueue.Empty () &&
 %% }
 %% \end{lstlisting}
 %% \end{frame}
-
-\begin{frame}{The Scheduling Problem}
-
-  \begin{columns}
-    \begin{column}{.5\textwidth}
-      \resizebox{\textwidth}{!}{
-      \begin{tikzpicture}
-        [trans/.style={
-            circle,
-            draw,
-            on chain},
-          start chain=going above,
-          node distance = .5cm]
-        \node[text centered, text width=5em] at (0,0) {Idle \\ Transactions};
-        \node[trans,red] at (0,1) {$t_0$};
-        \node[trans,red] {$t_1$};
-        \node[trans,green] {$t_2$};
-        \node[trans,green] {$t_4$};
-
-        \node[text centered, text width=5em] at (3,0) {Active \\ Transactions};
-        \node[trans] at (3,1) {$t_3$};
-        \node[trans] {$t_5$};
-      \end{tikzpicture}
-      }
-    \end{column}
-    \begin{column}{.5\textwidth}
-      Pick an idle transaction that is {\color{green}safe} with respect to the set of active transactions subject to \emph{fairness}.
-    \end{column}
-  \end{columns}
-
-\end{frame}
-
-\begin{frame}{Scheduler Classes}
-
-  When are preconditions evaluated?
-  \begin{itemize}
-  \item before execution (\emph{lazy}) or after execution (\emph{eager})
-  \end{itemize}
-
-  \vspace*{12pt}
-
-  How is safety checked?
-  \begin{itemize}
-  \item every time (\emph{oblivious}) or never (\emph{knowledgeable})
-  \end{itemize}
-
-  \vspace*{12pt}
-
-  How are race conditions handled?
-  \begin{itemize}
-  \item avoid (\emph{cautious}) or recover (\emph{speculative})
-  \end{itemize}
-
-  \vspace*{12pt}
-
-  Is the execution of a transaction physically atomic?
-  \begin{itemize}
-  \item yes (\emph{non-preemptive}) or no (\emph{preemptive})
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{Scheduler Implementation}
-
-  \begin{columns}
-    \begin{column}[T]{.5\textwidth}
-
-      \centering
-
-      {\Large Instance Scheduler}
-
-      \vspace*{8pt}
-
-      \begin{tikzpicture}
-        [thread/.style={draw, rounded corners}]
-        %\draw[help lines] (-2,-2) grid (2,4);
-        \draw[ystep=.5cm] (0,0) grid (1,3);
-        \node[text centered, text width=2cm] at (-1,1.5) {Queue of Instances};
-        \node[thread] (t1) at (-.5,-1) {Thread 1};
-        \node[thread] (t2) at (1.5,-1) {Thread 2};
-        \draw[->,thick,>=stealth] (.5,0) -> (t1.north);
-        \draw[->,thick,>=stealth] (.5,0) -> (t2.north);
-        \node at (.5,-2) {Execute all transactions in instance};
-        \draw[thick] (t1.west) to[out=135,in=225] (-2,3);
-        \draw[->,thick,>=stealth] (-2,3) to[out=45,in=90] (.5,3);
-      \end{tikzpicture}
-
-    \end{column}
-    \begin{column}[T]{.5\textwidth}
-
-      \centering
-
-      {\Large Partitioned Scheduler}
-
-      \vspace*{8pt}
-
-      \begin{tikzpicture}
-        [thread/.style={draw, rounded corners}]
-        %\draw[help lines] (-2,-2) grid (2,4);
-        \node[thread] (t1) at (0,0) {Thread 1};
-        \node[thread] (t2) at (3,0) {Thread 2};
-        \node[thread] (t3) at (3,2) {Thread 3};
-        \node[thread] (t4) at (0,2) {Thread 4};
-        \draw[->,thick,>=stealth] (t1.east) -- (t2.west);
-        \draw[->,thick,>=stealth] (t2.north) -- (t3.south);
-        \draw[->,thick,>=stealth] (t3.west) -- (t4.east);
-        \draw[->,thick,>=stealth] (t4.south) -- (t1.north);
-        \node at (1.5, 1) {Termination Ring};
-      \end{tikzpicture}
-
-      \vspace*{8pt}
-
-      Thread
-
-      \vspace*{8pt}
-
-      \begin{tikzpicture}
-        \draw[ystep=.5cm] (0,0) grid (1,3);
-        \node[text centered, text width=2.5cm] at (-1.5,1.5) {List of Transactions};
-        \node at (.5, 2.75) {Idle};
-        \node at (.5, 2.25) {Idle};
-        \node[blue] at (.5, 1.75) {Exec};
-        \node[green] at (.5, 1.25) {Wait};
-        \node[green] at (.5,  .75) {Wait};
-        \node at (.5,  .25) {Idle};
-      \end{tikzpicture}
-
-    \end{column}
-  \end{columns}
-
-\end{frame}
-
-\begin{frame}{Scheduler Evaluation: AsyncClock \includegraphics[height=12pt]{CLOCK01-300px.png}}
-
-  \begin{columns}
-    \begin{column}{.4\textwidth}
-      \begin{itemize}
-      \item Machine:  2 cores
-      \item Instance/Partitioned:  2 threads
-      \item Thread:  3 threads
-      \end{itemize}
-
-      \vspace*{8pt}
-
-      \emph{Thread suffers excessive context switches}
-    \end{column}
-    \begin{column}{.6\textwidth}
-      \includegraphics[width=.6\textheight]{async_throughput_box.png}
-    \end{column}
-  \end{columns}
-
-  \vspace*{12pt}
-
-  \fbox{
-    \parbox{\linewidth}{
-      \centering
-      Instance/Partitioned are viable event schedulers!
-    }
-  }
-
-\end{frame}
-
-\begin{frame}{Scheduler Evaluation: SyncClock \includegraphics[height=12pt]{CLOCK01-300px.png}}
-
-    \begin{columns}
-    \begin{column}{.4\textwidth}
-      \begin{itemize}
-      \item Machine:  2 cores
-      \item Instance/Partitioned:  2 threads
-      \item Thread:  \emph{2 threads}
-      \end{itemize}
-    \end{column}
-    \begin{column}{.6\textwidth}
-      \includegraphics[width=.6\textheight]{sync_throughput_box.png}
-    \end{column}
-  \end{columns}
-
-  \vspace*{12pt}
-
-  \fbox{
-    \parbox{\linewidth}{
-      \centering
-      Compilation beats interpretation!
-    }
-  }
-
-\end{frame}
-
-\begin{frame}{Conclusions and Future Work}
-  \begin{block}{Conclusions}
-    \begin{enumerate}
-    \item Reactive component model enables principled composition/decomposition of reactive systems.
-    \item Reactive component semantics can be checked efficiently.
-    \item Empirical results suggest that reactive components could compete with optimized multi-threaded approaches.
-    \end{enumerate}
-  \end{block}
-
-  \begin{block}{Future Work}
-    \begin{itemize}
-    \item Extend model for introduction and dynamic composition
-    \item Explore additional scheduler classes and algorithms
-    \end{itemize}
-  \end{block}
-\end{frame}
-
-\begin{frame}
-  \centering
-  \Huge
-  Questions?
-\end{frame}
 
 %% \begin{frame}{\rcgo{}:  Reference Semantics}
 
