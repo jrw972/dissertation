@@ -1,0 +1,58 @@
+\begin{tikzpicture}
+[
+arrowstyle/.style={
+  decoration={markings,mark=at position 1 with {\arrow[scale=2,]{stealth}}},
+  postaction={decorate},
+  shorten >=0.4pt
+}
+]
+
+%% component boundary
+\draw (0,0) rectangle (10,8.25);
+%% active pull ports
+\node (apull1) [shape=leftin, draw, text=gray, fill=gray] at (0,1.5) {man};
+\node [align=center] at (-1,1.5) {active\\pull port};
+\node (apull2) [shape=leftin, draw, text=gray, fill=gray] at (0,.5) {man};
+%% passive pull ports
+\node (ppull1) [shape=rightout, draw, text=gray, fill=gray] at (10, 1.5) {man};
+\node [align=center] at (11,1.5) {passive\\pull port};
+%\node (ppull2) [shape=rightout, draw, text=gray, fill=gray] at (10, .5) {man};
+%\draw [thick,arrowstyle] (apull2.east) -- (ppull2.west);
+\node [draw, ellipse, minimum height=15, minimum width=20] (expr) at (7,.5) {};
+\node at (8.5,.5) {expression};
+\draw [thick,arrowstyle] (expr.west) -- (apull2.east);
+\draw [thick,arrowstyle] (ppull1.west) -| (expr.north);
+\draw [dashed] (9,1) ellipse (3.25 and 1.5);
+\node at (9,1) {\textbf{\emph{getter}}};
+%% actions and reactions
+\node [draw, diamond, minimum height=15, minimum width=20] (pre) at (2.5,3) {};
+\node at (2.5,2.5) {precondition};
+\node [draw, minimum height=15, minimum width=50, rounded corners=5] (trans1) at (5,3) {};
+\draw [dashed] (3.5,3) ellipse (3 and 1);
+\node at (3.5,3.5) {\textbf{\emph{action}}};
+\node [draw, minimum height=15, minimum width=50, rounded corners=5] (trans2) at (5,5) {};
+\node at (5,4.5) {transition};
+\node at (5,3.5) {transition};
+\draw [thick,arrowstyle] (pre) -- (trans1);
+\draw [thick,arrowstyle] (trans1) |- (apull1.east) node[pos=.5,right] {\textbf{call}};
+%% active push ports
+\node (apush1) [shape=rightout, draw, text=white, fill=white] at (10, 3) {man};
+\node (apush2) [shape=rightout, draw, text=white, fill=white] at (10, 4) {man};
+\node (apush3) [shape=rightout, draw, text=white, fill=white] at (10, 5) {man};
+\node [align=center] at (11.1,5) {active\\push port};
+\draw [thick,dashed,arrowstyle] (trans1) -- (apush1.west);
+\draw [thick,dashed,arrowstyle] (trans1) -- (apush2.west);
+\node at(7.5,4) {\textbf{activate}};
+\draw [thick,dashed,arrowstyle] (trans2) -- (apush2.west);
+\draw [thick,dashed,arrowstyle] (trans2) -- (apush3.west);
+%% passive push ports
+\node (ppush1) [shape=leftin, draw, text=white, fill=white] at (0, 5) {man};
+\draw [thick,arrowstyle] (ppush1.east) -- (trans2);
+\node [align=center] at (-1.1,5) {passive\\push port};
+\draw [dashed] (2,5) ellipse (5 and 1);
+\node at (2,5.5) {\textbf{\emph{reaction}}};
+\node [draw, cylinder, shape border rotate=90, minimum height=40, minimum width=40] (sv1) at (5,7.25) {};
+\node [align=center] at (5,6.25) {state variables};
+
+
+\end{tikzpicture}

@@ -252,7 +252,7 @@ Many concepts, e.g., components, ports, actions, and reactions, have a natural m
 A major divergence from Go is the introduction of attributes that change the mutability of variables, as this was necessary to maintain the isolation between components while supporting reference semantics.
 The separation between the immutable phase and mutable phase is accomplished via an \verb+activate+ statement that contains a continuation to be executed in the mutable phase.
 To support move semantics, we introduce a new type called a \emph{transferable heap} which allows one component to safely transfer a collection of objects to another component.
-In following presentation, we use the following convention:
+In the following presentation, we use the following convention:
 \begin{itemize}
   \item keywords appear in lowercase, e.g., \verb+type+
   \item identifiers and literals appear in uppercase and underscores, e.g., \verb+ID+
@@ -503,7 +503,7 @@ bind (this *System) TheBinder {
 \end{verbatim}
 The first statement of the example binds the \verb+Out+ push port of the \verb+System+'s \verb+producer+ to the \verb+In+ reaction of the \verb+System+'s \verb+consumer+\footnote{The select operator(\texttt{.}) automatically dereferences pointers.}.
 The second statement of the example binds the \verb+isOutputBufferFull+ pull port of the \verb+System+'s \verb+producer+ to the \verb+isInputBufferFull+ getter of the \verb+System+'s \verb+consumer+.
-The left side of a bind statement always refers to a port while the right side refers to a getter or action.
+The left side of a bind statement always refers to a port while the right side refers to a getter or reaction.
 The direction of the arrow indicates the logical flow of information.
 Thus, information flows from a push port to a reaction (\verb+->+) and information flows from a getter to a pull port (\verb+<-+).
 A pull port must be bound to exactly one getter.

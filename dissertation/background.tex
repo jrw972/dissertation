@@ -71,10 +71,10 @@ Sutter and Larus~\cite{sutter2005software} and Lee~\cite{lee2006problem} provide
 In~\cite{sutter2005software}, the authors call for ``OO for concurrency--higher-level abstractions that help build concurrent programs, just as object-oriented abstractions help build large componentized programs.''
 The work presented in this dissertation is a step in this direction.
 
-Atomic transactions have been proposed as an alternative to locks when synchronizing multiple processes.
-The idea of an atomic transaction originated in the field of databases~\cite{Eswaran:1976:NCP:360363.360369}.
-Knight~\cite{Knight:1986:AMF:319838.319854} and then Herlihy and Moss~\cite{Herlihy:1993:TMA:165123.165164} proposed cache-based hardware support for atomic transactions.
-Hardware atomic transactions are forthcoming on modern processors~\cite{haswell}.
+Transactional memory has been proposed as an alternative to locks when synchronizing multiple processes.
+Transactional memory was inspired by the atomic transactions of databases~\cite{Eswaran:1976:NCP:360363.360369}.
+Knight~\cite{Knight:1986:AMF:319838.319854} and then Herlihy and Moss~\cite{Herlihy:1993:TMA:165123.165164} proposed cache-based hardware support for transactional memory.
+Transactional memory is forthcoming on modern processors~\cite{haswell}.
 Software transactional memory, proposed by Shavit and Touitou~\cite{shavit1997software}, has sparked a great deal of interest and has been implemented in a number of languages, e.g., Clojure~\cite{halloway2009programming}.
 
 Another technique for designing and implementing reactive systems that is receiving renewed interest is promises and futures~\cite{friedman1976impact, ifip1975new}.

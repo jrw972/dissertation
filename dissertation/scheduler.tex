@@ -1,4 +1,4 @@
-\chapter{Transaction Scheduler}
+\chapter{Transaction Scheduling}
 \label{scheduler}
 
 A scheduler is responsible for executing transactions according to the fairness criteria set forth in Section~\ref{execution}.
@@ -81,7 +81,7 @@ Figure~\ref{dt_state} shows the state transition diagram for the state component
 Each state has a self loop that allows a transaction to stay in the same state while another transaction changes state (indicated by $\lambda$).
 There are two main paths through the transition system.
 The path $abc$ corresponds to evaluating the precondition and immediately executing the immutable and mutable phases.
-The path $adec$, for example, corresponds to evaluating the precondition and later executing the immutable and mutable phases.
+The path $adec$ corresponds to evaluating the precondition and later executing the immutable and mutable phases.
 Let $\Gamma$ be the set of transitions indicated in Figure~\ref{dt_state}.
 Each element $\gamma \in \Gamma$ is a pair in $Q \times Q$.
 The following condition states that every transition in a scheduler must obey the transition system described in Figure~\ref{dt_state}:
@@ -177,7 +177,7 @@ Thus, with respect to parallel and concurrent execution, a scheduler design must
 
 The scheduling problem for reactive components, then, is:  given a set of active transactions, select the next transaction for evaluation (precondition) or execution (immutable and mutable phase) subject to fairness and safety.
 
-\section{Scheduler Classes}
+\section{Scheduler Design Criteria}
 
 Different factors may influence the design of transaction schedulers, which we distinguish according to four dimensions.
 A given scheduler may be:  \emph{lazy} or \emph{eager}, \emph{oblivious} or \emph{knowledgeable}, \emph{cautious} or \emph{speculative}, and \emph{non-preemptive} or \emph{preemptive}.
@@ -319,7 +319,7 @@ One potential weakness of this scheduler is the synchronization required to coor
 Thus, the scalability of this scheduler is a concern.
 
 \paragraph{Concurrent partitioned round-robin scheduler with asynchronous locking and distributed termination.}
-One of the goals when designing this scheduler was to avoid the blocking behavior and overhead of locking observed during out evaluations of the concurrent scheduler with a global instance work queue.
+One of the goals when designing this scheduler was to avoid the blocking behavior and overhead of locking observed during our evaluations of the concurrent scheduler with a global instance work queue.
 The pthreads reader/writer locks used to protect each component instance were replaced by asynchronous reader/writer locks implemented in user-space.
 The asynchronous locks consist of a spin lock, variables indicating the status of the lock, and a queue of requests.
 To acquire a lock for a component, a scheduler thread first acquires the spin lock and then checks if the lock can be acquired immediately, which it can if either the lock has no owner or the thread is a reader (i.e., it is requesting a read lock); the lock has already been locked by another reader; and there are no writers in the queue.
@@ -349,7 +349,7 @@ Multiple threads may receive their own synchronization message at the same time.
 The goal of the synchronization phase is to establish a common point of reference for determining if any transaction is enabled.
 When a thread receives its own synchronization message, it sends a message to its neighbor that it is entering the CHECK state.
 This message is forwarded around the ring causing all of the threads to enter the CHECK state.
-The CHECK state is like the modified RUN state in that any executed transaction causes a reset message to circulate around the ring.
+The CHECK state is like the RUN state in that any executed transaction causes a reset message to circulate around the ring.
 A thread that cycles through its list of transactions and finds no enabled transactions sends a wait message to its neighbor and enters the WAIT state.
 If the neighbor is in the WAIT state, it forwards the message.
 If a thread receives its own wait message, then all of the threads are in the WAIT state and the termination condition has been established.
@@ -367,11 +367,9 @@ We propose the following metrics for the evaluation of a general-purpose schedul
 \begin{description}
 \item[Throughput:] the number of transactions executed per second.
 Given the same system, a scheduler with higher throughput is preferable to a system with lower throughput as it is accomplishing more work per unit of time.
-Throughput can also be defined for specific problems by defining a unit of work and measuring the number of work units processed per unit of time.
 \item[Latency:] the amount of time between an transaction becoming enabled and being executed.
 The goal in measuring the latency between a transaction becoming enabled and its execution is to quantify the responsiveness of the scheduler.
 An interactive application may prefer a scheduler that executes enabled transactions promptly to aid in providing a good user experience or other benefit.
-Like throughput, latency may also be defined for units of work.
 \item[Utilization:] the fraction of the CPUs used.
 Utilization is a measure of how efficiently the scheduler is using the CPUs and can be used to quantify an improvement in throughput or latency.
 For example, a 10\% increase in throughput accompanied by a 10\% increase in utilization may be acceptable while a 10\% increase in throughput with a 100\% increase in utilization may not be acceptable.
@@ -423,7 +421,7 @@ The second variant is a simplified version of the clock system consisting of a T
 The counter creates a race between the two transactions so that they cannot be executed concurrently.
 This system will be denoted as the \emph{SyncClock} system.
 
-For comparison, we implemented threaded versions of the AsyncClock and SyncClock systems using the POSIX threads library (pthreads).
+For comparison, we implemented multi-threaded versions of the AsyncClock and SyncClock systems using the POSIX threads library (pthreads).
 The AsyncClock implementation attempts to preserve the spirit of the AsyncClock system by being as asynchronous as possible.
 This implementation uses three threads corresponding to the Request, Response, and Tick transactions.
 The Request and Response threads share a flag variable that is protected by a mutex and condition variable to implement the asynchronous request/response protocol.
@@ -774,7 +772,7 @@ Figures~\ref{sync_thread_throughput_utilization}, \ref{sync_instance_throughput_
 The utilization for the Thread experiment decreases with increasing throughput.
 This suggests that the Linux scheduler is serializing the execution of the threads which decreases utilization while avoiding lock contention which results in increased throughput.
 Most of the runs for the Instance and Partitioned experiments achieve a utilization greater than 100\% while a number of runs in the Thread experiment do not.
-The Instance experiment shows a weak trend of increased utilization with throughput while the Partitioned experiment shows a trend of decreased utilization with throughput.
+The Instance experiment perhaps shows a weak trend of increased utilization with throughput while the Partitioned experiment shows a trend of decreased utilization with throughput.
 
 \begin{figure}[H]
 \center
@@ -951,7 +949,7 @@ This prompts the question:  can reactive components be as efficient as threads?
 While we cannot answer this question definitively, the act of converting a reactive component program to a threaded program does provide evidence that it may be possible to make reactive components as efficient as threads.
 The procedure for converting a reactive component program to a threaded program involves 1) creating a reader/writer lock for each component instance, 2) creating a thread for each transaction, 3) creating a condition variable and mutex for each precondition, 4) creating a critical section for each transaction, and 5) signaling affected transactions after the critical section.
 It seems feasible that this procedure can be automated.
-Thus, a system of reactive components can be converted to threads or scheduled as events depending on the resources available and nature of the transactions in the system, but doing so is left for future work.
+Thus, a system of reactive components can be converted to threads or scheduled as events depending on the resources available and the nature of the transactions in the system, but doing so is left for future work.
 
 %% \section{Scheduler}
 

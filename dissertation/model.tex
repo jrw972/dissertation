@@ -26,6 +26,8 @@ Unlike I/O Automata in which transitions have limited depth, a transition among 
 
 \section{Features of the Model}
 
+\input{shapes}
+
 %% left active pull port
 %% x, y, width, height, label
 \def\lapull[#1,#2,#3,#4,#5,#6]#7{
@@ -103,55 +105,7 @@ Unlike I/O Automata in which transitions have limited depth, a transition among 
 \resizebox{\textwidth}{!}{%
 \begingroup
 \fontsize{10pt}{12pt}\selectfont
-\begin{tikzpicture}
-[
-arrowstyle/.style={
-  decoration={markings,mark=at position 1 with {\arrow[scale=2,]{stealth}}},
-  postaction={decorate},
-  shorten >=0.4pt
-}
-]
-
-%% component boundary
-\draw (0,0) rectangle (10,8.25);
-%% active pull ports
-\lapull[0,1.5,1,.5,apullex1,apullin1]{}
-\node[align=center] at (-1,1.5) {active\\pull port};
-\lapull[0,.5,1,.5,apullex2,apullin2]{}
-%% passive pull ports
-\rppull[10,1.5,1,.5,ppullex1,ppullin1]{}
-\node[align=center] at (11,1.5) {passive\\pull port};
-\rppull[10,.5,1,.5,ppullex2,ppullin2]{}
-\draw[thick] (apullin2.center) -- (ppullin2.center);
-%% actions and rections
-\node[draw, diamond, minimum height=15, minimum width=20] (pre) at (2.5,3) {};
-\node at (2.5,2.5) {precondition};
-\node[draw, minimum height=15, minimum width=50, rounded corners=5] (trans1) at (5,3) {};
-\draw[dashed] (3.5,3) ellipse (3 and 1);
-\node at (3.5,3.5) {\textbf{\emph{action}}};
-\node[draw, minimum height=15, minimum width=50, rounded corners=5] (trans2) at (5,5) {};
-\node at (5,4.5) {transition};
-\draw[thick,arrowstyle] (pre) -- (trans1);
-\draw[thick] (apullin1.center) -| (trans1) node[pos=.5,right] {\textbf{call}};
-%% active push ports
-\rapush[10,3,1,.5,apushex1,apushin1]{}
-\rapush[10,4,1,.5,apushex2,apushin2]{}
-\rapush[10,5,1,.5,apushex3,apushin3]{}
-\node[align=center] at (11.1,5) {active\\push port};
-\draw[thick,dashed,arrowstyle] (trans1) -- (apushin1.center);
-\draw[thick,dashed,arrowstyle] (trans1) -- (apushin2.center);
-\node at(7.5,4) {\textbf{activate}};
-\draw[thick,dashed,arrowstyle] (trans2) -- (apushin2.center);
-\draw[thick,dashed,arrowstyle] (trans2) -- (apushin3.center);
-%% passive push ports
-\lppush[0,5,1,.5,ppushex1,ppushin1]{}
-\draw[thick,arrowstyle] (ppushin1.center) -- (trans2);
-\node[align=center] at (-1.1,5) {passive\\push port};
-\draw[dashed] (2,5) ellipse (5 and 1);
-\node at (2,5.5) {\textbf{\emph{reaction}}};
-\node[draw, cylinder, shape border rotate=90, minimum height=40, minimum width=40] (sv1) at (5,7.25) {};
-\node[align=center] at (5,6.25) {state variables};
-\end{tikzpicture}
+\input{model_diagram}
 \endgroup
 }%
 \caption{Features of a reactive component\label{reactive_component}}
@@ -177,7 +131,9 @@ The combination of a precondition and transition is called an \emph{action} beca
 
 An \emph{active pull port} represents an immutable external data dependency.
 The component may \emph{call} an active pull port to yield a value required in a transition.
-Active pull ports must be bound to a \emph{passive pull port} which resembles a function returning a value, e.g., a getter or a predicate.
+Active pull ports must be bound to a \emph{passive pull port} which resembles a function returning one or more values.
+Associated with a passive pull port is an expression that may interrogate the state of the corresponding component or call other pull ports.
+The combination of a passive pull port and an expression is called a \emph{getter}.
 Where push ports allow components to publicize their behavior, pull ports allow components to safely publicize their internal state for use by other components.
 
 Composition in the reactive component model has two main features.
@@ -729,8 +685,6 @@ component RequestResponse {
 component Clock {
   var Counter c
   var RequestResponse rr
-  push request()
-  push clock(int t)
 
   bind {
     c.getCounter -> rr.getValue

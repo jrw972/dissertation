@@ -1,8 +1,6 @@
 all: slides.pdf
 
-slides.pdf: slides.tex
-
-%.pdf: %.tex slides.bib
+%.pdf: %.tex model.tex slides.bib
 	pdflatex $<
 	bibtex slides
 	pdflatex $<

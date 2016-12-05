@@ -1,0 +1,426 @@
+% Shapes for diagrams.
+\makeatletter
+\pgfdeclareshape{rightout}{
+  \savedanchor{\center}{
+    \pgfpointorigin
+  }
+  \savedanchor{\text}{
+    \pgfpointorigin
+    \pgf@x=-\wd\pgfnodeparttextbox
+    \pgfutil@tempdima=-\dp\pgfnodeparttextbox
+    \advance\pgf@y by\pgfutil@tempdima/
+  }
+  \savedanchor{\southwest}{
+    \pgf@x=-\wd\pgfnodeparttextbox
+    \pgf@y=-.5\ht\pgfnodeparttextbox
+    \pgfutil@tempdima=-.5\dp\pgfnodeparttextbox
+    \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@x by-\pgf@xb
+    \advance\pgf@y by-\pgf@yb
+  }
+  \savedanchor{\south}{
+    \pgf@x=-.5\wd\pgfnodeparttextbox
+    \pgf@y=-.5\ht\pgfnodeparttextbox
+    \pgfutil@tempdima=-.5\dp\pgfnodeparttextbox
+    \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@y by-\pgf@yb
+  }
+  \savedanchor{\northwest}{
+    \pgf@x=-\wd\pgfnodeparttextbox
+    \pgfutil@tempdima=.5\dp\pgfnodeparttextbox
+    \pgf@y=.5\ht\pgfnodeparttextbox \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@x by-\pgf@xb
+    \advance\pgf@y by\pgf@yb
+  }
+  \savedanchor{\north}{
+    \pgf@x=-.5\wd\pgfnodeparttextbox
+    \pgfutil@tempdima=.5\dp\pgfnodeparttextbox
+    \pgf@y=.5\ht\pgfnodeparttextbox \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@y by\pgf@yb
+  }
+  \savedanchor{\west}{
+    \pgfpointorigin
+    \pgf@x=-\wd\pgfnodeparttextbox
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \advance\pgf@x by-\pgf@xb
+  }
+  \savedanchor{\southeast}{
+    \pgfpointorigin
+    \pgfutil@tempdima=-.5\dp\pgfnodeparttextbox
+    \pgf@y=-.5\ht\pgfnodeparttextbox \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@x by\pgf@xb
+    \advance\pgf@y by-\pgf@yb
+  }
+  \savedanchor{\northeast}{
+    \pgfpointorigin
+    \pgfutil@tempdima=.5\dp\pgfnodeparttextbox
+    \pgf@y=.5\ht\pgfnodeparttextbox \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@x by\pgf@xb
+    \advance\pgf@y by\pgf@yb
+  }
+  \savedanchor{\east}{
+    \pgfpointorigin
+    \pgfutil@tempdima=.5\ht\pgfnodeparttextbox
+    \advance\pgf@x by\pgfutil@tempdima
+    \pgfutil@tempdima=.5\dp\pgfnodeparttextbox
+    \advance\pgf@x by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \advance\pgf@x by\pgf@xb
+  }
+
+  \anchor{center}{\center}
+  \anchor{text}{\text}
+
+  \anchor{south west}{\southwest}
+  \anchor{west}{\west}
+  \anchor{north west}{\northwest}
+  \anchor{north}{\north}
+  \anchor{north east}{\northeast}
+  \anchor{east}{\east}
+  \anchor{south east}{\southeast}
+  \anchor{south}{\south}
+
+  \backgroundpath{
+    \pgfmoveto{\southwest}
+    \pgflineto{\west}
+    \pgflineto{\northwest}
+    \pgflineto{\north}
+    \pgflineto{\northeast}
+    \pgflineto{\east}
+    \pgflineto{\southeast}
+    \pgflineto{\south}
+    \pgflineto{\southwest}
+  }
+}
+\makeatother
+
+\makeatletter
+\pgfdeclareshape{rightin}{
+  \savedanchor{\center}{
+    \pgfpointorigin
+  }
+  \savedanchor{\text}{
+    \pgfpointorigin
+    \pgf@x=-\wd\pgfnodeparttextbox
+    \pgfutil@tempdima=-\dp\pgfnodeparttextbox
+    \advance\pgf@y by\pgfutil@tempdima/
+  }
+  \savedanchor{\southwest}{
+    \pgf@x=-\wd\pgfnodeparttextbox
+    \pgf@y=-.5\ht\pgfnodeparttextbox
+    \pgfutil@tempdima=-.5\dp\pgfnodeparttextbox
+    \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@x by-\pgf@xb
+    \advance\pgf@y by-\pgf@yb
+  }
+  \savedanchor{\south}{
+    \pgf@x=-.5\wd\pgfnodeparttextbox
+    \pgf@y=-.5\ht\pgfnodeparttextbox
+    \pgfutil@tempdima=-.5\dp\pgfnodeparttextbox
+    \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@y by-\pgf@yb
+  }
+  \savedanchor{\northwest}{
+    \pgf@x=-\wd\pgfnodeparttextbox
+    \pgfutil@tempdima=.5\dp\pgfnodeparttextbox
+    \pgf@y=.5\ht\pgfnodeparttextbox \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@x by-\pgf@xb
+    \advance\pgf@y by\pgf@yb
+  }
+  \savedanchor{\north}{
+    \pgf@x=-.5\wd\pgfnodeparttextbox
+    \pgfutil@tempdima=.5\dp\pgfnodeparttextbox
+    \pgf@y=.5\ht\pgfnodeparttextbox \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@y by\pgf@yb
+  }
+  \savedanchor{\west}{
+    \pgfpointorigin
+    \pgf@x=-\wd\pgfnodeparttextbox
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \advance\pgf@x by-\pgf@xb
+  }
+  \savedanchor{\southeast}{
+    \pgfpointorigin
+    \pgfutil@tempdima=-.5\dp\pgfnodeparttextbox
+    \pgf@y=-.5\ht\pgfnodeparttextbox \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@x by\pgf@xb
+    \advance\pgf@y by-\pgf@yb
+    \pgfutil@tempdima=.5\ht\pgfnodeparttextbox
+    \advance\pgf@x by\pgfutil@tempdima
+    \pgfutil@tempdima=.5\dp\pgfnodeparttextbox
+    \advance\pgf@x by\pgfutil@tempdima
+  }
+  \savedanchor{\northeast}{
+    \pgfpointorigin
+    \pgfutil@tempdima=.5\dp\pgfnodeparttextbox
+    \pgf@y=.5\ht\pgfnodeparttextbox \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@x by\pgf@xb
+    \advance\pgf@y by\pgf@yb
+    \pgfutil@tempdima=.5\ht\pgfnodeparttextbox
+    \advance\pgf@x by\pgfutil@tempdima
+    \pgfutil@tempdima=.5\dp\pgfnodeparttextbox
+    \advance\pgf@x by\pgfutil@tempdima
+  }
+  \savedanchor{\east}{
+    \pgfpointorigin
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \advance\pgf@x by\pgf@xb
+  }
+
+  \anchor{center}{\center}
+  \anchor{text}{\text}
+
+  \anchor{south west}{\southwest}
+  \anchor{west}{\west}
+  \anchor{north west}{\northwest}
+  \anchor{north}{\north}
+  \anchor{north east}{\northeast}
+  \anchor{east}{\east}
+  \anchor{south east}{\southeast}
+  \anchor{south}{\south}
+
+  \backgroundpath{
+    \pgfmoveto{\southwest}
+    \pgflineto{\west}
+    \pgflineto{\northwest}
+    \pgflineto{\north}
+    \pgflineto{\northeast}
+    \pgflineto{\east}
+    \pgflineto{\southeast}
+    \pgflineto{\south}
+    \pgflineto{\southwest}
+  }
+}
+\makeatother
+
+\makeatletter
+\pgfdeclareshape{leftout}{
+  \savedanchor{\center}{
+    \pgfpointorigin
+  }
+  \savedanchor{\text}{
+    \pgfpointorigin
+    \pgfutil@tempdima=-\dp\pgfnodeparttextbox
+    \advance\pgf@y by\pgfutil@tempdima/
+  }
+  \savedanchor{\southeast}{
+    \pgf@x=\wd\pgfnodeparttextbox
+    \pgf@y=-.5\ht\pgfnodeparttextbox
+    \pgfutil@tempdima=-.5\dp\pgfnodeparttextbox
+    \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@x by\pgf@xb
+    \advance\pgf@y by-\pgf@yb
+  }
+  \savedanchor{\south}{
+    \pgf@x=.5\wd\pgfnodeparttextbox
+    \pgf@y=-.5\ht\pgfnodeparttextbox
+    \pgfutil@tempdima=-.5\dp\pgfnodeparttextbox
+    \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@y by-\pgf@yb
+  }
+  \savedanchor{\northeast}{
+    \pgf@x=\wd\pgfnodeparttextbox
+    \pgfutil@tempdima=.5\dp\pgfnodeparttextbox
+    \pgf@y=.5\ht\pgfnodeparttextbox \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@x by\pgf@xb
+    \advance\pgf@y by\pgf@yb
+  }
+  \savedanchor{\north}{
+    \pgf@x=.5\wd\pgfnodeparttextbox
+    \pgfutil@tempdima=.5\dp\pgfnodeparttextbox
+    \pgf@y=.5\ht\pgfnodeparttextbox \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@y by\pgf@yb
+  }
+  \savedanchor{\east}{
+    \pgfpointorigin
+    \pgf@x=\wd\pgfnodeparttextbox
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \advance\pgf@x by\pgf@xb
+  }
+  \savedanchor{\southwest}{
+    \pgfpointorigin
+    \pgfutil@tempdima=-.5\dp\pgfnodeparttextbox
+    \pgf@y=-.5\ht\pgfnodeparttextbox \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@x by-\pgf@xb
+    \advance\pgf@y by-\pgf@yb
+  }
+  \savedanchor{\northwest}{
+    \pgfpointorigin
+    \pgfutil@tempdima=.5\dp\pgfnodeparttextbox
+    \pgf@y=.5\ht\pgfnodeparttextbox \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@x by-\pgf@xb
+    \advance\pgf@y by\pgf@yb
+  }
+  \savedanchor{\west}{
+    \pgfpointorigin
+    \pgfutil@tempdima=.5\ht\pgfnodeparttextbox
+    \advance\pgf@x by-\pgfutil@tempdima
+    \pgfutil@tempdima=.5\dp\pgfnodeparttextbox
+    \advance\pgf@x by-\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \advance\pgf@x by-\pgf@xb
+  }
+
+  \anchor{center}{\center}
+  \anchor{text}{\text}
+
+  \anchor{south west}{\southwest}
+  \anchor{west}{\west}
+  \anchor{north west}{\northwest}
+  \anchor{north}{\north}
+  \anchor{north east}{\northeast}
+  \anchor{east}{\east}
+  \anchor{south east}{\southeast}
+  \anchor{south}{\south}
+
+  \backgroundpath{
+    \pgfmoveto{\southwest}
+    \pgflineto{\west}
+    \pgflineto{\northwest}
+    \pgflineto{\north}
+    \pgflineto{\northeast}
+    \pgflineto{\east}
+    \pgflineto{\southeast}
+    \pgflineto{\south}
+    \pgflineto{\southwest}
+  }
+}
+\makeatother
+
+\makeatletter
+\pgfdeclareshape{leftin}{
+  \savedanchor{\center}{
+    \pgfpointorigin
+  }
+  \savedanchor{\text}{
+    \pgfpointorigin
+    \pgfutil@tempdima=-\dp\pgfnodeparttextbox
+    \advance\pgf@y by\pgfutil@tempdima/
+  }
+  \savedanchor{\southwest}{
+    \pgfpointorigin
+    \pgfutil@tempdima=-.5\dp\pgfnodeparttextbox
+    \pgf@y=-.5\ht\pgfnodeparttextbox \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@x by-\pgf@xb
+    \advance\pgf@y by-\pgf@yb
+    \pgfutil@tempdima=.5\ht\pgfnodeparttextbox
+    \advance\pgf@x by-\pgfutil@tempdima
+    \pgfutil@tempdima=.5\dp\pgfnodeparttextbox
+    \advance\pgf@x by-\pgfutil@tempdima
+  }
+  \savedanchor{\northwest}{
+    \pgfpointorigin
+    \pgfutil@tempdima=.5\dp\pgfnodeparttextbox
+    \pgf@y=.5\ht\pgfnodeparttextbox \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@x by-\pgf@xb
+    \advance\pgf@y by\pgf@yb
+    \pgfutil@tempdima=.5\ht\pgfnodeparttextbox
+    \advance\pgf@x by-\pgfutil@tempdima
+    \pgfutil@tempdima=.5\dp\pgfnodeparttextbox
+    \advance\pgf@x by-\pgfutil@tempdima
+  }
+  \savedanchor{\west}{
+    \pgfpointorigin
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \advance\pgf@x by-\pgf@xb
+  }
+  \savedanchor{\southeast}{
+    \pgf@x=\wd\pgfnodeparttextbox
+    \pgf@y=-.5\ht\pgfnodeparttextbox
+    \pgfutil@tempdima=-.5\dp\pgfnodeparttextbox
+    \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@x by\pgf@xb
+    \advance\pgf@y by-\pgf@yb
+  }
+  \savedanchor{\south}{
+    \pgf@x=.5\wd\pgfnodeparttextbox
+    \pgf@y=-.5\ht\pgfnodeparttextbox
+    \pgfutil@tempdima=-.5\dp\pgfnodeparttextbox
+    \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@y by-\pgf@yb
+  }
+  \savedanchor{\northeast}{
+    \pgf@x=\wd\pgfnodeparttextbox
+    \pgfutil@tempdima=.5\dp\pgfnodeparttextbox
+    \pgf@y=.5\ht\pgfnodeparttextbox \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@x by\pgf@xb
+    \advance\pgf@y by\pgf@yb
+  }
+  \savedanchor{\north}{
+    \pgf@x=.5\wd\pgfnodeparttextbox
+    \pgfutil@tempdima=.5\dp\pgfnodeparttextbox
+    \pgf@y=.5\ht\pgfnodeparttextbox \advance\pgf@y by\pgfutil@tempdima
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@y by\pgf@yb
+  }
+  \savedanchor{\east}{
+    \pgfpointorigin
+    \pgf@x=\wd\pgfnodeparttextbox
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \advance\pgf@x by\pgf@xb
+  }
+
+  \anchor{center}{\center}
+  \anchor{text}{\text}
+
+  \anchor{south west}{\southwest}
+  \anchor{west}{\west}
+  \anchor{north west}{\northwest}
+  \anchor{north}{\north}
+  \anchor{north east}{\northeast}
+  \anchor{east}{\east}
+  \anchor{south east}{\southeast}
+  \anchor{south}{\south}
+
+  \backgroundpath{
+    \pgfmoveto{\southwest}
+    \pgflineto{\west}
+    \pgflineto{\northwest}
+    \pgflineto{\north}
+    \pgflineto{\northeast}
+    \pgflineto{\east}
+    \pgflineto{\southeast}
+    \pgflineto{\south}
+    \pgflineto{\southwest}
+  }
+}
+\makeatother

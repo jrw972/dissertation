@@ -305,7 +305,7 @@ An ordinary call in the language is accomplished through the following sequence:
 \item (Callee) Push the base pointer onto the stack and set the base pointer to the top of the stack.
 \item (Callee) Reserve space on the stack for local variables.
 \item (Callee) Execute the body of the function, method, etc.
-\item (Callee) Pop the stack, pop and restore the base pointer, pop and restore the instruction pointer.
+\item (Callee) Pop the local variables, pop and restore the base pointer, pop and restore the instruction pointer.
 \item (Caller) Pop the arguments.
 \item (Caller) Pop the return values.
 \end{enumerate}
@@ -356,7 +356,7 @@ The \rcgo{} run-time system populates each push port before execution begins.
 \paragraph{Synchronized two-phase calling convention.}
 As was previously stated, the execution of an activate statement is split into an immutable phase and a mutable phase.
 To prepare for the mutable phase, the immutable phase must preserve the stack frame (context) of the action or reaction that executes an activate statement and must record which activate statement was executed so that the same activation can be resumed in the mutable phase.
-To accomplish this, we devised a \emph{synchronized two-phase calling convention}, which is used to execute activate statements during the immutable phase.
+To accomplish this, we devised the \emph{synchronized two-phase calling convention}, which is used to execute activate statements during the immutable phase.
 
 Recall that activate statements may only appear in actions and reactions.
 After executing the immutable phase of an activate statement in a reaction, control must be returned to the calling activate statement so that it may activate other push ports.
@@ -724,7 +724,7 @@ The goal of implementing reactive components was to test the practicality of the
 Specifically, we desired to know how the various features of the model could be implemented, which features were troublesome, and how the implementation utilizes various assumptions.
 Flexibility in the reactive component model necessitates a check for sound composition.
 The sound composition algorithm described in Section~\ref{sound_composition} uses the static system assumption and the component proxy assumption to generate a graphical model of each transition and check it for determinism.
-A cursory analysis yielded an upper bound of $O(k n^2 \log (n))$ where $n$ is the number of instances involved in the transaction.
+A cursory analysis yielded an upper bound of $O(k n^2 \log (n))$ where $n$ is the number of instances involved in the transaction and $k$ is the maximum branching factor in the transaction.
 
 To implement activate statements, we developed the synchronized two-phase calling convention which executes the immutable phase of a transaction first and preserves the context necessary for the second (mutable) phase.
 The synchronized two-phase calling convention was implemented using standard function call and stack manipulation facilities.
