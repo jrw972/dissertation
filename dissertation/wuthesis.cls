@@ -212,10 +212,12 @@ Robert Edward Thomas}
      \strut \vfill
     \begin{center}
     \begin{doublespace}
-      Washington University in St.\ Louis \\
+      WASHINGTON UNIVERSITY IN ST.\ LOUIS
+    \end{doublespace}
+    \begin{singlespace}
       School of Engineering and Applied Science \\
       \thesisdepartment
-    \end{doublespace}
+    \end{singlespace}
 
     \vspace{0.5in}
 
@@ -235,12 +237,12 @@ Robert Edward Thomas}
     \vspace{0.75in}
 
     \begin{singlespace}
-      A \MakeLowercase{\thesistype}\ presented to the Graduate School
-of Arts and Sciences\\
-      of Washington University in partial fulfillment of the \\
-      requirements for the degree of
-
-      {\thesisdegree}
+      A \MakeLowercase{\thesistype}\ presented to \\
+      The Graduate School \\
+      of Washington University in \\
+      partial fulfillment of the \\
+      requirements for the degree \\
+      of {\thesisdegree}
 
       \thesismonth\ \thesisyear \\
       Saint Louis, Missouri
